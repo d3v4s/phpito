@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projects >
+	<server id="1">
+		<name>prova</name>
+		<path>/home/hxs/Desktop/site_test/technofriend</path>
+		<address>127.0.0.1</address>
+		<port>8585</port>
+	</server>
+	<server id="2">
+		<name>prova</name>
+		<path>/home/test/</path>
+		<address>127.0.0.1</address>
+		<port>666</port>
+	</server>
+	<server id="3">
+		<name>prova</name>
+		<path>/home/test/</path>
+		<address>127.0.0.1</address>
+		<port>666</port>
+	</server>
+	<server id="4">
+		<name>prova</name>
+		<path>/home/test/</path>
+		<address>127.0.0.1</address>
+		<port>666</port>
+	</server>
+</projects>
