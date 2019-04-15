@@ -1,6 +1,5 @@
 package it.phpito.view.shell;
 
-import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.HashMap;
 
@@ -28,6 +27,8 @@ import it.as.utils.exception.FileException;
 import it.as.utils.view.UtilsViewAS;
 import it.phpito.controller.PHPitoManager;
 import it.phpito.data.Project;
+import it.phpito.view.listener.selection.AddProjectSelectionAdapter;
+import it.phpito.view.listener.selection.StartServerSelectionAdapter;
 import swing2swt.layout.BorderLayout;
 import swing2swt.layout.BoxLayout;
 
@@ -39,7 +40,7 @@ public class ShellPHPito extends Shell {
 		this.shellPHPito = this;
 	}
 
-	/* override del metodo check per evitare il controllo della subclass */
+	/* override del metodo check - per evitare il controllo della subclass */
 	@Override
 	protected void checkSubclass() {
 	}
@@ -72,11 +73,7 @@ public class ShellPHPito extends Shell {
 		
 		/* pulsante menu' per aggiungere un nuovo progetto */
 		mntm = new MenuItem(mn, SWT.NONE);
-		mntm.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-			}
-		});
+		mntm.addSelectionListener(new AddProjectSelectionAdapter(this));
 		mntm.setText("Aggiungi");
 		
 		/* pulsante menu' per uscire */
@@ -117,11 +114,7 @@ public class ShellPHPito extends Shell {
 		
 		/* pulsante aggiungi progetto */
 		btn = new Button(compositeRight, SWT.CENTER);
-		btn.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-			}
-		});
+		btn.addSelectionListener(new AddProjectSelectionAdapter(this));
 		btn.setLayoutData(gdBttnWidth);
 		btn.setText("Aggiungi");
 		new Label(compositeRight, SWT.NONE).setLayoutData(gdLblHeight);
@@ -139,16 +132,7 @@ public class ShellPHPito extends Shell {
 		
 		/* pulsante avvia server */
 		btn = new Button(compositeRight, SWT.CENTER);
-		btn.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent se) {
-				try {
-					PHPitoManager.getInstance().runServer(PHPitoManager.getInstance().getProjectById(1).getServer());
-				} catch (IOException | FileException e) {
-					UtilsViewAS.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
-				}
-			}
-		});
+		btn.addSelectionListener(new StartServerSelectionAdapter(this, 1));
 		btn.setLayoutData(gdBttnWidth);
 		btn.setText("Start");
 		new Label(compositeRight, SWT.NONE).setLayoutData(gdLblHeight);
@@ -158,6 +142,7 @@ public class ShellPHPito extends Shell {
 		btn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				PHPitoManager.getInstance().stop = true;
 			}
 		});
 		btn.setLayoutData(gdBttnWidth);
@@ -183,11 +168,7 @@ public class ShellPHPito extends Shell {
 		table.setMenu(ppmnTbl);
 
 		mntm = new MenuItem(ppmnTbl, SWT.NONE);
-		mntm.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-			}
-		});
+		mntm.addSelectionListener(new AddProjectSelectionAdapter(this));
 		mntm.setText("Aggiungi");
 
 		mntm = new MenuItem(ppmnTbl, SWT.NONE);
@@ -199,16 +180,7 @@ public class ShellPHPito extends Shell {
 		mntm.setText("Elimina");
 		
 		mntm = new MenuItem(ppmnTbl, SWT.NONE);
-		mntm.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent se) {
-				try {
-					PHPitoManager.getInstance().runServer(PHPitoManager.getInstance().getProjectById(1).getServer());
-				} catch (IOException | FileException e) {
-					UtilsViewAS.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
-				}
-			}
-		});
+		mntm.addSelectionListener(new StartServerSelectionAdapter(this, 1));
 		mntm.setText("Start");
 
 		mntm = new MenuItem(ppmnTbl, SWT.NONE);

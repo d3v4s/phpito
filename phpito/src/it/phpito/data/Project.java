@@ -22,6 +22,7 @@ public class Project {
 		return server;
 	}
 	public void setServer(Server server) {
+		server.setProject(this);
 		this.server = server;
 	}
 	

@@ -2,9 +2,9 @@
 <projects >
 	<server id="1">
 		<name>prova</name>
-		<path>/home/hxs/Desktop/site_test/technofriend</path>
+		<path>/home/hxs/Desktop/site_test/technofriennnd/</path>
 		<address>127.0.0.1</address>
-		<port>8585</port>
+		<port>8080</port>
 	</server>
 	<server id="2">
 		<name>prova</name>

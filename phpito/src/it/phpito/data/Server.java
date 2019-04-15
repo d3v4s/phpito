@@ -5,6 +5,7 @@ public class Server {
 	private String address;
 	private Integer port;
 	private String state;
+	private Project project;
 
 	/* get e set */
 	public String getPath() {
@@ -31,7 +32,14 @@ public class Server {
 	public void setState(String state) {
 		this.state = state;
 	}
+	public Project getProject() {
+		return project;
+	}
+	public void setProject(Project project) {
+		this.project = project;
+	}
 
+	/* metodo che ritorna indirizzo e porta */
 	public String getAddressAndPort() {
 		return address + ":" + port;
 	}
