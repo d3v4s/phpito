@@ -25,6 +25,10 @@ public class Project {
 		server.setProject(this);
 		this.server = server;
 	}
+
+	public String getIdString() {
+		return String.valueOf(id);
+	}
 	
 	public String getIdAndName() {
 		return id + "-" + name;

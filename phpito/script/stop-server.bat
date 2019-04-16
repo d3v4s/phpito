@@ -1,6 +1,5 @@
 REM @echo off
-set address=%2;
-set directory=%3;
+set PID=%2;
 
 echo "[*] PHPito start server - Date: %date% %time%";
 echo "[*] Starting server php on: %address%";

@@ -29,6 +29,7 @@ import it.phpito.controller.PHPitoManager;
 import it.phpito.data.Project;
 import it.phpito.view.listener.selection.AddProjectSelectionAdapter;
 import it.phpito.view.listener.selection.StartServerSelectionAdapter;
+import it.phpito.view.listener.selection.StopServerSelectionAdapter;
 import swing2swt.layout.BorderLayout;
 import swing2swt.layout.BoxLayout;
 
@@ -139,12 +140,7 @@ public class ShellPHPito extends Shell {
 		
 		/* pulsante per fermare server */
 		btn = new Button(compositeRight, SWT.CENTER);
-		btn.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				PHPitoManager.getInstance().stop = true;
-			}
-		});
+		btn.addSelectionListener(new StopServerSelectionAdapter(this, 1));
 		btn.setLayoutData(gdBttnWidth);
 		btn.setText("Stop");
 		new Label(compositeRight, SWT.NONE).setLayoutData(gdLblHeight);
@@ -184,11 +180,7 @@ public class ShellPHPito extends Shell {
 		mntm.setText("Start");
 
 		mntm = new MenuItem(ppmnTbl, SWT.NONE);
-		mntm.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-			}
-		});
+		mntm.addSelectionListener(new StopServerSelectionAdapter(this, 1));
 		mntm.setText("Stop");
 		
 		table.setHeaderVisible(true);
@@ -219,7 +211,7 @@ public class ShellPHPito extends Shell {
 			ti.setText(1, p.getName());
 			ti.setText(2, p.getServer().getAddressAndPort());
 			ti.setText(3, p.getServer().getPath());
-			ti.setText(4, p.getServer().getState() == null ? "OFFLINE" : p.getServer().getState());
+			ti.setText(4, p.getServer().getStatePIDString());
 		}
 	}
 

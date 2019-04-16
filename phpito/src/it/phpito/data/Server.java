@@ -4,7 +4,7 @@ public class Server {
 	private String path;
 	private String address;
 	private Integer port;
-	private String state;
+	private Integer processID;
 	private Project project;
 
 	/* get e set */
@@ -26,11 +26,11 @@ public class Server {
 	public void setPort(Integer port) {
 		this.port = port;
 	}
-	public String getState() {
-		return state;
+	public Integer getProcessID() {
+		return processID;
 	}
-	public void setState(String state) {
-		this.state = state;
+	public void setProcessId(Integer processID) {
+		this.processID = processID;
 	}
 	public Project getProject() {
 		return project;
@@ -39,8 +39,22 @@ public class Server {
 		this.project = project;
 	}
 
+	public String getPortString() {
+		return String.valueOf(port);
+	}
+
 	/* metodo che ritorna indirizzo e porta */
 	public String getAddressAndPort() {
 		return address + ":" + port;
+	}
+
+	/* metodo che ritorna il process id in stringa */
+	public String getPIDString() {
+		return String.valueOf(processID);
+	}
+
+	/* metodo che ritorna lo stato del server (ONLINE o OFFLINE) e il PID */ 
+	public String getStatePIDString() {
+		return  processID == null ? "OFFLINE" : "ONLINE PID: " + String.valueOf(processID);
 	}
 }

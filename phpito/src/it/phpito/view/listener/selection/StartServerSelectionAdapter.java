@@ -8,6 +8,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import it.as.utils.exception.FileException;
 import it.as.utils.view.UtilsViewAS;
+import it.phpito.ServerException;
 import it.phpito.controller.PHPitoManager;
 import it.phpito.data.Project;
 
@@ -24,18 +25,8 @@ public class StartServerSelectionAdapter extends SelectionAdapter {
 	public void widgetSelected(SelectionEvent se) {
 		try {
 			Project p = PHPitoManager.getInstance().getProjectById(idProject);
-			Thread t = new Thread(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						PHPitoManager.getInstance().runServer(p);
-					} catch (IOException e) {
-						UtilsViewAS.getInstance().lunchMBError(parent, e, PHPitoManager.NAME);
-					}
-				}
-			});
-			t.start();
-		} catch (FileException e) {
+			PHPitoManager.getInstance().startServer(p);
+		} catch (FileException | IOException | ServerException e) {
 			UtilsViewAS.getInstance().lunchMBError(parent, e, PHPitoManager.NAME);
 		}
 	}

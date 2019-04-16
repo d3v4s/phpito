@@ -1,11 +1,8 @@
 #!/bin/bash
 
-DATE=`date '+%Y-%m-%d %H:%M:%S'`;
-ADDRESS=$1;
-DIRECTORY=$2;
+DATE=`date '+%Y-%m-%d %H:%M:%S'`
+PID_KILL=$1
 
-echo "[*] PHPito start server - Date: $DATE";
-echo "[*] Starting server php on: $ADDRESS";
-echo "[*] Directory root: $DIRECTORY";
-
-php -S $ADDRESS -t $DIRECTORY;
+echo "[*] Kill PID: $PID_KILL"
+echo "[*] Stopping server..."
+kill "$PID_KILL" && echo "[*] PHPito stopped server at $DATE" || echo "[!] Error!!! Fail to stop server." && exit 1
