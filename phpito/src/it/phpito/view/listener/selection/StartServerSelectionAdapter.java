@@ -2,6 +2,7 @@ package it.phpito.view.listener.selection;
 
 import java.io.IOException;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Shell;
@@ -25,7 +26,10 @@ public class StartServerSelectionAdapter extends SelectionAdapter {
 	public void widgetSelected(SelectionEvent se) {
 		try {
 			Project p = PHPitoManager.getInstance().getProjectById(idProject);
-			PHPitoManager.getInstance().startServer(p);
+			if (PHPitoManager.getInstance().startServer(p))
+				UtilsViewAS.getInstance().lunchMB(parent, SWT.OK, "OK", "Server PHP avviato");
+			else
+				UtilsViewAS.getInstance().lunchMB(parent, SWT.OK, "FAIL!!!", "L'avvio del server non ha avuto sucesso");
 		} catch (FileException | IOException | ServerException e) {
 			UtilsViewAS.getInstance().lunchMBError(parent, e, PHPitoManager.NAME);
 		}

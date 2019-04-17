@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -90,7 +91,7 @@ public class PHPitoManager {
 	}
 	
 	@SuppressWarnings("resource")
-	public void startServer(Project project) throws IOException, FileException, ServerException {
+	public boolean startServer(Project project) throws IOException, FileException, ServerException {
 		if (!NetworkAS.getInstance().isAvaiblePort(project.getServer().getPort()))
 			throw new ServerException("Errore!!! La porta scelta e' gia' in uso.");
 		String[] cmndStart = new String[] {RUN + SCRIPT_START_SERVER,
@@ -110,12 +111,11 @@ public class PHPitoManager {
 		
 		String stdoStart = null;
 		Long pid = null;
-		LocalDateTime maxTime = LocalDateTime.now().plusSeconds(10L); // TODO finisciiiiiiii funziona con br.ready
+		LocalDateTime maxTime = LocalDateTime.now().plusSeconds(5L);
 		while ((stdoStart = (br.ready()) ? br.readLine() : "") != null) {
 			if (!stdoStart.isEmpty())
 				LoggerAS.getInstance().writeLog(stdoStart, project.getName(), new String[] {"server", project.getName()});
-			System.out.println(stdoStart);
-			 if (Pattern.matches(regexError, stdoStart)) {
+			if (Pattern.matches(regexError, stdoStart)) {
 				project.getServer().setProcessId(null);
 				updateProject(project);
 				String reasonError = "";
@@ -130,13 +130,13 @@ public class PHPitoManager {
 				project.getServer().setProcessId(pid);
 				updateProject(project);
 				new ReadOutputServerThread(project, br).start();
-				return;
+				return true;
 			} else if (LocalDateTime.now().isAfter(maxTime)) {
 				throw new ServerException("Error Server!!! Fail to start PHP server");
 			}
-			 
 		}
 		br.close();
+		return false;
 	}
 	
 	private class ReadOutputServerThread extends Thread {
@@ -154,7 +154,6 @@ public class PHPitoManager {
 				String outServer = null;
 				while ((outServer = bufferedReader.readLine()) != null) {
 					LoggerAS.getInstance().writeLog(outServer, project.getName(), new String[] {"server", project.getName()});
-					System.out.println(outServer);
 				}
 			} catch (IOException | FileException e) {
 				try {
@@ -176,9 +175,29 @@ public class PHPitoManager {
 		}
 	}
 	
-	public Long getPIDServer(Server server) throws FileException, NumberFormatException, IOException {
+	public void flushRunningServers() throws IOException, FileException {
+		HashMap<String, Project> projectMap = getProjectsMap();
+		for (String id : projectMap.keySet())
+			if (!isServerRunning(projectMap.get(id).getServer())) {
+				Project prjct = projectMap.get(id);
+				prjct.getServer().setProcessId(null);
+				updateProject(prjct);
+			}
+	}
+	
+	public ArrayList<Server> getRunningServers() throws FileException, IOException {
+		ArrayList<Server> serverList = new ArrayList<Server>();
+		HashMap<String, Project> projectMap = getProjectsMap();
+		for (String id : projectMap.keySet())
+			if (isServerRunning(projectMap.get(id).getServer()))
+				serverList.add(projectMap.get(id).getServer());
+		
+		return serverList;
+	}
+	
+	public Long getPIDServer(Server server) throws NumberFormatException, IOException {
 		String regexPID = (UtilsAS.getInstance().getOsName().contains("win")) ?
-				".*TCP.*" + server.getAddressAndPortRegex() + ".*LISTENING[\\s]*([\\d]{1,}).*" :
+				".*TCP.*" + server.getAddressAndPortRegex() + ".*LISTENING[\\s]*([\\d]{1,})[\\D]*" :
 				".*tcp.*" + server.getAddressAndPortRegex() + ".*LISTEN[\\s]*([\\d]{1,})/php.*";
 		String[] cmnd = new String[] {RUN + SCRIPT_PID_SERVER, server.getAddressAndPortRegex()};
 		ProcessBuilder pb = new ProcessBuilder(cmnd);
@@ -200,6 +219,8 @@ public class PHPitoManager {
 	}
 	
 	public boolean isServerRunning(Server server) throws IOException {
+		if (server.getProcessID() == null)
+			return false;
 		String[] cmnd = new String[] {RUN + SCRIPT_CHECK_SERVER, server.getAddressAndPortRegex(), server.getPIDString()};
 		String regex = (UtilsAS.getInstance().getOsName().contains("win")) ?
 				".*TCP.*" + server.getAddressAndPortRegex() + ".*LISTENING[\\s]*" + server.getPIDString() + ".*":
@@ -214,14 +235,15 @@ public class PHPitoManager {
 		String stdo = null;
 		while ((stdo = br.readLine()) != null) {
 			if (Pattern.matches(regex, stdo)) {
+				br.close();
 				return true;
 			}
 		}
-		
+		br.close();
 		return false;
 	}
 	
-	public void stopServer(Project project) throws IOException, FileException, ServerException {
+	public boolean stopServer(Project project) throws IOException, FileException, ServerException {
 		if (isServerRunning(project.getServer())) {
 			String[] cmnd = new String[] {RUN + SCRIPT_STOP_SERVER, project.getServer().getPIDString()};
 			String regexStop = ".*[\\W]{3} PHPito stopped server at [\\d]{4}-[\\d]{2}-[\\d]{2} [\\d]{2}:[\\d]{2}:[\\d]{2}.*";
@@ -236,7 +258,6 @@ public class PHPitoManager {
 			String stdo = null;
 			while ((stdo = br.readLine()) != null) {
 				LoggerAS.getInstance().writeLog(stdo, project.getName(), new String[] {"server", project.getName()});
-				System.out.println(stdo);
 				if (Pattern.matches(regexFail, stdo)) {
 					br.close();
 					throw new ServerException("Error!!! Fail to stop server at " + project.getServer().getAddress() +
@@ -245,10 +266,16 @@ public class PHPitoManager {
 					br.close();
 					project.getServer().setProcessId(null);
 					updateProject(project);
-					return;
+					return true;
 				}
 			}
 			br.close();
+			if (!isServerRunning(project.getServer())) {
+				project.getServer().setProcessId(null);
+				updateProject(project);
+				return true;
+			} else
+				return false;
 		} else {
 			project.getServer().setProcessId(null);
 			updateProject(project);

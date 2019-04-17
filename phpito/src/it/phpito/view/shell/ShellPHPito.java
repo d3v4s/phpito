@@ -1,6 +1,8 @@
 package it.phpito.view.shell;
 
+import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.eclipse.jface.viewers.TableViewer;
@@ -16,7 +18,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
@@ -27,6 +31,8 @@ import it.as.utils.exception.FileException;
 import it.as.utils.view.UtilsViewAS;
 import it.phpito.controller.PHPitoManager;
 import it.phpito.data.Project;
+import it.phpito.data.Server;
+import it.phpito.exception.ServerException;
 import it.phpito.view.listener.selection.AddProjectSelectionAdapter;
 import it.phpito.view.listener.selection.StartServerSelectionAdapter;
 import it.phpito.view.listener.selection.StopServerSelectionAdapter;
@@ -39,6 +45,25 @@ public class ShellPHPito extends Shell {
 	public ShellPHPito(Display display) {
 		super(display);
 		this.shellPHPito = this;
+		this.addListener(SWT.Close, new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+				try {
+					ArrayList<Server> serverList = PHPitoManager.getInstance().getRunningServers();
+					if (!serverList.isEmpty()) {
+						String msg = "Attenzione!!! I server in esecuzione verranno fermati.\n"
+										+ "Confermi l'operazione???";
+						int resp = UtilsViewAS.getInstance().lunchMB(shellPHPito, SWT.YES | SWT.NO, "ATTENZIONE!!!", msg);
+						event.doit = resp == SWT.YES;
+						if (event.doit)
+							for (Server server : serverList)
+								PHPitoManager.getInstance().stopServer(server.getProject());
+					}
+				} catch (FileException | IOException | ServerException e) {
+					UtilsViewAS.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
+				}
+			}
+		});
 	}
 
 	/* override del metodo check - per evitare il controllo della subclass */
