@@ -5,16 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Paths;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -97,12 +89,15 @@ public class PHPitoManager {
 		xmlAS.flush(node.getOwnerDocument(), PATH_FILE_XML);
 	}
 	
+	@SuppressWarnings("resource")
 	public void startServer(Project project) throws IOException, FileException, ServerException {
 		if (!NetworkAS.getInstance().isAvaiblePort(project.getServer().getPort()))
 			throw new ServerException("Errore!!! La porta scelta e' gia' in uso.");
 		String[] cmndStart = new String[] {RUN + SCRIPT_START_SERVER,
 											project.getServer().getAddressAndPort(),
 											project.getServer().getPath(), "test.log"};
+		String regexError = ".*Failed to listen on " + project.getServer().getAddressAndPort() + ".*";
+		String regexReasError = ".*reason: ([\\w\\s]{1,}).*";
 		ProcessBuilder pbStart = new ProcessBuilder(cmndStart);
 		pbStart.directory(new File(DIR_SCRIPT));
 		pbStart.redirectErrorStream(true);
@@ -112,130 +107,37 @@ public class PHPitoManager {
 		
 		InputStreamReader isrStart = new InputStreamReader(prcssStart.getInputStream());
 		BufferedReader br = new BufferedReader(isrStart);
-		Duration timeout = Duration.ofSeconds(5L);
-		ExecutorService executor = Executors.newSingleThreadExecutor();
-		boolean isStart = false;
-
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		Future<Boolean> handler = executor.submit(new Callable() {
-		    @Override
-		    public Boolean call() throws Exception {
-		    	String regexError = ".*Failed to listen on " + project.getServer().getAddressAndPort() + ".*";
-				String regexReasError = ".*reason: ([\\w\\s]{1,}).*";
-				String stdoStart = null;
-				Long pid = null;
-				LocalDateTime timeMax = LocalDateTime.now().plusSeconds(10L);
-				while ((stdoStart = br.readLine()) != null) {
-					LoggerAS.getInstance().writeLog(stdoStart, project.getName(), new String[] {"server", project.getName()});
-					System.out.println(stdoStart);
-					 if (Pattern.matches(regexError, stdoStart)) {
-						String reasonError = "";
-						Matcher matchReasError = Pattern.compile(regexReasError).matcher(stdoStart);
-						if (matchReasError.find())
-							reasonError = matchReasError.group(1);
-						project.getServer().setProcessId(null);
-						updateProject(project);
-						br.close();
-						throw new ServerException("Errore Server!!! L'avvio del Server ha ritornato un errore".concat(
-																							(reasonError.isEmpty()) ? "\nMessaggio: " + stdoStart :
-																								"\nErrore individuato: " + reasonError));
-					} else if ((pid = getPIDServer(project.getServer())) != null) {
-						project.getServer().setProcessId(pid);
-						updateProject(project);
-						new ReadOutputServerThread(project, br).start();
-						return true;
-					}
-					if (LocalDateTime.now().isAfter(timeMax)) {
-						String msgError = "Error!!! Fail to start PHP server on " + project.getServer().getAddressAndPort();
-						LoggerAS.getInstance().writeLog(msgError, project.getName(), new String[] {"server", project.getName()});
-						project.getServer().setProcessId(null);
-						updateProject(project);
-						br.close();
-						throw new ServerException(msgError);
-					}
-				}
+		
+		String stdoStart = null;
+		Long pid = null;
+		LocalDateTime maxTime = LocalDateTime.now().plusSeconds(10L); // TODO finisciiiiiiii funziona con br.ready
+		while ((stdoStart = (br.ready()) ? br.readLine() : "") != null) {
+			if (!stdoStart.isEmpty())
+				LoggerAS.getInstance().writeLog(stdoStart, project.getName(), new String[] {"server", project.getName()});
+			System.out.println(stdoStart);
+			 if (Pattern.matches(regexError, stdoStart)) {
+				project.getServer().setProcessId(null);
+				updateProject(project);
+				String reasonError = "";
+				Matcher matchReasError = Pattern.compile(regexReasError).matcher(stdoStart);
+				if (matchReasError.find())
+					reasonError = matchReasError.group(1);
 				br.close();
-				return false;
-		    }
-		});
-
-		try {
-			isStart = handler.get(timeout.toMillis(), TimeUnit.MILLISECONDS);
-		} catch (InterruptedException | ExecutionException | TimeoutException e) {
-		} finally {
-			br.close();
-			executor.shutdownNow();
+				throw new ServerException("Errore Server!!! L'avvio del Server ha ritornato un errore".concat(
+																	(reasonError.isEmpty()) ? "\nMessaggio: " + stdoStart :
+																		"\nErrore individuato: " + reasonError));
+			} else if ((pid = getPIDServer(project.getServer())) != null) {
+				project.getServer().setProcessId(pid);
+				updateProject(project);
+				new ReadOutputServerThread(project, br).start();
+				return;
+			} else if (LocalDateTime.now().isAfter(maxTime)) {
+				throw new ServerException("Error Server!!! Fail to start PHP server");
+			}
+			 
 		}
-		
-		if (!isStart) {
-			String msgError = "Error!!! Fail to start PHP server on " + project.getServer().getAddressAndPort();
-			LoggerAS.getInstance().writeLog(msgError, project.getName(), new String[] {"server", project.getName()});
-			project.getServer().setProcessId(null);
-			updateProject(project);
-			throw new ServerException(msgError);
-		}
-		
-		
-		
-		
-//		String regexError = ".*Failed to listen on " + project.getServer().getAddressAndPort() + ".*";
-//		String regexReasError = ".*reason: ([\\w\\s]{1,}).*";
-//		String stdoStart = null;
-//		Long pid = null;
-//		LocalDateTime timeMax = LocalDateTime.now().plusSeconds(10L);
-//		while (true) {
-//			
-//			Duration timeout = Duration.ofSeconds(1);
-//			ExecutorService executor = Executors.newSingleThreadExecutor();
-//
-//			@SuppressWarnings({ "unchecked", "rawtypes" })
-//			Future<String> handler = executor.submit(new Callable() {
-//			    @Override
-//			    public String call() throws Exception {
-//			        String stdoStart = br.readLine();
-//			        return stdoStart;
-//			    }
-//			});
-//
-//			try {
-//				stdoStart = handler.get(timeout.toMillis(), TimeUnit.MILLISECONDS);
-//			} catch (InterruptedException | ExecutionException | TimeoutException e) {
-//			} finally {
-//				stdoStart = null;
-//				executor.shutdownNow();
-//			}
-//			
-//			LoggerAS.getInstance().writeLog(stdoStart, project.getName(), new String[] {"server", project.getName()});
-//			System.out.println(stdoStart);
-//			 if (Pattern.matches(regexError, stdoStart)) {
-//				String reasonError = "";
-//				Matcher matchReasError = Pattern.compile(regexReasError).matcher(stdoStart);
-//				if (matchReasError.find())
-//					reasonError = matchReasError.group(1);
-//				project.getServer().setProcessId(null);
-//				updateProject(project);
-//				br.close();
-//				throw new ServerException("Errore Server!!! L'avvio del Server ha ritornato un errore".concat(
-//																					(reasonError.isEmpty()) ? "\nMessaggio: " + stdoStart :
-//																						"\nErrore individuato: " + reasonError));
-//			} else if ((pid = getPIDServer(project.getServer())) != null) {
-//				project.getServer().setProcessId(pid);
-//				updateProject(project);
-//				new ReadOutputServerThread(project, br).start();
-//				return;
-//			}
-//			if (LocalDateTime.now().isAfter(timeMax)) {
-//				String msgError = "Error!!! Fail to start PHP server on " + project.getServer().getAddressAndPort();
-//				LoggerAS.getInstance().writeLog(msgError, project.getName(), new String[] {"server", project.getName()});
-//				project.getServer().setProcessId(null);
-//				updateProject(project);
-//				br.close();
-//				throw new ServerException(msgError);
-//			}
-//		}
+		br.close();
 	}
-	
-//	private class ReadStdoStartThread() extends
 	
 	private class ReadOutputServerThread extends Thread {
 		Project project;
@@ -276,8 +178,8 @@ public class PHPitoManager {
 	
 	public Long getPIDServer(Server server) throws FileException, NumberFormatException, IOException {
 		String regexPID = (UtilsAS.getInstance().getOsName().contains("win")) ?
-				".*TCP.*" + server.getAddressAndPortRegex() + ".*LISTENING[\\s]*([\\d]{1,}.*" :
-				".*tcp.*" + server.getAddressAndPortRegex() + ".*LISTEN[\\s]*([\\d]{1,})/php.*";
+				".*TCP.*" + server.getAddressAndPortRegex() + ".*LISTENING[\\s]*([\\d]{1,}).*" :
+				".*tcp." + server.getAddressAndPortRegex() + ".*LISTEN[\\s]*([\\d]{1,})/php.*";
 		String[] cmnd = new String[] {RUN + SCRIPT_PID_SERVER, server.getAddressAndPortRegex()};
 		ProcessBuilder pb = new ProcessBuilder(cmnd);
 		pb.directory(new File(DIR_SCRIPT));
@@ -354,21 +256,3 @@ public class PHPitoManager {
 		}
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
