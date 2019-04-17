@@ -179,7 +179,7 @@ public class PHPitoManager {
 	public Long getPIDServer(Server server) throws FileException, NumberFormatException, IOException {
 		String regexPID = (UtilsAS.getInstance().getOsName().contains("win")) ?
 				".*TCP.*" + server.getAddressAndPortRegex() + ".*LISTENING[\\s]*([\\d]{1,}).*" :
-				".*tcp." + server.getAddressAndPortRegex() + ".*LISTEN[\\s]*([\\d]{1,})/php.*";
+				".*tcp.*" + server.getAddressAndPortRegex() + ".*LISTEN[\\s]*([\\d]{1,})/php.*";
 		String[] cmnd = new String[] {RUN + SCRIPT_PID_SERVER, server.getAddressAndPortRegex()};
 		ProcessBuilder pb = new ProcessBuilder(cmnd);
 		pb.directory(new File(DIR_SCRIPT));
