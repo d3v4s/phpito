@@ -1,4 +1,4 @@
-package it.phpito;
+package it.phpito.exception;
 
 public class ServerException extends Exception {
 	private static final long serialVersionUID = 9165051035928508044L;

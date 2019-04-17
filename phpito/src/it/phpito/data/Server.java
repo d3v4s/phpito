@@ -1,10 +1,12 @@
 package it.phpito.data;
 
+import java.util.regex.Pattern;
+
 public class Server {
 	private String path;
 	private String address;
 	private Integer port;
-	private Integer processID;
+	private Long processID;
 	private Project project;
 
 	/* get e set */
@@ -26,10 +28,10 @@ public class Server {
 	public void setPort(Integer port) {
 		this.port = port;
 	}
-	public Integer getProcessID() {
+	public Long getProcessID() {
 		return processID;
 	}
-	public void setProcessId(Integer processID) {
+	public void setProcessId(Long processID) {
 		this.processID = processID;
 	}
 	public Project getProject() {
@@ -39,18 +41,30 @@ public class Server {
 		this.project = project;
 	}
 
+	/* metodo che ritorna porta String */
 	public String getPortString() {
 		return String.valueOf(port);
 	}
 
-	/* metodo che ritorna indirizzo e porta */
+	/* metodo che setta il id processo da String */  
+	public void setProcessIdString(String processID) {
+		this.processID =  !(processID.isEmpty() || processID == null || !Pattern.matches("[\\d]{1,}", processID)) ?
+													Long.valueOf(processID) : null;
+	}
+
+	/* metodo che ritorna indirizzo e porta String */
 	public String getAddressAndPort() {
 		return address + ":" + port;
+	}
+	
+	/* metodo che ritorna indirizzo e porta per regex */
+	public String getAddressAndPortRegex() {
+		return getAddressAndPort().replace(".", "\\.");
 	}
 
 	/* metodo che ritorna il process id in stringa */
 	public String getPIDString() {
-		return String.valueOf(processID);
+		return processID != null ? String.valueOf(processID) : "";
 	}
 
 	/* metodo che ritorna lo stato del server (ONLINE o OFFLINE) e il PID */ 

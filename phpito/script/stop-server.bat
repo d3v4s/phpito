@@ -1,9 +1,7 @@
-REM @echo off
-set PID=%2;
+@echo off
+set PID_KILL=%1;
 
-echo "[*] PHPito start server - Date: %date% %time%";
-echo "[*] Starting server php on: %address%";
-echo "[*] Directory root: %directory%";
-
-REM @echo on
-php -S %address% -t %directory%;  
+echo "[*] Kill PID: %PID_KILL%"
+echo "[*] Stopping server..."
+@echo on
+taskkill /PID "%PID_KILL%" && echo "[*] PHPito stopped server at %date% %time%" || echo "[!] Error!!! Fail to stop server."

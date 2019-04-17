@@ -133,14 +133,14 @@ public class ShellPHPito extends Shell {
 		
 		/* pulsante avvia server */
 		btn = new Button(compositeRight, SWT.CENTER);
-		btn.addSelectionListener(new StartServerSelectionAdapter(this, 1));
+		btn.addSelectionListener(new StartServerSelectionAdapter(this, 1L));
 		btn.setLayoutData(gdBttnWidth);
 		btn.setText("Start");
 		new Label(compositeRight, SWT.NONE).setLayoutData(gdLblHeight);
 		
 		/* pulsante per fermare server */
 		btn = new Button(compositeRight, SWT.CENTER);
-		btn.addSelectionListener(new StopServerSelectionAdapter(this, 1));
+		btn.addSelectionListener(new StopServerSelectionAdapter(this, 1L));
 		btn.setLayoutData(gdBttnWidth);
 		btn.setText("Stop");
 		new Label(compositeRight, SWT.NONE).setLayoutData(gdLblHeight);
@@ -176,11 +176,11 @@ public class ShellPHPito extends Shell {
 		mntm.setText("Elimina");
 		
 		mntm = new MenuItem(ppmnTbl, SWT.NONE);
-		mntm.addSelectionListener(new StartServerSelectionAdapter(this, 1));
+		mntm.addSelectionListener(new StartServerSelectionAdapter(this, 1L));
 		mntm.setText("Start");
 
 		mntm = new MenuItem(ppmnTbl, SWT.NONE);
-		mntm.addSelectionListener(new StopServerSelectionAdapter(this, 1));
+		mntm.addSelectionListener(new StopServerSelectionAdapter(this, 1L));
 		mntm.setText("Stop");
 		
 		table.setHeaderVisible(true);

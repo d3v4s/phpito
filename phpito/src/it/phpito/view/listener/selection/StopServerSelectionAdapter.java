@@ -8,15 +8,15 @@ import org.eclipse.swt.widgets.Shell;
 
 import it.as.utils.exception.FileException;
 import it.as.utils.view.UtilsViewAS;
-import it.phpito.ServerException;
 import it.phpito.controller.PHPitoManager;
 import it.phpito.data.Project;
+import it.phpito.exception.ServerException;
 
 public class StopServerSelectionAdapter extends SelectionAdapter {
 	private Shell parent; 
-	private Integer idProject;
+	private Long idProject;
 
-	public StopServerSelectionAdapter(Shell parent, Integer idProject) {
+	public StopServerSelectionAdapter(Shell parent, Long idProject) {
 		this.idProject = idProject;
 		this.parent = parent;
 	}
