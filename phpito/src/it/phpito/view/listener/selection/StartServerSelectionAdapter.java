@@ -34,6 +34,7 @@ public class StartServerSelectionAdapter extends SelectionAdapter {
 			else
 				UtilsViewAS.getInstance().lunchMB(parent, SWT.OK, "FAIL!!!", "L'avvio del server non ha avuto sucesso.");
 		} catch (FileException | IOException | ServerException | DOMException | ProjectException e) {
+
 			UtilsViewAS.getInstance().lunchMBError(parent, e, PHPitoManager.NAME);
 		}
 	}

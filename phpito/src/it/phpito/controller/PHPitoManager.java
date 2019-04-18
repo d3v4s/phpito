@@ -117,6 +117,7 @@ public class PHPitoManager {
 	}
 	
 	@SuppressWarnings("resource")
+
 	public boolean startServer(Project project) throws IOException, FileException, ServerException, DOMException, ProjectException {
 		if (!NetworkAS.getInstance().isAvaiblePort(project.getServer().getPort()))
 			throw new ServerException("Errore!!! La porta scelta e' gia' in uso.");
@@ -140,8 +141,6 @@ public class PHPitoManager {
 			if (!stdoStart.isEmpty())
 				LoggerAS.getInstance().writeLog(stdoStart, project.getName(), new String[] {"server", project.getName()});
 			if (Pattern.matches(regexError, stdoStart)) {
-//				project.getServer().setProcessId(null);
-//				updateProject(project);
 				String reasonError = "";
 				Matcher matchReasError = Pattern.compile(regexReasError).matcher(stdoStart);
 				if (matchReasError.find())
@@ -202,6 +201,7 @@ public class PHPitoManager {
 		}
 	}
 	
+
 	public void flushRunningServers() throws IOException, FileException, DOMException, ProjectException {
 		HashMap<String, Project> projectMap = getProjectsMap();
 		Project prjct = null;
@@ -229,6 +229,7 @@ public class PHPitoManager {
 	
 	public Long getPIDServer(Server server) throws NumberFormatException, IOException {
 		String regexPID = (UtilsAS.getInstance().getOsName().contains("win")) ?
+
 				".*TCP.*" + server.getAddressAndPortRegex() + ".*LISTENING[\\D]*([\\d]{1,})[\\D]*" :
 				".*tcp.*" + server.getAddressAndPortRegex() + ".*LISTEN[\\D]*([\\d]{1,})/php.*";
 		String[] cmnd = new String[] {RUN + SCRIPT_PID_SERVER, server.getAddressAndPortRegex()};
@@ -275,7 +276,9 @@ public class PHPitoManager {
 		return false;
 	}
 	
+
 	public boolean stopServer(Project project) throws IOException, FileException, ServerException, DOMException, ProjectException {
+
 		if (isServerRunning(project.getServer())) {
 			String[] cmnd = new String[] {RUN + SCRIPT_STOP_SERVER, project.getServer().getPIDString()};
 			String regexStop = ".*[\\W]{3}[\\s]PHPito stopped server at [\\d]{4}-[\\d]{2}-[\\d]{2}[\\s][\\d]{2}:[\\d]{2}:[\\d]{2}.*";
@@ -298,13 +301,16 @@ public class PHPitoManager {
 												+ "PID: " + project.getServer().getPIDString());
 				} else if (Pattern.matches(regexStop, stdo)) {
 					br.close();
+
 					flushRunningServers();
 					return true;
 				}
 			}
 			br.close();
 			if (!isServerRunning(project.getServer())) {
+
 				flushRunningServers();
+
 				return true;
 			} else
 				return false;

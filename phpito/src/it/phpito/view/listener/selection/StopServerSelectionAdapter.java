@@ -32,6 +32,7 @@ public class StopServerSelectionAdapter extends SelectionAdapter {
 			if (PHPitoManager.getInstance().stopServer(p))
 				UtilsViewAS.getInstance().lunchMB(parent, SWT.OK, "OK", "Server PHP fermato");
 			else
+
 				UtilsViewAS.getInstance().lunchMB(parent, SWT.OK, "FAIL!!!", "L'arresto del server non ha avuto sucesso.");
 		} catch (FileException | IOException | ServerException | DOMException | ProjectException e) {
 			UtilsViewAS.getInstance().lunchMBError(parent, e, PHPitoManager.NAME);
