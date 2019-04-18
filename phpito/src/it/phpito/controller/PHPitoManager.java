@@ -293,8 +293,9 @@ public class PHPitoManager {
 				if (Pattern.matches(regexFail, stdo)) {
 					br.close();
 					flushRunningServers();
-					throw new ServerException("Error!!! Fail to stop server at " + project.getServer().getAddress() +
-												" PID: " + project.getServer().getPIDString());
+					throw new ServerException("Errore!!! L'arresto del Server ha ritornato un errore.\n"
+												+ "Indirizzo: " + project.getServer().getAddress() + "\n"
+												+ "PID: " + project.getServer().getPIDString());
 				} else if (Pattern.matches(regexStop, stdo)) {
 					br.close();
 					flushRunningServers();
