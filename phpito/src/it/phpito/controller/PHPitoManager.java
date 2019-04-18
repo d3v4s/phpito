@@ -158,7 +158,7 @@ public class PHPitoManager {
 				return true;
 			} else if (LocalDateTime.now().isAfter(maxTime)) {
 				flushRunningServers();
-				throw new ServerException("Error Server!!! Fail to start PHP server");
+				throw new ServerException("Error Server!!! Avvio del server php fallito!");
 			}
 		}
 		flushRunningServers();
@@ -255,8 +255,8 @@ public class PHPitoManager {
 			return false;
 		String[] cmnd = new String[] {RUN + SCRIPT_CHECK_SERVER, server.getAddressAndPortRegex(), server.getPIDString()};
 		String regex = (UtilsAS.getInstance().getOsName().contains("win")) ?
-				".*TCP[\\W]*" + server.getAddressAndPortRegex() + "[\\W]*LISTENING[\\W]*" + server.getPIDString() + "[\\W]*.*" :
-				".*tcp.*" + server.getAddressAndPortRegex() + ".*LISTEN.*" + server.getPIDString() + "/php.*";
+				".*TCP.*" + server.getAddressAndPortRegex() + ".*LISTENING[\\D]*" + server.getPIDString() + "[\\D]*.*" :
+				".*tcp.*" + server.getAddressAndPortRegex() + ".*LISTEN[\\D]*" + server.getPIDString() + "/php.*";
 		ProcessBuilder pb = new ProcessBuilder(cmnd);
 		pb.directory(new File(DIR_SCRIPT));
 		pb.redirectErrorStream(true);
@@ -292,29 +292,24 @@ public class PHPitoManager {
 				LoggerAS.getInstance().writeLog(stdo, project.getName(), new String[] {"server", project.getName()});
 				if (Pattern.matches(regexFail, stdo)) {
 					br.close();
+					flushRunningServers();
 					throw new ServerException("Error!!! Fail to stop server at " + project.getServer().getAddress() +
 												" PID: " + project.getServer().getPIDString());
 				} else if (Pattern.matches(regexStop, stdo)) {
 					br.close();
-//					project.getServer().setProcessId(null);
-//					updateProject(project);
 					flushRunningServers();
 					return true;
 				}
 			}
 			br.close();
 			if (!isServerRunning(project.getServer())) {
-//				project.getServer().setProcessId(null);
-//				updateProject(project);
 				flushRunningServers();
 				return true;
 			} else
 				return false;
 		} else {
-//			project.getServer().setProcessId(null);
-//			updateProject(project);
 			flushRunningServers();
-			throw new ServerException("Error!!! Server is not running");
+			throw new ServerException("Errore!!! Il server non e' avviato.");
 		}
 	}
 }
