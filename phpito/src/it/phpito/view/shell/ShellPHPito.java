@@ -26,14 +26,16 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+import org.w3c.dom.DOMException;
 
 import it.as.utils.exception.FileException;
 import it.as.utils.view.UtilsViewAS;
 import it.phpito.controller.PHPitoManager;
 import it.phpito.data.Project;
 import it.phpito.data.Server;
+import it.phpito.exception.ProjectException;
 import it.phpito.exception.ServerException;
-import it.phpito.view.listener.selection.AddProjectSelectionAdapter;
+import it.phpito.view.listener.selection.LuncherAddProjectSelectionAdapter;
 import it.phpito.view.listener.selection.StartServerSelectionAdapter;
 import it.phpito.view.listener.selection.StopServerSelectionAdapter;
 import swing2swt.layout.BorderLayout;
@@ -41,6 +43,7 @@ import swing2swt.layout.BoxLayout;
 
 public class ShellPHPito extends Shell {
 	private ShellPHPito shellPHPito;
+	private final int fontHeight = 20;
 
 	public ShellPHPito(Display display) {
 		super(display);
@@ -59,7 +62,7 @@ public class ShellPHPito extends Shell {
 							for (Server server : serverList)
 								PHPitoManager.getInstance().stopServer(server.getProject());
 					}
-				} catch (FileException | IOException | ServerException e) {
+				} catch (DOMException | ProjectException | IOException | FileException | ServerException e) {
 					UtilsViewAS.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
 				}
 			}
@@ -69,6 +72,10 @@ public class ShellPHPito extends Shell {
 	/* override del metodo check - per evitare il controllo della subclass */
 	@Override
 	protected void checkSubclass() {
+	}
+
+	public int getFontHeight() {
+		return fontHeight;
 	}
 
 	/* metodo per creare contenuti */
@@ -99,7 +106,7 @@ public class ShellPHPito extends Shell {
 		
 		/* pulsante menu' per aggiungere un nuovo progetto */
 		mntm = new MenuItem(mn, SWT.NONE);
-		mntm.addSelectionListener(new AddProjectSelectionAdapter(this));
+		mntm.addSelectionListener(new LuncherAddProjectSelectionAdapter(this));
 		mntm.setText("Aggiungi");
 		
 		/* pulsante menu' per uscire */
@@ -140,7 +147,7 @@ public class ShellPHPito extends Shell {
 		
 		/* pulsante aggiungi progetto */
 		btn = new Button(compositeRight, SWT.CENTER);
-		btn.addSelectionListener(new AddProjectSelectionAdapter(this));
+		btn.addSelectionListener(new LuncherAddProjectSelectionAdapter(this));
 		btn.setLayoutData(gdBttnWidth);
 		btn.setText("Aggiungi");
 		new Label(compositeRight, SWT.NONE).setLayoutData(gdLblHeight);
@@ -189,7 +196,7 @@ public class ShellPHPito extends Shell {
 		table.setMenu(ppmnTbl);
 
 		mntm = new MenuItem(ppmnTbl, SWT.NONE);
-		mntm.addSelectionListener(new AddProjectSelectionAdapter(this));
+		mntm.addSelectionListener(new LuncherAddProjectSelectionAdapter(this));
 		mntm.setText("Aggiungi");
 
 		mntm = new MenuItem(ppmnTbl, SWT.NONE);
@@ -220,7 +227,7 @@ public class ShellPHPito extends Shell {
 		try {
 			HashMap<String, Project> mapProjects = PHPitoManager.getInstance().getProjectsMap();
 			printTable(table, mapProjects);
-		} catch (FileException e) {
+		} catch (FileException | DOMException | ProjectException e) {
 			UtilsViewAS.getInstance().lunchMBError(this, e, PHPitoManager.NAME);
 		}
 		

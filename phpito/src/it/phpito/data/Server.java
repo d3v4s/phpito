@@ -2,6 +2,8 @@ package it.phpito.data;
 
 import java.util.regex.Pattern;
 
+import it.phpito.exception.ProjectException;
+
 public class Server {
 	private String path;
 	private String address;
@@ -13,19 +15,25 @@ public class Server {
 	public String getPath() {
 		return path;
 	}
-	public void setPath(String path) {
+	public void setPath(String path) throws ProjectException {
+		if (path == null || path.isEmpty())
+			throw new ProjectException("Errore nella formatazzione della path");
 		this.path = path;
 	}
 	public String getAddress() {
 		return address;
 	}
-	public void setAddress(String address) {
+	public void setAddress(String address) throws ProjectException {
+		if (address == null || address.isEmpty() || !Pattern.matches("[\\d]{1,3}\\.[\\d]{1,3}\\.[\\d]{1,3}\\.[\\d]{1,3}", address))
+			throw new ProjectException("Errore nella formatazzione dell'indirizzo");
 		this.address = address;
 	}
 	public Integer getPort() {
 		return port;
 	}
-	public void setPort(Integer port) {
+	public void setPort(Integer port) throws ProjectException {
+		if (port == null)
+			throw new ProjectException("Errore nella formatazzione della porta");
 		this.port = port;
 	}
 	public Long getProcessID() {
@@ -39,6 +47,13 @@ public class Server {
 	}
 	public void setProject(Project project) {
 		this.project = project;
+	}
+	
+	/* metodo che setta porta da String */
+	public void setPortString(String port) throws ProjectException {
+		if (port == null || port.isEmpty() || !Pattern.matches("[\\d]{1,}", port))
+			throw new ProjectException("Errore nella formatazzione della porta");
+		this.port = Integer.valueOf(port);
 	}
 
 	/* metodo che ritorna porta String */
