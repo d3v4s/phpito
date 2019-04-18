@@ -8,9 +8,11 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 
 import it.as.utils.core.LogErrorAS;
@@ -21,6 +23,7 @@ import it.as.utils.core.XMLManagerAS;
 import it.as.utils.exception.FileException;
 import it.phpito.data.Project;
 import it.phpito.data.Server;
+import it.phpito.exception.ProjectException;
 import it.phpito.exception.ServerException;
 
 public class PHPitoManager {
@@ -50,7 +53,7 @@ public class PHPitoManager {
 		return phpItoManager;
 	}
 
-	public HashMap<String, Project> getProjectsMap() throws FileException {
+	public HashMap<String, Project> getProjectsMap() throws FileException, DOMException, ProjectException {
 		HashMap<String, Project> mapProjects = new HashMap<String, Project>();
 		Project project;
 		Node node;
@@ -66,16 +69,36 @@ public class PHPitoManager {
 			project.getServer().setAddress(xmlAS.getArrayChildNode(node, XML_ADDRESS).get(0).getTextContent());
 			project.getServer().setPort(Integer.parseInt(xmlAS.getArrayChildNode(node, XML_PORT).get(0).getTextContent()));
 			project.getServer().setPath(xmlAS.getArrayChildNode(node, XML_PATH).get(0).getTextContent());
-			pid = xmlAS.getArrayChildNode(node, XML_PID).get(0).getTextContent();
-			project.getServer().setProcessIdString(pid);
+			if (!xmlAS.getArrayChildNode(node, XML_PID).isEmpty()) {
+				pid = xmlAS.getArrayChildNode(node, XML_PID).get(0).getTextContent();
+				project.getServer().setProcessIdString(pid);
+			}
 			mapProjects.put(id, project);
 		}
 		
 		return mapProjects;
 	}
 	
-	public Project getProjectById(Long id) throws FileException {
+	public Project getProjectById(Long id) throws FileException, DOMException, ProjectException {
 		return getProjectsMap().get(String.valueOf(id));
+	}
+	
+	public String getNextProjectId() throws FileException {
+		XMLManagerAS xmlAS = XMLManagerAS.getInstance();
+		Set<String> setId = xmlAS.getMapIdElement(PATH_FILE_XML, "server").keySet();
+		long id = xmlAS.getGreatId(setId) + 1;
+		return String.valueOf((id < 1L) ? 1 : id);
+	}
+	
+	public void addProject(Project project) throws FileException {
+		XMLManagerAS xmlAS = XMLManagerAS.getInstance();
+		HashMap<String, String> mapChild = new HashMap<String, String>();
+		mapChild.put(XML_NAME, project.getName());
+		mapChild.put(XML_PATH, project.getServer().getPath());
+		mapChild.put(XML_ADDRESS, project.getServer().getAddress());
+		mapChild.put(XML_PORT, project.getServer().getPortString());
+		mapChild.put(XML_PID, "");
+		xmlAS.addElementWithChild(PATH_FILE_XML, "server", getNextProjectId(), mapChild);
 	}
 	
 	public void updateProject(Project project) throws FileException {
@@ -86,12 +109,15 @@ public class PHPitoManager {
 		xmlAS.getArrayChildNode(node, XML_PATH).get(0).setTextContent(project.getServer().getPath());
 		xmlAS.getArrayChildNode(node, XML_ADDRESS).get(0).setTextContent(project.getServer().getAddress());
 		xmlAS.getArrayChildNode(node, XML_PORT).get(0).setTextContent(project.getServer().getPortString());
-		xmlAS.getArrayChildNode(node, XML_PID).get(0).setTextContent(project.getServer().getPIDString());
+		if (!xmlAS.getArrayChildNode(node, XML_PID).isEmpty())
+			xmlAS.getArrayChildNode(node, XML_PID).get(0).setTextContent(project.getServer().getPIDString());
+		else
+			xmlAS.addChildElement(XML_PID, project.getServer().getPIDString(), node);
 		xmlAS.flush(node.getOwnerDocument(), PATH_FILE_XML);
 	}
 	
 	@SuppressWarnings("resource")
-	public boolean startServer(Project project) throws IOException, FileException, ServerException {
+	public boolean startServer(Project project) throws IOException, FileException, ServerException, DOMException, ProjectException {
 		if (!NetworkAS.getInstance().isAvaiblePort(project.getServer().getPort()))
 			throw new ServerException("Errore!!! La porta scelta e' gia' in uso.");
 		String[] cmndStart = new String[] {RUN + SCRIPT_START_SERVER,
@@ -104,8 +130,6 @@ public class PHPitoManager {
 		pbStart.redirectErrorStream(true);
 		Process prcssStart = pbStart.start();
 		
-		
-		
 		InputStreamReader isrStart = new InputStreamReader(prcssStart.getInputStream());
 		BufferedReader br = new BufferedReader(isrStart);
 		
@@ -116,25 +140,28 @@ public class PHPitoManager {
 			if (!stdoStart.isEmpty())
 				LoggerAS.getInstance().writeLog(stdoStart, project.getName(), new String[] {"server", project.getName()});
 			if (Pattern.matches(regexError, stdoStart)) {
-				project.getServer().setProcessId(null);
-				updateProject(project);
+//				project.getServer().setProcessId(null);
+//				updateProject(project);
 				String reasonError = "";
 				Matcher matchReasError = Pattern.compile(regexReasError).matcher(stdoStart);
 				if (matchReasError.find())
 					reasonError = matchReasError.group(1);
 				br.close();
+				flushRunningServers();
 				throw new ServerException("Errore Server!!! L'avvio del Server ha ritornato un errore".concat(
-																	(reasonError.isEmpty()) ? "\nMessaggio: " + stdoStart :
-																		"\nErrore individuato: " + reasonError));
+											(reasonError.isEmpty()) ? "\nMessaggio: " + stdoStart :
+												"\nErrore individuato: " + reasonError));
 			} else if ((pid = getPIDServer(project.getServer())) != null) {
 				project.getServer().setProcessId(pid);
 				updateProject(project);
 				new ReadOutputServerThread(project, br).start();
 				return true;
 			} else if (LocalDateTime.now().isAfter(maxTime)) {
+				flushRunningServers();
 				throw new ServerException("Error Server!!! Fail to start PHP server");
 			}
 		}
+		flushRunningServers();
 		br.close();
 		return false;
 	}
@@ -175,18 +202,23 @@ public class PHPitoManager {
 		}
 	}
 	
-	public void flushRunningServers() throws IOException, FileException {
+	public void flushRunningServers() throws IOException, FileException, DOMException, ProjectException {
 		HashMap<String, Project> projectMap = getProjectsMap();
-		for (String id : projectMap.keySet())
-			if (!isServerRunning(projectMap.get(id).getServer())) {
-				Project prjct = projectMap.get(id);
+		Project prjct = null;
+		for (String id : projectMap.keySet()) {
+			prjct = projectMap.get(id);
+			if (isServerRunning(prjct.getServer())) {
+				prjct.getServer().setProcessId(getPIDServer(prjct.getServer()));
+			} else {
 				prjct.getServer().setProcessId(null);
-				updateProject(prjct);
 			}
+			updateProject(prjct);
+		}
 	}
 	
-	public ArrayList<Server> getRunningServers() throws FileException, IOException {
+	public ArrayList<Server> getRunningServers() throws FileException, IOException, DOMException, ProjectException {
 		ArrayList<Server> serverList = new ArrayList<Server>();
+		flushRunningServers();
 		HashMap<String, Project> projectMap = getProjectsMap();
 		for (String id : projectMap.keySet())
 			if (isServerRunning(projectMap.get(id).getServer()))
@@ -197,8 +229,8 @@ public class PHPitoManager {
 	
 	public Long getPIDServer(Server server) throws NumberFormatException, IOException {
 		String regexPID = (UtilsAS.getInstance().getOsName().contains("win")) ?
-				".*TCP.*" + server.getAddressAndPortRegex() + ".*LISTENING[\\s]*([\\d]{1,})[\\D]*" :
-				".*tcp.*" + server.getAddressAndPortRegex() + ".*LISTEN[\\s]*([\\d]{1,})/php.*";
+				".*TCP.*" + server.getAddressAndPortRegex() + ".*LISTENING[\\D]*([\\d]{1,})[\\D]*" :
+				".*tcp.*" + server.getAddressAndPortRegex() + ".*LISTEN[\\D]*([\\d]{1,})/php.*";
 		String[] cmnd = new String[] {RUN + SCRIPT_PID_SERVER, server.getAddressAndPortRegex()};
 		ProcessBuilder pb = new ProcessBuilder(cmnd);
 		pb.directory(new File(DIR_SCRIPT));
@@ -223,8 +255,8 @@ public class PHPitoManager {
 			return false;
 		String[] cmnd = new String[] {RUN + SCRIPT_CHECK_SERVER, server.getAddressAndPortRegex(), server.getPIDString()};
 		String regex = (UtilsAS.getInstance().getOsName().contains("win")) ?
-				".*TCP.*" + server.getAddressAndPortRegex() + ".*LISTENING[\\s]*" + server.getPIDString() + ".*":
-				".*tcp.*" + server.getAddressAndPortRegex() + ".*LISTEN[\\s]*" + server.getPIDString() + "/php.*";
+				".*TCP[\\W]*" + server.getAddressAndPortRegex() + "[\\W]*LISTENING[\\W]*" + server.getPIDString() + "[\\W]*.*" :
+				".*tcp.*" + server.getAddressAndPortRegex() + ".*LISTEN.*" + server.getPIDString() + "/php.*";
 		ProcessBuilder pb = new ProcessBuilder(cmnd);
 		pb.directory(new File(DIR_SCRIPT));
 		pb.redirectErrorStream(true);
@@ -243,11 +275,11 @@ public class PHPitoManager {
 		return false;
 	}
 	
-	public boolean stopServer(Project project) throws IOException, FileException, ServerException {
+	public boolean stopServer(Project project) throws IOException, FileException, ServerException, DOMException, ProjectException {
 		if (isServerRunning(project.getServer())) {
 			String[] cmnd = new String[] {RUN + SCRIPT_STOP_SERVER, project.getServer().getPIDString()};
-			String regexStop = ".*[\\W]{3} PHPito stopped server at [\\d]{4}-[\\d]{2}-[\\d]{2} [\\d]{2}:[\\d]{2}:[\\d]{2}.*";
-			String regexFail = ".*[\\W]{3} Error[!]{3} Fail to stop server.*";
+			String regexStop = ".*[\\W]{3}[\\s]PHPito stopped server at [\\d]{4}-[\\d]{2}-[\\d]{2}[\\s][\\d]{2}:[\\d]{2}:[\\d]{2}.*";
+			String regexFail = ".*[\\W]{3}[\\s]Error!!! Fail to stop server.*";
 			ProcessBuilder pb = new ProcessBuilder(cmnd);
 			pb.directory(new File(DIR_SCRIPT));
 			pb.redirectErrorStream(true);
@@ -261,24 +293,27 @@ public class PHPitoManager {
 				if (Pattern.matches(regexFail, stdo)) {
 					br.close();
 					throw new ServerException("Error!!! Fail to stop server at " + project.getServer().getAddress() +
-													" PID: " + project.getServer().getPIDString());
+												" PID: " + project.getServer().getPIDString());
 				} else if (Pattern.matches(regexStop, stdo)) {
 					br.close();
-					project.getServer().setProcessId(null);
-					updateProject(project);
+//					project.getServer().setProcessId(null);
+//					updateProject(project);
+					flushRunningServers();
 					return true;
 				}
 			}
 			br.close();
 			if (!isServerRunning(project.getServer())) {
-				project.getServer().setProcessId(null);
-				updateProject(project);
+//				project.getServer().setProcessId(null);
+//				updateProject(project);
+				flushRunningServers();
 				return true;
 			} else
 				return false;
 		} else {
-			project.getServer().setProcessId(null);
-			updateProject(project);
+//			project.getServer().setProcessId(null);
+//			updateProject(project);
+			flushRunningServers();
 			throw new ServerException("Error!!! Server is not running");
 		}
 	}

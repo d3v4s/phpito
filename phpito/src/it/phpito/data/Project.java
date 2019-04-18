@@ -33,4 +33,12 @@ public class Project {
 	public String getIdAndName() {
 		return id + "-" + name;
 	}
+
+	@Override
+	public String toString() {
+		String ret = "Nome:\t" + name + "\n"
+					+ "Path:\t" + server.getPath() + "\n"
+					+ "Indirizzo:\t" + server.getAddressAndPort();
+		return ret;
+	}
 }
