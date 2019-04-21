@@ -1,9 +1,15 @@
 package it.phpito.data;
 
+import java.util.HashMap;
+
 public class Project {
 	private Long id;
 	private String name;
 	private Server server;
+	public static final String K_NAME = "name";
+	public static final String K_PATH = "path";
+	public static final String K_ADDRESS = "address";
+	public static final String K_PORT = "port";
 
 	/* get e set */
 	public Long getId() {
@@ -31,7 +37,21 @@ public class Project {
 	}
 	
 	public String getIdAndName() {
-		return String.format("%03d", id) + "-" + name;
+		return String.format("%04d", id) + "-" + name;
+	}
+	
+	/* metodo che ritorna key per hashmap progetto */
+	public static String[] getArrayKeyProject() {
+		return new String[]{K_NAME, K_PATH, K_ADDRESS, K_PORT};
+	}
+	
+	public HashMap<String, String> getHashMap() {
+		HashMap<String, String> projectMap = new HashMap<String, String>();
+		projectMap.put(K_NAME, name);
+		projectMap.put(K_PATH, server.getPath());
+		projectMap.put(K_ADDRESS, server.getAddress());
+		projectMap.put(K_PORT, server.getPortString());
+		return projectMap;
 	}
 
 	@Override

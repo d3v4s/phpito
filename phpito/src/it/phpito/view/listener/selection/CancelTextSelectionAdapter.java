@@ -10,20 +10,18 @@ import it.phpito.view.shell.ShellDialogPHPito;
 
 public class CancelTextSelectionAdapter extends SelectionAdapter {
 	private ShellDialogPHPito shellDialog;
-	private HashMap<String, Text> textMap;
 
-	public CancelTextSelectionAdapter(ShellDialogPHPito shellDialog, HashMap<String, Text> textMap) {
+	public CancelTextSelectionAdapter(ShellDialogPHPito shellDialog) {
 		super();
 		this.shellDialog = shellDialog;
-		this.textMap = textMap;
 	}
 
 	@Override
 	public void widgetSelected(SelectionEvent e) {
-		if (shellDialog.isTextsEmpty(textMap))
+		if (shellDialog.isTextsEmpty())
 			shellDialog.dispose();
 		else
-			shellDialog.emptyingText(textMap);
+			shellDialog.emptyingText();
 	}
 
 	

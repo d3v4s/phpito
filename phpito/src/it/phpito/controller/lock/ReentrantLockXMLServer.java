@@ -142,7 +142,7 @@ public class ReentrantLockXMLServer {
 	public void deleteProject(String id) {
 		try {
 			if (reentrantLock.tryLock(30, TimeUnit.SECONDS))
-				XMLManagerAS.getInstance().deleteNode(PATH_FILE_XML, XML_SERVER, id);
+				XMLManagerAS.getInstance().deleteNode(PATH_FILE_XML, XML_SERVER, id, true);
 		} catch (InterruptedException | FileException e) {
 		} finally {
 			reentrantLock.unlock();

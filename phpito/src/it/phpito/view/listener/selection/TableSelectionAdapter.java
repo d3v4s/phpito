@@ -3,6 +3,7 @@ package it.phpito.view.listener.selection;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
+import it.phpito.view.shell.ShellDialogPHPito;
 import it.phpito.view.shell.ShellPHPito;
 
 public class TableSelectionAdapter extends SelectionAdapter {
@@ -15,14 +16,12 @@ public class TableSelectionAdapter extends SelectionAdapter {
 
 	@Override
 	public void widgetDefaultSelected(SelectionEvent e) {
-		
+		ShellDialogPHPito shellDialog = new ShellDialogPHPito(shellPHPito);
+		new LuncherModifyProjectSelectionAdapter(shellPHPito).lunchModifyProject(shellDialog);;
 	}
 
 	@Override
 	public void widgetSelected(SelectionEvent e) {
-//		String id = shellPHPito.getTable().getSelection()[0].getText(0);
-//		shellPHPito.setIdSelect(Long.valueOf(id));
+		shellPHPito.autoSetIdProjectSelect();
 	}
-
-	
 }

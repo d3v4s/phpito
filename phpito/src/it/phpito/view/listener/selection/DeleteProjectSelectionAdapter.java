@@ -20,7 +20,10 @@ public class DeleteProjectSelectionAdapter extends SelectionAdapter {
 	public void widgetSelected(SelectionEvent e) {
 		int res = UtilsViewAS.getInstance().lunchMB(shellPHPito, SWT.YES | SWT.NO, "ELIMINO???", "Sei sicuro di voler eliminare il seguente progetto?\n"
 																						+ shellPHPito.getProjectSeclect().toString());
-		if (res == SWT.YES)
+		if (res == SWT.YES) {
 			PHPitoManager.getInstance().getReentrantLockXMLServer().deleteProject(shellPHPito.getIdProjectSelectString());
+			shellPHPito.flushTable();
+			shellPHPito.getTable().forceFocus();
+		}
 	}
 }
