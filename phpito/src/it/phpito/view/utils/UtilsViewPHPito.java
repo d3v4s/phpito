@@ -41,7 +41,7 @@ public class UtilsViewPHPito {
 	public void stopServer(ShellPHPito shellPHPito) {
 		try {
 			Project p = PHPitoManager.getInstance().getProjectById(shellPHPito.getIdProjectSelect());
-			if (PHPitoManager.getInstance().stopServer(p))
+			if (!PHPitoManager.getInstance().stopServer(p))
 				UtilsViewAS.getInstance().lunchMB(shellPHPito, SWT.OK, "FAIL!!!", "L'arresto del server non ha avuto sucesso.");
 //			else
 //				UtilsViewAS.getInstance().lunchMB(shellPHPito, SWT.OK, "OK", "Server PHP fermato");
