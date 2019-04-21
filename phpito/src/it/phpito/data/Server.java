@@ -1,7 +1,9 @@
 package it.phpito.data;
 
+import java.io.IOException;
 import java.util.regex.Pattern;
 
+import it.phpito.controller.PHPitoManager;
 import it.phpito.exception.ProjectException;
 
 public class Server {
@@ -80,6 +82,10 @@ public class Server {
 	/* metodo che ritorna il process id in stringa */
 	public String getPIDString() {
 		return processID != null ? String.valueOf(processID) : "";
+	}
+	
+	public boolean isRunnig() throws IOException {
+		return PHPitoManager.getInstance().isServerRunning(this);
 	}
 
 	/* metodo che ritorna lo stato del server (ONLINE o OFFLINE) e il PID */ 
