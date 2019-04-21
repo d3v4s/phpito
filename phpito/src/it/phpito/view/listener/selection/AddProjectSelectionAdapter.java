@@ -13,15 +13,14 @@ import it.phpito.data.Project;
 import it.phpito.data.Server;
 import it.phpito.exception.ProjectException;
 import it.phpito.view.shell.ShellDialogPHPito;
+import it.phpito.view.shell.ShellPHPito;
 
 public class AddProjectSelectionAdapter extends SelectionAdapter {
 	private ShellDialogPHPito shellDialog;
-	private HashMap<String, Text> textMap;
 
-	public AddProjectSelectionAdapter(ShellDialogPHPito shellParent, HashMap<String, Text> textMap) {
+	public AddProjectSelectionAdapter(ShellDialogPHPito shellDialog) {
 		super();
-		this.shellDialog = shellParent;
-		this.textMap = textMap;
+		this.shellDialog = shellDialog;
 	}
 	
 	@Override
@@ -32,19 +31,22 @@ public class AddProjectSelectionAdapter extends SelectionAdapter {
 	@Override
 	public void widgetSelected(SelectionEvent event) {
 		Project project = new Project();
+		HashMap<String, Text> textMap = shellDialog.getTextMap();
 		try {
-			project.setName(textMap.get(ShellDialogPHPito.K_NAME).getText());
+			project.setName(textMap.get(Project.K_NAME).getText());
 			project.setServer(new Server());
-			project.getServer().setPath(textMap.get(ShellDialogPHPito.K_PATH).getText());
-			project.getServer().setAddress(textMap.get(ShellDialogPHPito.K_ADDRESS).getText());
-			project.getServer().setPortString(textMap.get(ShellDialogPHPito.K_PORT).getText());
+			project.getServer().setPath(textMap.get(Project.K_PATH).getText());
+			project.getServer().setAddress(textMap.get(Project.K_ADDRESS).getText());
+			project.getServer().setPortString(textMap.get(Project.K_PORT).getText());
 			
 			int res = UtilsViewAS.getInstance().lunchMB(shellDialog, SWT.YES | SWT.NO, "Confermi???", "Sei sicuro di voler aggiungere il seguente progetto???\n" + project.toString());
 			if (res == SWT.YES) {
 				PHPitoManager.getInstance().getReentrantLockXMLServer().addProject(project);
 				UtilsViewAS.getInstance().lunchMB(shellDialog, SWT.OK, "OK", "Nuovo progetto aggiunto con sucesso.");
-				shellDialog.getShellPHPito().flushTable();
+				ShellPHPito shellPHPito = shellDialog.getShellPHPito();
 				shellDialog.dispose();
+				shellPHPito.flushTable();
+				shellPHPito.getTable().forceFocus();
 			}
 		} catch (ProjectException e) {
 			UtilsViewAS.getInstance().lunchMBError(shellDialog, e, PHPitoManager.NAME);

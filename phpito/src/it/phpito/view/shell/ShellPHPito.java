@@ -10,7 +10,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -35,9 +34,11 @@ import it.phpito.exception.ServerException;
 import it.phpito.view.listener.key.TableKeyAdpter;
 import it.phpito.view.listener.selection.DeleteProjectSelectionAdapter;
 import it.phpito.view.listener.selection.LuncherAddProjectSelectionAdapter;
+import it.phpito.view.listener.selection.LuncherModifyProjectSelectionAdapter;
 import it.phpito.view.listener.selection.StartServerSelectionAdapter;
 import it.phpito.view.listener.selection.StopServerSelectionAdapter;
 import it.phpito.view.listener.selection.TableSelectionAdapter;
+import it.phpito.view.thread.EnableStartStopThread;
 import it.phpito.view.thread.WriterTerminalThread;
 import swing2swt.layout.BorderLayout;
 
@@ -46,8 +47,13 @@ public class ShellPHPito extends Shell {
 	private Table table;
 	private final int fontHeight = 20;
 	private StyledText logOutText;
-//	private Long idSelect = 0L;
-//	private Long idProjectSelect;
+	private Long idProjectSelect;
+	private ArrayList<MenuItem> mntmStartList = new ArrayList<MenuItem>();
+	private ArrayList<MenuItem> mntmStopList = new ArrayList<MenuItem>();
+	private ArrayList<MenuItem> mntmProjectList = new ArrayList<MenuItem>();
+	private ArrayList<Button> bttnStartList = new ArrayList<Button>();
+	private ArrayList<Button> bttnStopList = new ArrayList<Button>();
+	private ArrayList<Button> bttnProjectList = new ArrayList<Button>();
 
 	public ShellPHPito(Display display) {
 		super(display);
@@ -78,45 +84,52 @@ public class ShellPHPito extends Shell {
 	protected void checkSubclass() {
 	}
 
+	/* get e set */
 	public int getFontHeight() {
 		return fontHeight;
 	}
 	public StyledText getLogOutText() {
 		return logOutText;
 	}
-	public String getIdProjectSelectString() {
-//		if (table.getSelection().length == 0)
-//			return null;
-//		return table.getSelection()[0].getText(0);
-		return "1";
-	}
 	public Long getIdProjectSelect() {
-		return Long.parseLong(getIdProjectSelectString());
+		return idProjectSelect;
 	}
-	
-//	public void setIdSelect(Long idSelect) {
-//		this.idSelect = idSelect;
-//	}
+	public String getIdProjectSelectString() {
+		return String.valueOf(idProjectSelect);
+	}
 	public Project getProjectSeclect() {
 		return PHPitoManager.getInstance().getProjectById(getIdProjectSelect());
 	}
 	public Table getTable() {
 		return table;
 	}
+	public ArrayList<MenuItem> getMntmStartList() {
+		return mntmStartList;
+	}
+	public ArrayList<MenuItem> getMntmStopList() {
+		return mntmStopList;
+	}
+	public ArrayList<MenuItem> getMntmProjectList() {
+		return mntmProjectList;
+	}
+	public ArrayList<Button> getBttnStartList() {
+		return bttnStartList;
+	}
+	public ArrayList<Button> getBttnStopList() {
+		return bttnStopList;
+	}
+	public ArrayList<Button> getBttnProjectList() {
+		return bttnProjectList;
+	}
 
 	/* metodo per creare contenuti */
 	public void createContents() throws DOMException {
-		this.setMinimumSize(200, 300);
+		this.setMinimumSize(200, 550);
 		this.setSize(850, 600);
 		UtilsViewAS.getInstance().centerWindow(this);
 		this.setText("PHPito");
 		this.setLayout(new BorderLayout(0, 0));
 
-		/* nomi delle colonne per la tabella*/
-		String[] titles = { "id", "Nome", "Indirizzo", "Path", "Stato"};
-		int[] width = {40, 100, 130, 250, 100};
-		int[] style = {SWT.CENTER, SWT.LEFT, SWT.LEFT, SWT.LEFT, SWT.CENTER};
-		
 		/* barra menu' della testata */
 		Menu menu = new Menu(this, SWT.BAR);
 		this.setMenuBar(menu);
@@ -130,12 +143,30 @@ public class ShellPHPito extends Shell {
 		mn = new Menu(mntm);
 		mntm.setMenu(mn);
 		
-		/* pulsante menu' per aggiungere un nuovo progetto */
-		mntm = new MenuItem(mn, SWT.NONE);
-		mntm.addSelectionListener(new LuncherAddProjectSelectionAdapter(this));
-		mntm.setText("Aggiungi");
-	
-		Button btn;
+		String[] menuProjectList = new String[] {"Aggiungi", "Modifica", "Elimina", "Start", "Stop"};
+		SelectionAdapter[] menuProjectSelAdptList = new SelectionAdapter[] {
+				new LuncherAddProjectSelectionAdapter(this),
+				new LuncherModifyProjectSelectionAdapter(this),
+				new DeleteProjectSelectionAdapter(this),
+				new StartServerSelectionAdapter(this),
+				new StopServerSelectionAdapter(this)
+		};
+		
+		for (int i = 0; i < menuProjectList.length; i++) {
+			mntm = new MenuItem(mn, SWT.NONE);
+			mntm.addSelectionListener(menuProjectSelAdptList[i]);
+			mntm.setText(menuProjectList[i]);
+			if (menuProjectList[i].equals("Modifica"))
+				mntmProjectList.add(mntm);
+			else if (menuProjectList[i].equals("Elimina"))
+				mntmProjectList.add(mntm);
+			else if (menuProjectList[i].equals("Start"))
+				mntmStartList.add(mntm);
+			else if (menuProjectList[i].equals("Stop"))
+				mntmStopList.add(mntm);
+		}
+		
+		Button bttn;
 		GridData gd;
 		
 		/* contenitore per la zona alta */
@@ -151,34 +182,6 @@ public class ShellPHPito extends Shell {
 		logOutText.setForeground(new Color(getDisplay(), 20, 207, 20));
 		logOutText.setBackground(new Color(getDisplay(), 0, 0, 0));
 		logOutText.setEnabled(false);
-		
-//		Thread t = new Thread(new Runnable() {
-//			@Override
-//			public void run() {
-//				LocalDateTime lastPrint = LocalDateTime.now().minusYears(50);
-//				while (!isDisposed()) {
-//					try {
-//						if (lastPrint.isBefore(PHPitoManager.getInstance().getLocalDateTimeLastModifyLogServer(idSelect))) {
-//							getDisplay().asyncExec(new Runnable() {
-//								@Override
-//								public void run() {
-//									String out = PHPitoManager.getInstance().getReentrantLockLogServer().readLog(getProjectSeclect(), 10);
-//									shellPHPito.getLogOutText().setText(out);
-//								}
-//							});
-//							lastPrint = LocalDateTime.now();
-//						}
-//					} catch (DOMException | FileException e) {
-//						e.printStackTrace();
-//					}
-//					try {
-//						Thread.sleep(500);
-//					} catch (InterruptedException e) {
-//					}
-//				}
-//			}
-//		});
-//		t.start();
 
 		/* contenitore per la zona laterale destra */
 		Composite rightComposite = new Composite(this, SWT.NONE);
@@ -193,33 +196,21 @@ public class ShellPHPito extends Shell {
 		GridData gdLblHeight = new GridData();
 		gdLblHeight.heightHint = 13;
 		
-		/* pulsante aggiungi progetto */
-		btn = new Button(rightComposite, SWT.CENTER);
-		btn.addSelectionListener(new LuncherAddProjectSelectionAdapter(this));
-		btn.setLayoutData(gdBttnWidth);
-		btn.setText("Aggiungi");
-		new Label(rightComposite, SWT.NONE).setLayoutData(gdLblHeight);
-		
-		/* pulsante per eliminare progetto */
-		btn = new Button(rightComposite, SWT.CENTER);
-		btn.addSelectionListener(new DeleteProjectSelectionAdapter(this));
-		btn.setLayoutData(gdBttnWidth);
-		btn.setText("Elimina");
-		new Label(rightComposite, SWT.NONE).setLayoutData(gdLblHeight);
-		
-		/* pulsante avvia server */
-		btn = new Button(rightComposite, SWT.CENTER);
-		btn.addSelectionListener(new StartServerSelectionAdapter(this));
-		btn.setLayoutData(gdBttnWidth);
-		btn.setText("Start");
-		new Label(rightComposite, SWT.NONE).setLayoutData(gdLblHeight);
-		
-		/* pulsante per fermare server */
-		btn = new Button(rightComposite, SWT.CENTER);
-		btn.addSelectionListener(new StopServerSelectionAdapter(this));
-		btn.setLayoutData(gdBttnWidth);
-		btn.setText("Stop");
-		new Label(rightComposite, SWT.NONE).setLayoutData(gdLblHeight);
+		for (int i = 0; i < menuProjectList.length; i++) {
+			bttn = new Button(rightComposite, SWT.PUSH);
+			bttn.addSelectionListener(menuProjectSelAdptList[i]);
+			bttn.setLayoutData(gdBttnWidth);
+			bttn.setText(menuProjectList[i]);
+			new Label(rightComposite, SWT.NONE).setLayoutData(gdLblHeight);
+			if (menuProjectList[i].equals("Modifica"))
+				bttnProjectList.add(bttn);
+			else if (menuProjectList[i].equals("Elimina"))
+				bttnProjectList.add(bttn);
+			else if (menuProjectList[i].equals("Start"))
+				bttnStartList.add(bttn);
+			else if (menuProjectList[i].equals("Stop"))
+				bttnStopList.add(bttn);
+		}
 		
 		/* composite centrale con scroll verticale */
 		ScrolledComposite scrolledComposite = new ScrolledComposite(this, SWT.BORDER | SWT.V_SCROLL);
@@ -241,26 +232,25 @@ public class ShellPHPito extends Shell {
 		/* poupup menu per tabella */
 		Menu ppmnTbl = new Menu(table);
 		table.setMenu(ppmnTbl);
-
-		mntm = new MenuItem(ppmnTbl, SWT.NONE);
-		mntm.addSelectionListener(new LuncherAddProjectSelectionAdapter(this));
-		mntm.setText("Aggiungi");
-
-		mntm = new MenuItem(ppmnTbl, SWT.NONE);
-		mntm.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-			}
-		});
-		mntm.setText("Elimina");
 		
-		mntm = new MenuItem(ppmnTbl, SWT.NONE);
-		mntm.addSelectionListener(new StartServerSelectionAdapter(this));
-		mntm.setText("Start");
-
-		mntm = new MenuItem(ppmnTbl, SWT.NONE);
-		mntm.addSelectionListener(new StopServerSelectionAdapter(this));
-		mntm.setText("Stop");
+		for (int i = 0; i < menuProjectList.length; i++) {
+			mntm = new MenuItem(ppmnTbl, SWT.NONE);
+			mntm.addSelectionListener(menuProjectSelAdptList[i]);
+			mntm.setText(menuProjectList[i]);
+			if (menuProjectList[i].equals("Modifica"))
+				mntmProjectList.add(mntm);
+			else if (menuProjectList[i].equals("Elimina"))
+				mntmProjectList.add(mntm);
+			else if (menuProjectList[i].equals("Start"))
+				mntmStartList.add(mntm);
+			else if (menuProjectList[i].equals("Stop"))
+				mntmStopList.add(mntm);
+		}
+		
+		/* nomi delle colonne per la tabella*/
+		String[] titles = { "id", "Nome", "Indirizzo", "Path", "Stato"};
+		int[] width = {40, 100, 130, 260, 100};
+		int[] style = {SWT.CENTER, SWT.LEFT, SWT.LEFT, SWT.LEFT, SWT.CENTER};
 		
 		table.setHeaderVisible(true);
 		for (int i = 0; i < titles.length; i++) {
@@ -270,7 +260,6 @@ public class ShellPHPito extends Shell {
 			tblclmn.getColumn().setResizable(true);
 			tblclmn.getColumn().setMoveable(true);
 		}
-//		flushTable();
 	}
 
 	/* metodo che riscrive tabella da hashmap di progetti */
@@ -297,6 +286,7 @@ public class ShellPHPito extends Shell {
 		if (indexTable >= table.getItems().length || indexTable < 0)
 			indexTable = 0;
 		table.setSelection(indexTable);
+		autoSetIdProjectSelect();
 	}
 
 	@Override
@@ -304,9 +294,14 @@ public class ShellPHPito extends Shell {
 		super.open();
 		flushTable();
 		new WriterTerminalThread(this).start();
+		new EnableStartStopThread(this).start();
 	}
-	
-	
-	
+
+	public void autoSetIdProjectSelect() {
+		Long id = null;
+		if (table.getSelectionIndex() >= 0)
+			id = Long.parseLong(table.getItem(table.getSelectionIndex()).getText(0));
+		idProjectSelect = id;
+	}
 }
 

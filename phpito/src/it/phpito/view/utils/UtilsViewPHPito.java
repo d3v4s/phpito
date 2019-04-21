@@ -26,11 +26,12 @@ public class UtilsViewPHPito {
 	public void startServer(ShellPHPito shellPHPito) {
 		try {
 			Project p = PHPitoManager.getInstance().getProjectById(shellPHPito.getIdProjectSelect());
-			if (PHPitoManager.getInstance().startServer(p))
-				UtilsViewAS.getInstance().lunchMB(shellPHPito, SWT.OK, "OK", "Server PHP avviato");
-			else
+			if (!PHPitoManager.getInstance().startServer(p))
 				UtilsViewAS.getInstance().lunchMB(shellPHPito, SWT.OK, "FAIL!!!", "L'avvio del server non ha avuto sucesso.");
+//			else
+//				UtilsViewAS.getInstance().lunchMB(shellPHPito, SWT.OK, "OK", "Server PHP avviato");
 			shellPHPito.flushTable();
+			shellPHPito.getTable().forceFocus();
 		} catch (IOException | ServerException e) {
 			UtilsViewAS.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
 		}
@@ -41,10 +42,11 @@ public class UtilsViewPHPito {
 		try {
 			Project p = PHPitoManager.getInstance().getProjectById(shellPHPito.getIdProjectSelect());
 			if (PHPitoManager.getInstance().stopServer(p))
-				UtilsViewAS.getInstance().lunchMB(shellPHPito, SWT.OK, "OK", "Server PHP fermato");
-			else
 				UtilsViewAS.getInstance().lunchMB(shellPHPito, SWT.OK, "FAIL!!!", "L'arresto del server non ha avuto sucesso.");
+//			else
+//				UtilsViewAS.getInstance().lunchMB(shellPHPito, SWT.OK, "OK", "Server PHP fermato");
 			shellPHPito.flushTable();
+			shellPHPito.getTable().forceFocus();
 		} catch (IOException | ServerException e) {
 			UtilsViewAS.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
 		}
