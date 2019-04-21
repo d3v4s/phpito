@@ -8,26 +8,26 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Node;
+import com.ibm.icu.text.SimpleDateFormat;
 
 import it.as.utils.core.LogErrorAS;
 import it.as.utils.core.LoggerAS;
 import it.as.utils.core.NetworkAS;
 import it.as.utils.core.UtilsAS;
-import it.as.utils.core.XMLManagerAS;
 import it.as.utils.exception.FileException;
+import it.phpito.controller.lock.ReentrantLockLogServer;
+import it.phpito.controller.lock.ReentrantLockXMLServer;
 import it.phpito.data.Project;
 import it.phpito.data.Server;
-import it.phpito.exception.ProjectException;
 import it.phpito.exception.ServerException;
 
 public class PHPitoManager {
 	private static PHPitoManager phpItoManager;
+	private ReentrantLockXMLServer reentrantLockXMLServer = new ReentrantLockXMLServer();
+	private ReentrantLockLogServer reentrantLockLogServer = new ReentrantLockLogServer();
 	private final String DIR_SCRIPT = Paths.get(UtilsAS.getInstance().getRunPath(), "script").toString();
 	private final String EXT_SCRIPT = (UtilsAS.getInstance().getOsName().contains("win")) ? ".bat" : ".sh";
 	private final String SCRIPT_START_SERVER = "start-server" + EXT_SCRIPT;
@@ -35,13 +35,6 @@ public class PHPitoManager {
 	private final String SCRIPT_PID_SERVER = "pid-server" + EXT_SCRIPT;
 	private final String SCRIPT_CHECK_SERVER = "check-server" + EXT_SCRIPT;
 	private final String RUN = (UtilsAS.getInstance().getOsName().contains("win")) ? "" : "./";
-	private final String PATH_FILE_XML = Paths.get("conf", "server.xml").toString();
-	private final String XML_SERVER = "server";
-	private final String XML_NAME = "name";
-	private final String XML_PATH = "path";
-	private final String XML_ADDRESS = "address";
-	private final String XML_PORT = "port";
-	private final String XML_PID = "pid";
 	public static final String NAME = "PHPito";
 
 	private PHPitoManager() {
@@ -49,76 +42,42 @@ public class PHPitoManager {
 
 	/* singleton */
 	public static PHPitoManager getInstance() {
-		phpItoManager = (phpItoManager == null) ? new PHPitoManager() : phpItoManager;
-		return phpItoManager;
+//		phpItoManager = (phpItoManager == null) ? new PHPitoManager() : phpItoManager;
+		return (phpItoManager = (phpItoManager == null) ? new PHPitoManager() : phpItoManager);
 	}
 
-	public HashMap<String, Project> getProjectsMap() throws FileException, DOMException, ProjectException {
-		HashMap<String, Project> mapProjects = new HashMap<String, Project>();
-		Project project;
-		Node node;
-		String pid;
-		XMLManagerAS xmlAS = XMLManagerAS.getInstance();
-		HashMap<String, Node> mapNode = xmlAS.getMapIdElement(PATH_FILE_XML, XML_SERVER);
-		for (String id : mapNode.keySet()) {
-			node = mapNode.get(id);
-			project = new Project();
-			project.setId(Long.valueOf(id));
-			project.setName(xmlAS.getArrayChildNode(node, XML_NAME).get(0).getTextContent());
-			project.setServer(new Server());
-			project.getServer().setAddress(xmlAS.getArrayChildNode(node, XML_ADDRESS).get(0).getTextContent());
-			project.getServer().setPort(Integer.parseInt(xmlAS.getArrayChildNode(node, XML_PORT).get(0).getTextContent()));
-			project.getServer().setPath(xmlAS.getArrayChildNode(node, XML_PATH).get(0).getTextContent());
-			if (!xmlAS.getArrayChildNode(node, XML_PID).isEmpty()) {
-				pid = xmlAS.getArrayChildNode(node, XML_PID).get(0).getTextContent();
-				project.getServer().setProcessIdString(pid);
-			}
-			mapProjects.put(id, project);
-		}
-		
-		return mapProjects;
+	/* get reentrant lock */
+	public ReentrantLockXMLServer getReentrantLockXMLServer() {
+		return reentrantLockXMLServer;
 	}
-	
-	public Project getProjectById(Long id) throws FileException, DOMException, ProjectException {
-		return getProjectsMap().get(String.valueOf(id));
+	public ReentrantLockLogServer getReentrantLockLogServer() {
+		return reentrantLockLogServer;
 	}
-	
-	public String getNextProjectId() throws FileException {
-		XMLManagerAS xmlAS = XMLManagerAS.getInstance();
-		Set<String> setId = xmlAS.getMapIdElement(PATH_FILE_XML, "server").keySet();
-		long id = xmlAS.getGreatId(setId) + 1;
-		return String.valueOf((id < 1L) ? 1 : id);
-	}
-	
-	public void addProject(Project project) throws FileException {
-		XMLManagerAS xmlAS = XMLManagerAS.getInstance();
-		HashMap<String, String> mapChild = new HashMap<String, String>();
-		mapChild.put(XML_NAME, project.getName());
-		mapChild.put(XML_PATH, project.getServer().getPath());
-		mapChild.put(XML_ADDRESS, project.getServer().getAddress());
-		mapChild.put(XML_PORT, project.getServer().getPortString());
-		mapChild.put(XML_PID, "");
-		xmlAS.addElementWithChild(PATH_FILE_XML, "server", getNextProjectId(), mapChild);
-	}
-	
-	public void updateProject(Project project) throws FileException {
-		XMLManagerAS xmlAS = XMLManagerAS.getInstance();
-		HashMap<String, Node> mapNode = xmlAS.getMapIdElement(PATH_FILE_XML, XML_SERVER);
-		Node node = mapNode.get(project.getIdString());
-		xmlAS.getArrayChildNode(node, XML_NAME).get(0).setTextContent(project.getName());
-		xmlAS.getArrayChildNode(node, XML_PATH).get(0).setTextContent(project.getServer().getPath());
-		xmlAS.getArrayChildNode(node, XML_ADDRESS).get(0).setTextContent(project.getServer().getAddress());
-		xmlAS.getArrayChildNode(node, XML_PORT).get(0).setTextContent(project.getServer().getPortString());
-		if (!xmlAS.getArrayChildNode(node, XML_PID).isEmpty())
-			xmlAS.getArrayChildNode(node, XML_PID).get(0).setTextContent(project.getServer().getPIDString());
-		else
-			xmlAS.addChildElement(XML_PID, project.getServer().getPIDString(), node);
-		xmlAS.flush(node.getOwnerDocument(), PATH_FILE_XML);
-	}
-	
-	@SuppressWarnings("resource")
 
-	public boolean startServer(Project project) throws IOException, FileException, ServerException, DOMException, ProjectException {
+	/* metodo ritorna progetto da id */
+	public Project getProjectById(Long id) {
+		if (id == null)
+			return null;
+		return reentrantLockXMLServer.getProjectsMap().get(String.valueOf(id));
+	}
+
+	public LocalDateTime getLocalDateTimeLastModifyLogServer(Long id) throws FileException {
+		if (id == null)
+			return LocalDateTime.MAX;
+		Project project = getProjectById(id);
+		File logFile = LoggerAS.getInstance().getFileLog(project.getName(), null, new String[] {"server", project.getIdAndName()});
+		Integer year = Integer.valueOf(new SimpleDateFormat("yyyy").format(logFile.lastModified()));
+		Integer month = Integer.valueOf(new SimpleDateFormat("MM").format(logFile.lastModified()));
+		Integer dayOfMonth = Integer.valueOf(new SimpleDateFormat("dd").format(logFile.lastModified()));
+		Integer hour = Integer.valueOf(new SimpleDateFormat("HH").format(logFile.lastModified()));
+		Integer minute = Integer.valueOf(new SimpleDateFormat("mm").format(logFile.lastModified()));
+		Integer second = Integer.valueOf(new SimpleDateFormat("ss").format(logFile.lastModified()));
+		return LocalDateTime.of(year, month, dayOfMonth, hour, minute, second);
+	}
+	
+	public boolean startServer(Project project) throws IOException, ServerException {
+		if (project == null)
+			return false;
 		if (!NetworkAS.getInstance().isAvaiblePort(project.getServer().getPort()))
 			throw new ServerException("Errore!!! La porta scelta e' gia' in uso.");
 		String[] cmndStart = new String[] {RUN + SCRIPT_START_SERVER,
@@ -139,7 +98,7 @@ public class PHPitoManager {
 		LocalDateTime maxTime = LocalDateTime.now().plusSeconds(5L);
 		while ((stdoStart = (br.ready()) ? br.readLine() : "") != null) {
 			if (!stdoStart.isEmpty())
-				LoggerAS.getInstance().writeLog(stdoStart, project.getName(), new String[] {"server", project.getName()});
+				reentrantLockLogServer.writeLog(stdoStart, project);
 			if (Pattern.matches(regexError, stdoStart)) {
 				String reasonError = "";
 				Matcher matchReasError = Pattern.compile(regexReasError).matcher(stdoStart);
@@ -152,16 +111,17 @@ public class PHPitoManager {
 												"\nErrore individuato: " + reasonError));
 			} else if ((pid = getPIDServer(project.getServer())) != null) {
 				project.getServer().setProcessId(pid);
-				updateProject(project);
+				reentrantLockXMLServer.updateProject(project);
 				new ReadOutputServerThread(project, br).start();
 				return true;
 			} else if (LocalDateTime.now().isAfter(maxTime)) {
+				br.close();
 				flushRunningServers();
 				throw new ServerException("Error Server!!! Avvio del server php fallito!");
 			}
 		}
-		flushRunningServers();
 		br.close();
+		flushRunningServers();
 		return false;
 	}
 	
@@ -179,9 +139,9 @@ public class PHPitoManager {
 			try {
 				String outServer = null;
 				while ((outServer = bufferedReader.readLine()) != null) {
-					LoggerAS.getInstance().writeLog(outServer, project.getName(), new String[] {"server", project.getName()});
+					reentrantLockLogServer.writeLog(outServer, project);
 				}
-			} catch (IOException | FileException e) {
+			} catch (IOException e) {
 				try {
 					LogErrorAS.getInstance().writeLog(e, NAME);
 				} catch (FileException e1) {
@@ -202,8 +162,8 @@ public class PHPitoManager {
 	}
 	
 
-	public void flushRunningServers() throws IOException, FileException, DOMException, ProjectException {
-		HashMap<String, Project> projectMap = getProjectsMap();
+	public void flushRunningServers() throws IOException {
+		HashMap<String, Project> projectMap = reentrantLockXMLServer.getProjectsMap();
 		Project prjct = null;
 		for (String id : projectMap.keySet()) {
 			prjct = projectMap.get(id);
@@ -212,14 +172,14 @@ public class PHPitoManager {
 			} else {
 				prjct.getServer().setProcessId(null);
 			}
-			updateProject(prjct);
+			reentrantLockXMLServer.updateProject(prjct);
 		}
 	}
 	
-	public ArrayList<Server> getRunningServers() throws FileException, IOException, DOMException, ProjectException {
+	public ArrayList<Server> getRunningServers() throws IOException {
 		ArrayList<Server> serverList = new ArrayList<Server>();
 		flushRunningServers();
-		HashMap<String, Project> projectMap = getProjectsMap();
+		HashMap<String, Project> projectMap = reentrantLockXMLServer.getProjectsMap();
 		for (String id : projectMap.keySet())
 			if (isServerRunning(projectMap.get(id).getServer()))
 				serverList.add(projectMap.get(id).getServer());
@@ -277,8 +237,7 @@ public class PHPitoManager {
 	}
 	
 
-	public boolean stopServer(Project project) throws IOException, FileException, ServerException, DOMException, ProjectException {
-
+	public boolean stopServer(Project project) throws IOException, ServerException {
 		if (isServerRunning(project.getServer())) {
 			String[] cmnd = new String[] {RUN + SCRIPT_STOP_SERVER, project.getServer().getPIDString()};
 			String regexStop = ".*[\\W]{3}[\\s]PHPito stopped server at [\\d]{4}-[\\d]{2}-[\\d]{2}[\\s][\\d]{2}:[\\d]{2}:[\\d]{2}.*";
@@ -292,7 +251,7 @@ public class PHPitoManager {
 			BufferedReader br = new BufferedReader(isr);
 			String stdo = null;
 			while ((stdo = br.readLine()) != null) {
-				LoggerAS.getInstance().writeLog(stdo, project.getName(), new String[] {"server", project.getName()});
+				reentrantLockLogServer.writeLog(stdo, project);
 				if (Pattern.matches(regexFail, stdo)) {
 					br.close();
 					flushRunningServers();
@@ -308,9 +267,7 @@ public class PHPitoManager {
 			}
 			br.close();
 			if (!isServerRunning(project.getServer())) {
-
 				flushRunningServers();
-
 				return true;
 			} else
 				return false;

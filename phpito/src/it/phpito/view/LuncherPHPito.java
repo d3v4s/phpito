@@ -28,8 +28,9 @@ public class LuncherPHPito {
 		shellPHPito.createContents();
 		shellPHPito.open();
 		shellPHPito.layout();
-		while (!shellPHPito.isDisposed())
+		while (!shellPHPito.isDisposed()) {
 			if (!display.readAndDispatch())
 				display.sleep();
+		}
 	}
 }

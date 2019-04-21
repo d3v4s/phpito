@@ -31,7 +31,7 @@ public class Project {
 	}
 	
 	public String getIdAndName() {
-		return id + "-" + name;
+		return String.format("%03d", id) + "-" + name;
 	}
 
 	@Override
