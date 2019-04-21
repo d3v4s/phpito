@@ -35,18 +35,6 @@ public class ShellDialogPHPito extends Shell {
 	public ShellPHPito getShellPHPito() {
 		return shellPHPito;
 	}
-//	public String getKName() {
-//		return K_NAME;
-//	}
-//	public String getKPath() {
-//		return K_PATH;
-//	}
-//	public String getKAdress() {
-//		return K_ADDRESS;
-//	}
-//	public String getKPort() {
-//		return K_PORT;
-//	}
 	
 	/* metodo che ritorna key per aree di testo di aggiungi progetto */
 	public String[] getArrayKeyAddProject() {
