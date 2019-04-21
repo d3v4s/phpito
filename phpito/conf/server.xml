@@ -6,11 +6,5 @@
 
 
 
-<server id="1">
-        <path>/home/hxs/Desktop/site_test/technofriend</path>
-        <address>127.0.0.1</address>
-        <port>7000</port>
-        <name>prova</name>
-        <pid/>
-    </server>
+
 </projects>
