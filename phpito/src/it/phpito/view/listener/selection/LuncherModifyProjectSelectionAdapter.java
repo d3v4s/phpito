@@ -57,7 +57,7 @@ public class LuncherModifyProjectSelectionAdapter extends SelectionAdapter {
 				new TextFocusSelectionAdapter(shellDialog.getTextMap().get(Project.K_PORT)),
 				new UpdateProjectSelctionAdapter(shellDialog)
 		};
-		HashMap<String, String> mapProject = shellPHPito.getProjectSeclect().getHashMap();
+		HashMap<String, String> mapProject = shellPHPito.getProjectSelect().getHashMap();
 		for (int i = 0; i < keyList.length; i++) {
 			shellDialog.getTextMap().get(keyList[i]).addSelectionListener(selAdptList[i]);
 			shellDialog.getTextMap().get(keyList[i]).setText(mapProject.get(keyList[i]));

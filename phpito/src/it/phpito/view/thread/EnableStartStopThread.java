@@ -27,7 +27,7 @@ public class EnableStartStopThread extends Thread {
 					Project project;
 					Boolean isRunnig = null;
 					try {
-						if ((project = shellPHPito.getProjectSeclect()) != null)
+						if ((project = shellPHPito.getProjectSelect()) != null)
 							isRunnig = project.getServer().isRunnig();
 					} catch (IOException e) {
 						UtilsViewAS.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);

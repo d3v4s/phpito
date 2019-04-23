@@ -12,10 +12,10 @@ public class LuncherPHPito {
 	private Display display;
 	
 	public static void main(String[] args) {
-		LuncherPHPito windowPHPito = new LuncherPHPito();
+		LuncherPHPito luncherPHPito = new LuncherPHPito();
 
 		try {
-			windowPHPito.open();
+			luncherPHPito.open();
 		} catch (Exception e) {
 			UtilsViewAS.getInstance().lunchMBError(new Shell(), e, PHPitoManager.NAME);
 		}

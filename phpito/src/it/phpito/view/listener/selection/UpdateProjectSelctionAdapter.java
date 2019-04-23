@@ -28,16 +28,20 @@ public class UpdateProjectSelctionAdapter extends SelectionAdapter {
 
 	@Override
 	public void widgetSelected(SelectionEvent se) {
-		Project project = shellDialog.getShellPHPito().getProjectSeclect();
+		Project project = shellDialog.getShellPHPito().getProjectSelect();
+		String oldIdName = project.getIdAndName();
 		try {
 			project.setName(shellDialog.getTextMap().get(Project.K_NAME).getText());
 			project.getServer().setPath(shellDialog.getTextMap().get(Project.K_PATH).getText());
 			project.getServer().setAddress(shellDialog.getTextMap().get(Project.K_ADDRESS).getText());
 			project.getServer().setPortString(shellDialog.getTextMap().get(Project.K_PORT).getText());
 
-			int res = UtilsViewAS.getInstance().lunchMB(shellDialog, SWT.YES | SWT.NO, "Confermi???", "Sei sicuro di voler salvare le modifiche del seguente progetto???\n" + project.toString());
+			String msg = "Sei sicuro di voler salvare le modifiche del seguente progetto???\n" + project.toString();
+			int res = UtilsViewAS.getInstance().lunchMB(shellDialog, SWT.YES | SWT.NO, "Confermi???", msg);
 			if (res == SWT.YES) {
 				PHPitoManager.getInstance().getReentrantLockXMLServer().updateProject(project);
+				PHPitoManager.getInstance().getReentrantLockLogServer().renameDirProjectLog(oldIdName, project.getIdAndName());
+//				UtilsAS.getInstance().renameFile(LoggerAS.getInstance().getPathDirLog("server", oldIdName), project.getIdAndName());
 				UtilsViewAS.getInstance().lunchMB(shellDialog, SWT.OK, "OK", "Modifiche salvate con sucesso.");
 				ShellPHPito shellPHPito = shellDialog.getShellPHPito();
 				shellDialog.dispose();

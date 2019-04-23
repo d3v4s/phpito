@@ -11,10 +11,7 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.ibm.icu.text.SimpleDateFormat;
-
 import it.as.utils.core.LogErrorAS;
-import it.as.utils.core.LoggerAS;
 import it.as.utils.core.NetworkAS;
 import it.as.utils.core.UtilsAS;
 import it.as.utils.exception.FileException;
@@ -22,6 +19,7 @@ import it.phpito.controller.lock.ReentrantLockLogServer;
 import it.phpito.controller.lock.ReentrantLockXMLServer;
 import it.phpito.data.Project;
 import it.phpito.data.Server;
+import it.phpito.exception.ProjectException;
 import it.phpito.exception.ServerException;
 
 public class PHPitoManager {
@@ -42,7 +40,6 @@ public class PHPitoManager {
 
 	/* singleton */
 	public static PHPitoManager getInstance() {
-//		phpItoManager = (phpItoManager == null) ? new PHPitoManager() : phpItoManager;
 		return (phpItoManager = (phpItoManager == null) ? new PHPitoManager() : phpItoManager);
 	}
 
@@ -60,24 +57,26 @@ public class PHPitoManager {
 			return null;
 		return reentrantLockXMLServer.getProjectsMap().get(String.valueOf(id));
 	}
-
-	public LocalDateTime getLocalDateTimeLastModifyLogServer(Long id) throws FileException {
-		if (id == null)
-			return LocalDateTime.MAX;
-		Project project = getProjectById(id);
-		File logFile = LoggerAS.getInstance().getFileLog(project.getName(), null, new String[] {"server", project.getIdAndName()});
-		Integer year = Integer.valueOf(new SimpleDateFormat("yyyy").format(logFile.lastModified()));
-		Integer month = Integer.valueOf(new SimpleDateFormat("MM").format(logFile.lastModified()));
-		Integer dayOfMonth = Integer.valueOf(new SimpleDateFormat("dd").format(logFile.lastModified()));
-		Integer hour = Integer.valueOf(new SimpleDateFormat("HH").format(logFile.lastModified()));
-		Integer minute = Integer.valueOf(new SimpleDateFormat("mm").format(logFile.lastModified()));
-		Integer second = Integer.valueOf(new SimpleDateFormat("ss").format(logFile.lastModified()));
-		return LocalDateTime.of(year, month, dayOfMonth, hour, minute, second);
-	}
+//
+//	public LocalDateTime getLocalDateTimeLastModifyLogServer(Long id) throws FileException {
+//		if (id == null)
+//			return LocalDateTime.MAX;
+//		Project project = getProjectById(id);
+//		if (project == null)
+//			return LocalDateTime.MAX;
+//		File logFile = LoggerAS.getInstance().getFileLog(project.getName(), null, new String[] {"server", project.getIdAndName()});
+//		Integer year = Integer.valueOf(new SimpleDateFormat("yyyy").format(logFile.lastModified()));
+//		Integer month = Integer.valueOf(new SimpleDateFormat("MM").format(logFile.lastModified()));
+//		Integer dayOfMonth = Integer.valueOf(new SimpleDateFormat("dd").format(logFile.lastModified()));
+//		Integer hour = Integer.valueOf(new SimpleDateFormat("HH").format(logFile.lastModified()));
+//		Integer minute = Integer.valueOf(new SimpleDateFormat("mm").format(logFile.lastModified()));
+//		Integer second = Integer.valueOf(new SimpleDateFormat("ss").format(logFile.lastModified()));
+//		return LocalDateTime.of(year, month, dayOfMonth, hour, minute, second);
+//	}
 	
-	public boolean startServer(Project project) throws IOException, ServerException {
+	public boolean startServer(Project project) throws IOException, ServerException, NumberFormatException, ProjectException {
 		if (project == null)
-			return false;
+			throw new ProjectException("Errore!!! Nessun server selezionato");
 		if (!NetworkAS.getInstance().isAvaiblePort(project.getServer().getPort()))
 			throw new ServerException("Errore!!! La porta scelta e' gia' in uso.");
 		String[] cmndStart = new String[] {RUN + SCRIPT_START_SERVER,
@@ -162,7 +161,7 @@ public class PHPitoManager {
 	}
 	
 
-	public void flushRunningServers() throws IOException {
+	public void flushRunningServers() throws IOException, NumberFormatException, ProjectException {
 		HashMap<String, Project> projectMap = reentrantLockXMLServer.getProjectsMap();
 		Project prjct = null;
 		for (String id : projectMap.keySet()) {
@@ -176,7 +175,7 @@ public class PHPitoManager {
 		}
 	}
 	
-	public ArrayList<Server> getRunningServers() throws IOException {
+	public ArrayList<Server> getRunningServers() throws IOException, ProjectException {
 		ArrayList<Server> serverList = new ArrayList<Server>();
 		flushRunningServers();
 		HashMap<String, Project> projectMap = reentrantLockXMLServer.getProjectsMap();
@@ -187,9 +186,10 @@ public class PHPitoManager {
 		return serverList;
 	}
 	
-	public Long getPIDServer(Server server) throws NumberFormatException, IOException {
+	public Long getPIDServer(Server server) throws NumberFormatException, IOException, ProjectException {
+		if (server == null)
+			throw new ProjectException("Errore!!! Nessun server selezionato");
 		String regexPID = (UtilsAS.getInstance().getOsName().contains("win")) ?
-
 				".*TCP.*" + server.getAddressAndPortRegex() + ".*LISTENING[\\D]*([\\d]{1,})[\\D]*" :
 				".*tcp.*" + server.getAddressAndPortRegex() + ".*LISTEN[\\D]*([\\d]{1,})/php.*";
 		String[] cmnd = new String[] {RUN + SCRIPT_PID_SERVER, server.getAddressAndPortRegex()};
@@ -237,7 +237,9 @@ public class PHPitoManager {
 	}
 	
 
-	public boolean stopServer(Project project) throws IOException, ServerException {
+	public boolean stopServer(Project project) throws IOException, ServerException, ProjectException {
+		if (project == null)
+			throw new ProjectException("Errore!!! Nessun server selezionato");
 		if (isServerRunning(project.getServer())) {
 			String[] cmnd = new String[] {RUN + SCRIPT_STOP_SERVER, project.getServer().getPIDString()};
 			String regexStop = ".*[\\W]{3}[\\s]PHPito stopped server at [\\d]{4}-[\\d]{2}-[\\d]{2}[\\s][\\d]{2}:[\\d]{2}:[\\d]{2}.*";

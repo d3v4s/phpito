@@ -30,8 +30,8 @@ import it.as.utils.view.UtilsViewAS;
 import it.phpito.controller.PHPitoManager;
 import it.phpito.data.Project;
 import it.phpito.data.Server;
+import it.phpito.exception.ProjectException;
 import it.phpito.exception.ServerException;
-import it.phpito.view.listener.key.TableKeyAdpter;
 import it.phpito.view.listener.selection.DeleteProjectSelectionAdapter;
 import it.phpito.view.listener.selection.LuncherAddProjectSelectionAdapter;
 import it.phpito.view.listener.selection.LuncherModifyProjectSelectionAdapter;
@@ -72,7 +72,7 @@ public class ShellPHPito extends Shell {
 							for (Server server : serverList)
 								PHPitoManager.getInstance().stopServer(server.getProject());
 					}
-				} catch (DOMException | IOException | ServerException e) {
+				} catch (DOMException | IOException | ServerException | ProjectException e) {
 					UtilsViewAS.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
 				}
 			}
@@ -97,7 +97,7 @@ public class ShellPHPito extends Shell {
 	public String getIdProjectSelectString() {
 		return String.valueOf(idProjectSelect);
 	}
-	public Project getProjectSeclect() {
+	public Project getProjectSelect() {
 		return PHPitoManager.getInstance().getProjectById(getIdProjectSelect());
 	}
 	public Table getTable() {
@@ -226,7 +226,7 @@ public class ShellPHPito extends Shell {
 		scrolledComposite.setContent(table);
 		scrolledComposite.setMinSize(table.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		table.addSelectionListener(new TableSelectionAdapter(this));
-		table.addKeyListener(new TableKeyAdpter(this));
+//		table.addKeyListener(new TableKeyAdpter(thiSs));
 		table.forceFocus();
 		
 		/* poupup menu per tabella */
