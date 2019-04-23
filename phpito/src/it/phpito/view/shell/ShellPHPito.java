@@ -12,6 +12,7 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -278,17 +279,25 @@ public class ShellPHPito extends Shell {
 			ti.setText(2, p.getServer().getAddressAndPort());
 			ti.setText(3, p.getServer().getPath());
 			ti.setText(4, p.getServer().getStatePIDString());
+			try {
+				if (p.getServer().isRunnig()) {
+					ti.setBackground(new Color(getDisplay(), new RGB(20, 207, 20)));
+					ti.setForeground(new Color(getDisplay(), new RGB(0, 0, 0)));
+				}
+			} catch (IOException e) {
+//				LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
+			}
 		}
 	}
 
 	/* metodo che riscrive la tabella recuperando i dati dall'xml */
 	public void flushTable() {
-		int indexTable = table.getSelectionIndex();
+//		int indexTable = table.getSelectionIndex();
 		HashMap<String, Project> mapProjects = PHPitoManager.getInstance().getReentrantLockXMLServer().getProjectsMap();
 		printProjectsOnTable(mapProjects);
-		if (indexTable >= table.getItems().length || indexTable < 0)
-			indexTable = 0;
-		table.setSelection(indexTable);
+//		if (indexTable >= table.getItems().length || indexTable < 0)
+//			indexTable = 0;
+//		table.setSelection(indexTable);
 		autoSetIdProjectSelect();
 	}
 
