@@ -6,6 +6,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import it.phpito.data.Project;
+
 
 public class ShellDialogPHPito extends Shell {
 	private ShellPHPito shellPHPito;
@@ -51,5 +53,11 @@ public class ShellDialogPHPito extends Shell {
 	public void emptyingText() {
 		for (String key : textMap.keySet())
 			textMap.get(key).setText("");
+	}
+	
+	public void setTextByProject(Project project) {
+		HashMap<String, String> mapProject = project.getHashMap();
+		for (String kText : textMap.keySet())
+			textMap.get(kText).setText(mapProject.get(kText));
 	}
 }

@@ -20,6 +20,4 @@ public class CancelTextSelectionAdapter extends SelectionAdapter {
 		else
 			shellDialog.emptyingText();
 	}
-
-	
 }

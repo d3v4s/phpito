@@ -92,4 +92,18 @@ public class Server {
 	public String getStatePIDString() {
 		return  processID == null ? "OFFLINE" : "ONLINE PID: " + String.valueOf(processID);
 	}
+	
+	public Server clone() {
+		Server clone = new Server();
+		try {
+			clone.setAddress(new String(address));
+			clone.setPath(new String(path));
+			clone.setPort(new Integer(port));
+			if (processID != null)
+				clone.setProcessId(new Long(processID));
+			
+		} catch (ProjectException e) {
+		}
+		return clone;
+	}
 }

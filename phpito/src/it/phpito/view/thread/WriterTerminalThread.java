@@ -7,15 +7,18 @@ import org.w3c.dom.DOMException;
 import it.as.utils.core.LogErrorAS;
 import it.as.utils.exception.FileException;
 import it.phpito.controller.PHPitoManager;
+import it.phpito.controller.lock.ReentrantLockLogServer;
 import it.phpito.data.Project;
 import it.phpito.view.shell.ShellPHPito;
 
 public class WriterTerminalThread extends Thread {
 	private ShellPHPito shellPHPito;
 	private Project project;
-	public WriterTerminalThread(ShellPHPito shellPHPito) {
+	private ReentrantLockLogServer reentrantLockLogServer;
+	public WriterTerminalThread(ShellPHPito shellPHPito, ReentrantLockLogServer reentrantLockLogServer) {
 		super();
 		this.shellPHPito = shellPHPito;
+		this.reentrantLockLogServer = reentrantLockLogServer;
 	}
 
 	@Override
@@ -27,7 +30,7 @@ public class WriterTerminalThread extends Thread {
 		while (!shellPHPito.isDisposed()) {
 			try {
 				project = shellPHPito.getProjectSelect();
-				lastMod = PHPitoManager.getInstance().getReentrantLockLogServer().getLocalDateTimeLastModifyLogServer((project));
+				lastMod = reentrantLockLogServer.getLocalDateTimeLastModifyLogServer((project));
 				if ((shellPHPito.getIdProjectSelect() != null && id != shellPHPito.getIdProjectSelect()) ||
 						lastPrint.isBefore(lastMod)) {
 //					project = shellPHPito.getProjectSelect();
@@ -35,7 +38,7 @@ public class WriterTerminalThread extends Thread {
 					shellPHPito.getDisplay().asyncExec(new Runnable() {
 						@Override
 						public void run() {
-							String out = PHPitoManager.getInstance().getReentrantLockLogServer().readLog(project, 10);
+							String out = reentrantLockLogServer.readLog(project, 10);
 							shellPHPito.getLogOutText().setText(out);
 						}
 					});

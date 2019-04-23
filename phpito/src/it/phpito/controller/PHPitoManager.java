@@ -24,8 +24,8 @@ import it.phpito.exception.ServerException;
 
 public class PHPitoManager {
 	private static PHPitoManager phpItoManager;
-	private ReentrantLockXMLServer reentrantLockXMLServer = new ReentrantLockXMLServer();
-	private ReentrantLockLogServer reentrantLockLogServer = new ReentrantLockLogServer();
+	private final ReentrantLockXMLServer reentrantLockXMLServer = new ReentrantLockXMLServer();
+	private final ReentrantLockLogServer reentrantLockLogServer = new ReentrantLockLogServer();
 	private final String DIR_SCRIPT = Paths.get(UtilsAS.getInstance().getRunPath(), "script").toString();
 	private final String EXT_SCRIPT = (UtilsAS.getInstance().getOsName().contains("win")) ? ".bat" : ".sh";
 	private final String SCRIPT_START_SERVER = "start-server" + EXT_SCRIPT;

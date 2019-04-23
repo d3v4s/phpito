@@ -11,6 +11,7 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -173,6 +174,7 @@ public class ShellPHPito extends Shell {
 		Composite topComposite = new Composite(this, SWT.NONE);
 		topComposite.setLayoutData(BorderLayout.NORTH);
 		topComposite.setLayout(new GridLayout(1,  false));
+		topComposite.setCursor(new Cursor(getDisplay(), SWT.CURSOR_CROSS));
 
 		logOutText = new StyledText(topComposite, SWT.BORDER | SWT.MULTI | SWT.WRAP);
 		gd = new GridData(GridData.FILL_BOTH);
@@ -201,6 +203,7 @@ public class ShellPHPito extends Shell {
 			bttn.addSelectionListener(menuProjectSelAdptList[i]);
 			bttn.setLayoutData(gdBttnWidth);
 			bttn.setText(menuProjectList[i]);
+			bttn.setCursor(new Cursor(getDisplay(), SWT.CURSOR_HAND));
 			new Label(rightComposite, SWT.NONE).setLayoutData(gdLblHeight);
 			if (menuProjectList[i].equals("Modifica"))
 				bttnProjectList.add(bttn);
@@ -293,7 +296,7 @@ public class ShellPHPito extends Shell {
 	public void open() {
 		super.open();
 		flushTable();
-		new WriterTerminalThread(this).start();
+		new WriterTerminalThread(this, PHPitoManager.getInstance().getReentrantLockLogServer()).start();
 		new EnableStartStopThread(this).start();
 	}
 
