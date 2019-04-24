@@ -34,7 +34,12 @@ public class PHPitoManager {
 	private final String SCRIPT_CHECK_SERVER = "check-server" + EXT_SCRIPT;
 	private final String RUN = (UtilsAS.getInstance().getOsName().contains("win")) ? "" : "./";
 	public static final String NAME = "PHPito";
+	public static final String INFO = "PHP Server Manager";
+	public static final String VERSION = "1.0";
+	public static final String AUTHOR = "Andrea Serra";
+	public static final String LINK_GITHUB = "https://github.com/z4X0r/phpito";
 
+	/* costruttore */
 	private PHPitoManager() {
 	}
 
@@ -57,23 +62,8 @@ public class PHPitoManager {
 			return null;
 		return reentrantLockXMLServer.getProjectsMap().get(String.valueOf(id));
 	}
-//
-//	public LocalDateTime getLocalDateTimeLastModifyLogServer(Long id) throws FileException {
-//		if (id == null)
-//			return LocalDateTime.MAX;
-//		Project project = getProjectById(id);
-//		if (project == null)
-//			return LocalDateTime.MAX;
-//		File logFile = LoggerAS.getInstance().getFileLog(project.getName(), null, new String[] {"server", project.getIdAndName()});
-//		Integer year = Integer.valueOf(new SimpleDateFormat("yyyy").format(logFile.lastModified()));
-//		Integer month = Integer.valueOf(new SimpleDateFormat("MM").format(logFile.lastModified()));
-//		Integer dayOfMonth = Integer.valueOf(new SimpleDateFormat("dd").format(logFile.lastModified()));
-//		Integer hour = Integer.valueOf(new SimpleDateFormat("HH").format(logFile.lastModified()));
-//		Integer minute = Integer.valueOf(new SimpleDateFormat("mm").format(logFile.lastModified()));
-//		Integer second = Integer.valueOf(new SimpleDateFormat("ss").format(logFile.lastModified()));
-//		return LocalDateTime.of(year, month, dayOfMonth, hour, minute, second);
-//	}
-	
+
+	/* metodo per avviare un server */
 	public boolean startServer(Project project) throws IOException, ServerException, NumberFormatException, ProjectException {
 		if (project == null)
 			throw new ProjectException("Errore!!! Nessun server selezionato");
@@ -123,7 +113,8 @@ public class PHPitoManager {
 		flushRunningServers();
 		return false;
 	}
-	
+
+	/* thread per leggere l'output log del server */
 	private class ReadOutputServerThread extends Thread {
 		Project project;
 		BufferedReader bufferedReader;
@@ -159,8 +150,8 @@ public class PHPitoManager {
 			}
 		}
 	}
-	
 
+	/* metodo che aggiorna i server in esecuzione sull'xml */
 	public void flushRunningServers() throws IOException, NumberFormatException, ProjectException {
 		HashMap<String, Project> projectMap = reentrantLockXMLServer.getProjectsMap();
 		Project prjct = null;
@@ -174,7 +165,8 @@ public class PHPitoManager {
 			reentrantLockXMLServer.updateProject(prjct);
 		}
 	}
-	
+
+	/* metodo che ritorna i server in esecuzione */
 	public ArrayList<Server> getRunningServers() throws IOException, ProjectException {
 		ArrayList<Server> serverList = new ArrayList<Server>();
 		flushRunningServers();
@@ -185,7 +177,8 @@ public class PHPitoManager {
 		
 		return serverList;
 	}
-	
+
+	/* metodo che ritorna il PID del server */
 	public Long getPIDServer(Server server) throws NumberFormatException, IOException, ProjectException {
 		if (server == null)
 			throw new ProjectException("Errore!!! Nessun server selezionato");
@@ -210,7 +203,8 @@ public class PHPitoManager {
 		br.close();
 		return null;
 	}
-	
+
+	/* metodo che controlla se il server e' in esecuzione */
 	public boolean isServerRunning(Server server) throws IOException {
 		if (server.getProcessID() == null)
 			return false;
@@ -236,7 +230,7 @@ public class PHPitoManager {
 		return false;
 	}
 	
-
+	/* metodo per stoppare server */
 	public boolean stopServer(Project project) throws IOException, ServerException, ProjectException {
 		if (project == null)
 			throw new ProjectException("Errore!!! Nessun server selezionato");

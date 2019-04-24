@@ -17,52 +17,6 @@ import it.phpito.data.Project;
 
 public class ReentrantLockLogServer {
 	private ReentrantLock reentrantLock = new ReentrantLock();
-//	private final String[] bannerList = new String[] {
-//			
-//			
-//			"  ____  _   _ ____  _ _        \n" + 
-//			" |  _ \\| | | |  _ \\(_) |_ ___  \n" + 
-//			" | |_) | |_| | |_) | | __/ _ \\ \n" + 
-//			" |  __/|  _  |  __/| | || (_) |\n" + 
-//			" |_|   |_| |_|_|   |_|\\__\\___/ \n" + 
-//			"                               ",
-//			
-//			" ______   __  __     ______   __     ______   ______    \n" + 
-//			"/\\  == \\ /\\ \\_\\ \\   /\\  == \\ /\\ \\   /\\__  _\\ /\\  __ \\   \n" + 
-//			"\\ \\  _-/ \\ \\  __ \\  \\ \\  _-/ \\ \\ \\  \\/_/\\ \\/ \\ \\ \\/\\ \\  \n" + 
-//			" \\ \\_\\    \\ \\_\\ \\_\\  \\ \\_\\    \\ \\_\\    \\ \\_\\  \\ \\_____\\ \n" + 
-//			"  \\/_/     \\/_/\\/_/   \\/_/     \\/_/     \\/_/   \\/_____/ \n" + 
-//			"                                                        ",
-//			
-//			" _______  ____  ____  _______   _   _           \n" + 
-//			"|_   __ \\|_   ||   _||_   __ \\ (_) / |_         \n" + 
-//			"  | |__) | | |__| |    | |__) |__ `| |-' .--.   \n" + 
-//			"  |  ___/  |  __  |    |  ___/[  | | | / .'`\\ \\ \n" + 
-//			" _| |_    _| |  | |_  _| |_    | | | |,| \\__. | \n" + 
-//			"|_____|  |____||____||_____|  [___]\\__/ '.__.'  \n" + 
-//			"                                                ",
-//
-//			"  _____  _    _ _____ _ _        \n" + 
-//			" |  __ \\| |  | |  __ (_) |       \n" + 
-//			" | |__) | |__| | |__) || |_ ___  \n" + 
-//			" |  ___/|  __  |  ___/ | __/ _ \\ \n" + 
-//			" | |    | |  | | |   | | || (_) |\n" + 
-//			" |_|    |_|  |_|_|   |_|\\__\\___/ \n" + 
-//			"                                 \n" + 
-//			"                                 ",
-//			
-//			" ██▓███   ██░ ██  ██▓███   ██▓▄▄▄█████▓ ▒█████  \n" + 
-//			"▓██░  ██▒▓██░ ██▒▓██░  ██▒▓██▒▓  ██▒ ▓▒▒██▒  ██▒\n" + 
-//			"▓██░ ██▓▒▒██▀▀██░▓██░ ██▓▒▒██▒▒ ▓██░ ▒░▒██░  ██▒\n" + 
-//			"▒██▄█▓▒ ▒░▓█ ░██ ▒██▄█▓▒ ▒░██░░ ▓██▓ ░ ▒██   ██░\n" + 
-//			"▒██▒ ░  ░░▓█▒░██▓▒██▒ ░  ░░██░  ▒██▒ ░ ░ ████▓▒░\n" + 
-//			"▒▓▒░ ░  ░ ▒ ░░▒░▒▒▓▒░ ░  ░░▓    ▒ ░░   ░ ▒░▒░▒░ \n" + 
-//			"░▒ ░      ▒ ░▒░ ░░▒ ░      ▒ ░    ░      ░ ▒ ▒░ \n" + 
-//			"░░        ░  ░░ ░░░        ▒ ░  ░      ░ ░ ░ ▒  \n" + 
-//			"          ░  ░  ░          ░               ░ ░  \n" + 
-//			"                                                "
-//	};
-//	private final int randomBanner = new Random().nextInt(bannerList.length);
 
 	/* metodo per scriver logo del progetto */
 	public void writeLog(String write, Project project) {
@@ -149,18 +103,18 @@ public class ReentrantLockLogServer {
 		} catch (InterruptedException e) {
 		}
 	}
-	
 
 	public LocalDateTime getLocalDateTimeLastModifyLogServer(Project project) throws FileException {
 		if (project == null)
 			return LocalDateTime.MAX;
 		File logFile = LoggerAS.getInstance().getFileLog("server", null, new String[] {"server", project.getIdAndName()});
-		Integer year = Integer.valueOf(new SimpleDateFormat("yyyy").format(logFile.lastModified()));
-		Integer month = Integer.valueOf(new SimpleDateFormat("MM").format(logFile.lastModified()));
-		Integer dayOfMonth = Integer.valueOf(new SimpleDateFormat("dd").format(logFile.lastModified()));
-		Integer hour = Integer.valueOf(new SimpleDateFormat("HH").format(logFile.lastModified()));
-		Integer minute = Integer.valueOf(new SimpleDateFormat("mm").format(logFile.lastModified()));
-		Integer second = Integer.valueOf(new SimpleDateFormat("ss").format(logFile.lastModified()));
+		long lastMod = logFile.lastModified();
+		Integer year = Integer.valueOf(new SimpleDateFormat("yyyy").format(lastMod));
+		Integer month = Integer.valueOf(new SimpleDateFormat("MM").format(lastMod));
+		Integer dayOfMonth = Integer.valueOf(new SimpleDateFormat("dd").format(lastMod));
+		Integer hour = Integer.valueOf(new SimpleDateFormat("HH").format(lastMod));
+		Integer minute = Integer.valueOf(new SimpleDateFormat("mm").format(lastMod));
+		Integer second = Integer.valueOf(new SimpleDateFormat("ss").format(lastMod));
 		return LocalDateTime.of(year, month, dayOfMonth, hour, minute, second);
 	}
 

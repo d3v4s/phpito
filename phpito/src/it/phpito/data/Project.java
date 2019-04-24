@@ -65,10 +65,10 @@ public class Project {
 
 	@Override
 	public String toString() {
-		String ret = (id != null ? "Id:\t\t" + getIdString() + "\n" : "").concat(
+		String ret = (id != null ? "Id:\t\t\t" + getIdString() + "\n" : "").concat(
 					"Nome:\t\t" + name + "\n"
 					+ "Path:\t\t" + server.getPath() + "\n"
-					+ "Indirizzo:\t\t" + server.getAddressAndPort());
+					+ "Indirizzo:\t" + server.getAddressAndPort());
 		return ret;
 	}
 	
