@@ -1,2 +1,2 @@
 # phpito
-Server Manager for PHP
+PHP Server Manager
