@@ -12,6 +12,7 @@ import org.w3c.dom.Node;
 import it.as.utils.core.LogErrorAS;
 import it.as.utils.core.XMLManagerAS;
 import it.as.utils.exception.FileException;
+import it.phpito.controller.PHPitoConf;
 import it.phpito.controller.PHPitoManager;
 import it.phpito.data.Project;
 import it.phpito.data.Server;
@@ -19,7 +20,7 @@ import it.phpito.exception.ProjectException;
 
 public class ReentrantLockXMLServer {
 	private ReentrantLock reentrantLock = new ReentrantLock();
-	private final String PATH_FILE_XML = Paths.get("conf", "server.xml").toString();
+	private final String PATH_FILE_XML = Paths.get(PHPitoConf.DIR_CONF, "server.xml").toString();
 	private final String XML_SERVER = "server";
 	private final String XML_NAME = "name";
 	private final String XML_PATH = "path";

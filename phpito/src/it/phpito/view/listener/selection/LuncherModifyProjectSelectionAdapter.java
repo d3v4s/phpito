@@ -21,14 +21,6 @@ public class LuncherModifyProjectSelectionAdapter extends SelectionAdapter {
 		super();
 		this.shellPHPito = shellPHPito;
 	}
-	
-	@Override
-	public void widgetDefaultSelected(SelectionEvent e) {
-		ShellDialogPHPito shellDialog = new ShellDialogPHPito(shellPHPito);
-		lunchModifyProject(shellDialog);
-	}
-
-
 
 	@Override
 	public void widgetSelected(SelectionEvent e) {
@@ -45,7 +37,7 @@ public class LuncherModifyProjectSelectionAdapter extends SelectionAdapter {
 		
 		/* ciclo per label */
 		String[] txtLbl = {"Id:", "Nome:", "Path:", "Indirizzo:", "Porta:"};
-		UtilsViewAS.getInstance().printLabelVertical(txtLbl, 30, 30, 60, shellPHPito.getFontHeight(), 30, shellDialog);
+		UtilsViewAS.getInstance().printLabelVertical(txtLbl, 30, 30, 60, shellPHPito.getFontHeight(), 30, shellDialog, SWT.NONE);
 		
 		/* ciclo per text */
 		String[] keyList = Project.getArrayKeyProject();

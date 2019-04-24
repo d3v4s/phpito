@@ -28,15 +28,19 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.w3c.dom.DOMException;
 
+import it.as.utils.exception.FileException;
 import it.as.utils.view.UtilsViewAS;
+import it.phpito.controller.PHPitoConf;
 import it.phpito.controller.PHPitoManager;
 import it.phpito.data.Project;
 import it.phpito.data.Server;
 import it.phpito.exception.ProjectException;
 import it.phpito.exception.ServerException;
 import it.phpito.view.listener.selection.DeleteProjectSelectionAdapter;
+import it.phpito.view.listener.selection.LuncherAboutSelctionAdapter;
 import it.phpito.view.listener.selection.LuncherAddProjectSelectionAdapter;
 import it.phpito.view.listener.selection.LuncherModifyProjectSelectionAdapter;
+import it.phpito.view.listener.selection.LuncherSettingSelctionAdapter;
 import it.phpito.view.listener.selection.StartServerSelectionAdapter;
 import it.phpito.view.listener.selection.StopServerSelectionAdapter;
 import it.phpito.view.listener.selection.TableSelectionAdapter;
@@ -50,6 +54,7 @@ public class ShellPHPito extends Shell {
 	private final int fontHeight = 20;
 	private StyledText logOutText;
 	private Long idProjectSelect;
+	private boolean actvtLogMon = true;
 	private ArrayList<MenuItem> mntmStartList = new ArrayList<MenuItem>();
 	private ArrayList<MenuItem> mntmStopList = new ArrayList<MenuItem>();
 	private ArrayList<MenuItem> mntmProjectList = new ArrayList<MenuItem>();
@@ -128,9 +133,9 @@ public class ShellPHPito extends Shell {
 	public void createContents() throws DOMException {
 		this.setMinimumSize(200, 550);
 		this.setSize(850, 600);
-		UtilsViewAS.getInstance().centerWindow(this);
 		this.setText("PHPito");
 		this.setLayout(new BorderLayout(0, 0));
+		UtilsViewAS.getInstance().centerWindow(this);
 
 		/* barra menu' della testata */
 		Menu menu = new Menu(this, SWT.BAR);
@@ -145,7 +150,7 @@ public class ShellPHPito extends Shell {
 		mn = new Menu(mntm);
 		mntm.setMenu(mn);
 		
-		String[] menuProjectList = new String[] {"Aggiungi", "Modifica", "Elimina", "Start", "Stop"};
+		String[] menuProjectList = {"Aggiungi", "Modifica", "Elimina", "Start", "Stop"};
 		SelectionAdapter[] menuProjectSelAdptList = new SelectionAdapter[] {
 				new LuncherAddProjectSelectionAdapter(this),
 				new LuncherModifyProjectSelectionAdapter(this),
@@ -168,23 +173,46 @@ public class ShellPHPito extends Shell {
 				mntmStopList.add(mntm);
 		}
 		
-		Button bttn;
-		GridData gd;
-		
-		/* contenitore per la zona alta */
-		Composite topComposite = new Composite(this, SWT.NONE);
-		topComposite.setLayoutData(BorderLayout.NORTH);
-		topComposite.setLayout(new GridLayout(1,  false));
-		topComposite.setCursor(new Cursor(getDisplay(), SWT.CURSOR_CROSS));
+		/* menu' casca PHPito */
+		mntm = new MenuItem(menu, SWT.CASCADE);
+		mntm.setText("PHPito");
+		mn = new Menu(mntm);
+		mntm.setMenu(mn);
 
-		logOutText = new StyledText(topComposite, SWT.BORDER | SWT.MULTI | SWT.WRAP);
-		gd = new GridData(GridData.FILL_BOTH);
-		gd.heightHint = 210;
-		logOutText.setLayoutData(gd);
-		logOutText.getFont().getFontData()[0].setHeight(fontHeight);
-		logOutText.setForeground(new Color(getDisplay(), 20, 207, 20));
-		logOutText.setBackground(new Color(getDisplay(), 0, 0, 0));
-		logOutText.setEnabled(false);
+		String[] menuPHPitoList = {"Impostazioni", "About"};
+		SelectionAdapter[] menuPHPitoSelAdptList = {
+				new LuncherSettingSelctionAdapter(this),
+				new LuncherAboutSelctionAdapter(this)
+		};
+		
+		for (int i = 0; i < menuPHPitoList.length; i++) {
+			mntm = new MenuItem(mn, SWT.NONE);
+			mntm.addSelectionListener(menuPHPitoSelAdptList[i]);
+			mntm.setText(menuPHPitoList[i]);
+		}
+
+		GridData gd;
+		try {
+			actvtLogMon = PHPitoConf.getInstance().getActvtLogMonConf();
+		} catch (FileException e) {
+			UtilsViewAS.getInstance().lunchMBError(this, e, PHPitoManager.NAME);
+		}
+		if (actvtLogMon) {
+			Composite topComposite = new Composite(this, SWT.NONE);
+			topComposite.setLayoutData(BorderLayout.NORTH);
+			topComposite.setLayout(new GridLayout(1,  false));
+			topComposite.setCursor(new Cursor(getDisplay(), SWT.CURSOR_CROSS));
+			
+			logOutText = new StyledText(topComposite, SWT.BORDER | SWT.MULTI | SWT.WRAP);
+			gd = new GridData(GridData.FILL_BOTH);
+			gd.heightHint = 210;
+			logOutText.setLayoutData(gd);
+			logOutText.getFont().getFontData()[0].setHeight(fontHeight);
+			logOutText.setForeground(new Color(getDisplay(), 20, 207, 20));
+			logOutText.setBackground(new Color(getDisplay(), 0, 0, 0));
+			logOutText.setEnabled(false);
+		}
+		/* contenitore per la zona alta */
 
 		/* contenitore per la zona laterale destra */
 		Composite rightComposite = new Composite(this, SWT.NONE);
@@ -199,6 +227,7 @@ public class ShellPHPito extends Shell {
 		GridData gdLblHeight = new GridData();
 		gdLblHeight.heightHint = 13;
 		
+		Button bttn;
 		for (int i = 0; i < menuProjectList.length; i++) {
 			bttn = new Button(rightComposite, SWT.PUSH);
 			bttn.addSelectionListener(menuProjectSelAdptList[i]);
@@ -285,19 +314,19 @@ public class ShellPHPito extends Shell {
 					ti.setForeground(new Color(getDisplay(), new RGB(0, 0, 0)));
 				}
 			} catch (IOException e) {
-//				LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
+				UtilsViewAS.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
 			}
 		}
 	}
 
 	/* metodo che riscrive la tabella recuperando i dati dall'xml */
 	public void flushTable() {
-//		int indexTable = table.getSelectionIndex();
+		int indexTable = table.getSelectionIndex();
 		HashMap<String, Project> mapProjects = PHPitoManager.getInstance().getReentrantLockXMLServer().getProjectsMap();
 		printProjectsOnTable(mapProjects);
-//		if (indexTable >= table.getItems().length || indexTable < 0)
-//			indexTable = 0;
-//		table.setSelection(indexTable);
+		if (indexTable >= table.getItems().length || indexTable < 0)
+			indexTable = 0;
+		table.setSelection(indexTable);
 		autoSetIdProjectSelect();
 	}
 
@@ -305,7 +334,8 @@ public class ShellPHPito extends Shell {
 	public void open() {
 		super.open();
 		flushTable();
-		new WriterTerminalThread(this, PHPitoManager.getInstance().getReentrantLockLogServer()).start();
+		if (actvtLogMon)
+			new WriterTerminalThread(this, PHPitoManager.getInstance().getReentrantLockLogServer()).start();
 		new EnableStartStopThread(this).start();
 	}
 

@@ -10,6 +10,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Text;
 
 import it.as.utils.view.UtilsViewAS;
+import it.as.utils.view.listener.selection.LuncherSelectPathSelectionAdapter;
 import it.phpito.data.Project;
 import it.phpito.view.shell.ShellDialogPHPito;
 import it.phpito.view.shell.ShellPHPito;
@@ -37,7 +38,7 @@ public class LuncherAddProjectSelectionAdapter extends SelectionAdapter {
 
 		/* ciclo per label */
 		String[] txtLbl = {"Nome:", "Path:", "Indirizzo:", "Porta:"};
-		UtilsViewAS.getInstance().printLabelVertical(txtLbl, 30, 30, 60, shellPHPito.getFontHeight(), 30, shellDialog);
+		UtilsViewAS.getInstance().printLabelVertical(txtLbl, 30, 30, 60, shellPHPito.getFontHeight(), 30, shellDialog, SWT.NONE);
 
 		/* ciclo per text */
 		String[] keyList = Project.getArrayKeyProjectNoId();
@@ -61,7 +62,7 @@ public class LuncherAddProjectSelectionAdapter extends SelectionAdapter {
 		String[] namesButton = new String[] {"Annulla", "Aggiungi"};
 
 		Button bttn = new Button(shellDialog, SWT.PUSH);
-		bttn.addSelectionListener(new LuncherSelectPathSelectionAdapter(shellDialog));
+		bttn.addSelectionListener(new LuncherSelectPathSelectionAdapter(shellDialog, shellDialog.getTextMap().get(Project.K_PATH)));
 		bttn.setBounds(270, 75, 80, 30);
 		bttn.setText("Scegli");
 		bttn.setCursor(new Cursor(shellPHPito.getDisplay(), SWT.CURSOR_HAND));
