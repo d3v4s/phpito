@@ -1,2 +1,2 @@
-# phpito
+# PHPito
 PHP Server Manager
