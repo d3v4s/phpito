@@ -19,9 +19,9 @@ public class ResetTextSelectionAdapter extends SelectionAdapter {
 	}
 
 	@Override
-	public void widgetSelected(SelectionEvent e) {
+	public void widgetSelected(SelectionEvent se) {
+		Project project = shellDialog.getShellPHPito().getProjectSelect();
 		try {
-			Project project = shellDialog.getShellPHPito().getProjectSelect();
 			Project newProject = project.clone();
 			HashMap<String, Text> textMap = shellDialog.getTextMap();
 			newProject.setName(textMap.get(Project.K_NAME).getText());
@@ -32,7 +32,8 @@ public class ResetTextSelectionAdapter extends SelectionAdapter {
 				shellDialog.dispose();
 			else
 				shellDialog.setTextByProject(project);
-		} catch (ProjectException e1) {
+		} catch (ProjectException e) {
+			shellDialog.setTextByProject(project);
 		}
 	}
 }
