@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,6 +27,7 @@ public class PHPitoManager {
 	private static PHPitoManager phpItoManager;
 	private final ReentrantLockXMLServer reentrantLockXMLServer = new ReentrantLockXMLServer();
 	private final ReentrantLockLogServer reentrantLockLogServer = new ReentrantLockLogServer();
+	private final ArrayBlockingQueue<Double> cpuUsageQueue = new ArrayBlockingQueue<Double>(80);
 	private final String DIR_SCRIPT = Paths.get(UtilsAS.getInstance().getRunPath(), "script").toString();
 	private final String EXT_SCRIPT = (UtilsAS.getInstance().getOsName().contains("win")) ? ".bat" : ".sh";
 	private final String SCRIPT_START_SERVER = "start-server" + EXT_SCRIPT;
@@ -41,6 +43,10 @@ public class PHPitoManager {
 
 	/* costruttore */
 	private PHPitoManager() {
+	}
+	
+	public ArrayBlockingQueue<Double> getCpuUsageQueue() {
+		return cpuUsageQueue;
 	}
 
 	/* singleton */

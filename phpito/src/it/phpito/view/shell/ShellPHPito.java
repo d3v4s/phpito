@@ -16,6 +16,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -28,8 +29,11 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.w3c.dom.DOMException;
 
+import it.as.utils.core.LoggerAS;
+import it.as.utils.core.UtilsAS;
 import it.as.utils.exception.FileException;
 import it.as.utils.view.UtilsViewAS;
+import it.as.utils.view.listener.selection.LuncherFileExplorerSelectionAdapter;
 import it.phpito.controller.PHPitoConf;
 import it.phpito.controller.PHPitoManager;
 import it.phpito.data.Project;
@@ -37,6 +41,7 @@ import it.phpito.data.Server;
 import it.phpito.exception.ProjectException;
 import it.phpito.exception.ServerException;
 import it.phpito.view.listener.selection.DeleteProjectSelectionAdapter;
+import it.phpito.view.listener.selection.DrawerCpuUsagePaintListener;
 import it.phpito.view.listener.selection.LuncherAboutSelctionAdapter;
 import it.phpito.view.listener.selection.LuncherAddProjectSelectionAdapter;
 import it.phpito.view.listener.selection.LuncherModifyProjectSelectionAdapter;
@@ -45,6 +50,7 @@ import it.phpito.view.listener.selection.StartServerSelectionAdapter;
 import it.phpito.view.listener.selection.StopServerSelectionAdapter;
 import it.phpito.view.listener.selection.TableSelectionAdapter;
 import it.phpito.view.thread.EnableStartStopThread;
+import it.phpito.view.thread.UsageCpuThread;
 import it.phpito.view.thread.WriterTerminalThread;
 import swing2swt.layout.BorderLayout;
 
@@ -53,8 +59,11 @@ public class ShellPHPito extends Shell {
 	private Table table;
 	private final int fontHeight = 20;
 	private StyledText logOutText;
+	private Canvas canvas;
+	private Label lblCPU;
 	private Long idProjectSelect;
 	private boolean actvtLogMon = true;
+	private boolean actvtSysInfo = true;
 	private ArrayList<MenuItem> mntmStartList = new ArrayList<MenuItem>();
 	private ArrayList<MenuItem> mntmStopList = new ArrayList<MenuItem>();
 	private ArrayList<MenuItem> mntmProjectList = new ArrayList<MenuItem>();
@@ -128,11 +137,17 @@ public class ShellPHPito extends Shell {
 	public ArrayList<Button> getBttnProjectList() {
 		return bttnProjectList;
 	}
+	public Canvas getCanvas() {
+		return canvas;
+	}
+	public Label getLblCPU() {
+		return lblCPU;
+	}
 
 	/* metodo per creare contenuti */
 	public void createContents() throws DOMException {
-		this.setMinimumSize(200, 550);
-		this.setSize(850, 600);
+		this.setMinimumSize(300, 640);
+		this.setSize(850, 640);
 		this.setText("PHPito");
 		this.setLayout(new BorderLayout(0, 0));
 		UtilsViewAS.getInstance().centerWindow(this);
@@ -179,9 +194,10 @@ public class ShellPHPito extends Shell {
 		mn = new Menu(mntm);
 		mntm.setMenu(mn);
 
-		String[] menuPHPitoList = {"Impostazioni", "About"};
+		String[] menuPHPitoList = {"Impostazioni", "Apri cartella Log", "About"};
 		SelectionAdapter[] menuPHPitoSelAdptList = {
 				new LuncherSettingSelctionAdapter(this),
+				new LuncherFileExplorerSelectionAdapter(this, LoggerAS.getInstance().getPathDirLog("server"), PHPitoManager.NAME),
 				new LuncherAboutSelctionAdapter(this)
 		};
 		
@@ -198,6 +214,7 @@ public class ShellPHPito extends Shell {
 			UtilsViewAS.getInstance().lunchMBError(this, e, PHPitoManager.NAME);
 		}
 		if (actvtLogMon) {
+			/* contenitore per la zona alta */
 			Composite topComposite = new Composite(this, SWT.NONE);
 			topComposite.setLayoutData(BorderLayout.NORTH);
 			topComposite.setLayout(new GridLayout(1,  false));
@@ -208,11 +225,19 @@ public class ShellPHPito extends Shell {
 			gd.heightHint = 210;
 			logOutText.setLayoutData(gd);
 			logOutText.getFont().getFontData()[0].setHeight(fontHeight);
-			logOutText.setForeground(new Color(getDisplay(), 20, 207, 20));
-			logOutText.setBackground(new Color(getDisplay(), 0, 0, 0));
+//			logOutText.setForeground(new Color(getDisplay(), 20, 207, 20));
+//			logOutText.setBackground(new Color(getDisplay(), 0, 0, 0));
+			logOutText.setForeground(getDisplay().getSystemColor(SWT.COLOR_GREEN));
+			logOutText.setBackground(getDisplay().getSystemColor(SWT.COLOR_BLACK));
 			logOutText.setEnabled(false);
+			
+//			Menu ppmnLOT = new Menu(logOutText);
+//			logOutText.setMenu(ppmnLOT);
+			
+//			mntm = new MenuItem(ppmnLOT, SWT.NONE);
+//			mntm.addSelectionListener(new LuncherFileExplorerSelectionAdapter(this, LoggerAS.getInstance().getPathDirLog("server"), PHPitoManager.NAME));
+//			mntm.setText("Apri Log");
 		}
-		/* contenitore per la zona alta */
 
 		/* contenitore per la zona laterale destra */
 		Composite rightComposite = new Composite(this, SWT.NONE);
@@ -293,6 +318,36 @@ public class ShellPHPito extends Shell {
 			tblclmn.getColumn().setResizable(true);
 			tblclmn.getColumn().setMoveable(true);
 		}
+
+		try {
+			actvtSysInfo = PHPitoConf.getInstance().getActvtSysInfoConf();
+		} catch (FileException e) {
+			UtilsViewAS.getInstance().lunchMBError(this, e, PHPitoManager.NAME);
+		}
+
+		if (actvtSysInfo) {
+			Composite compositeBottom = new Composite(shellPHPito, SWT.NONE);
+			compositeBottom.setLayoutData(BorderLayout.SOUTH);
+
+			canvas = new Canvas(compositeBottom, SWT.BORDER);
+			canvas.setBounds(20, 20, 80, 60);
+			canvas.addPaintListener(new DrawerCpuUsagePaintListener(PHPitoManager.getInstance().getCpuUsageQueue()));
+			canvas.setBackground(getDisplay().getSystemColor(SWT.COLOR_BLACK));
+			
+			new Label(compositeBottom, SWT.NONE).setBounds(0, 100, 300, 0);
+			
+
+			String[] nameLblList = {
+					"OS: " + UtilsAS.getInstance().getOsName(),
+					"Arch: " + UtilsAS.getInstance().getOsArch(),
+					"User: " + UtilsAS.getInstance().getOsUser()
+			};
+			UtilsViewAS.getInstance().printLabelVertical(nameLblList, 110, 8, 200, fontHeight, 0, compositeBottom, SWT.NONE);
+			
+			lblCPU = new Label(compositeBottom, SWT.NONE);
+			lblCPU.setBounds(110, 68, 200, fontHeight);
+			lblCPU.setText("CPU: ");
+		}
 	}
 
 	/* metodo che riscrive tabella da hashmap di progetti */
@@ -337,6 +392,7 @@ public class ShellPHPito extends Shell {
 		if (actvtLogMon)
 			new WriterTerminalThread(this, PHPitoManager.getInstance().getReentrantLockLogServer()).start();
 		new EnableStartStopThread(this).start();
+		new UsageCpuThread(this, PHPitoManager.getInstance().getCpuUsageQueue()).start();
 	}
 
 	public void autoSetIdProjectSelect() {

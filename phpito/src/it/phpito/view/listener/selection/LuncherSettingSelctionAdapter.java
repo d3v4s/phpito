@@ -38,10 +38,10 @@ public class LuncherSettingSelctionAdapter extends SelectionAdapter {
 	/* metodo per lanciare finestra che aggiunge il progetto */
 	public void lunchSettingPHPito(ShellDialogPHPito shellDialog) {
 		shellDialog.setSize(370, 360);
-		UtilsViewAS.getInstance().centerWindow(shellDialog);
 		shellDialog.setText("Impostazioni PHPito");
 		shellDialog.setLayout(new BorderLayout(0, 0));
 		shellDialog.setConfChckBttnMap(new HashMap<String, Button>());
+		UtilsViewAS.getInstance().centerWindow(shellDialog);
 
 		TabFolder tabFolder = new TabFolder(shellDialog, SWT.NONE);
 		tabFolder.setLayoutData(BorderLayout.CENTER);
@@ -82,7 +82,10 @@ public class LuncherSettingSelctionAdapter extends SelectionAdapter {
 		compositeBottom.setLayoutData(BorderLayout.SOUTH);
 		
         String[] namesBttnList = {"Annulla", "Salva"};
-        SelectionAdapter[] selAdptrBttnList = {new CloserShellSelectionAdpter(shellDialog), new SaveConfSelectionAdapter(shellDialog)};
+        SelectionAdapter[] selAdptrBttnList = {
+        		new CloserShellSelectionAdpter(shellDialog),
+        		new SaveConfSelectionAdapter(shellDialog)
+        };
         Button bttn;
 		for (int i = 0; i < namesBttnList.length; i++) {
 			bttn = new Button(compositeBottom, SWT.PUSH);
@@ -94,7 +97,7 @@ public class LuncherSettingSelctionAdapter extends SelectionAdapter {
 			bttn.setCursor(new Cursor(shellPHPito.getDisplay(), SWT.CURSOR_HAND));
 		}
 		
-		new Label(compositeBottom, SWT.NONE).setBounds(270, 20, 1, 50);
+		new Label(compositeBottom, SWT.NONE).setBounds(270, 20, 0, 50);
 		shellDialog.open();
 	}
 }

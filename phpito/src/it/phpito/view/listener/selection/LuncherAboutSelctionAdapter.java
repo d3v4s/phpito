@@ -2,10 +2,14 @@ package it.phpito.view.listener.selection;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Paths;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 
 import it.as.utils.core.UtilsAS;
@@ -30,9 +34,15 @@ public class LuncherAboutSelctionAdapter extends SelectionAdapter {
 
 	/* metodo per lanciare finestra che aggiunge il progetto */
 	public void lunchSettingPHPito(ShellDialogPHPito shellDialog) {
-		shellDialog.setSize(370, 360);
+		shellDialog.setSize(400, 360);
 		shellDialog.setText("About PHPito");
 		UtilsViewAS.getInstance().centerWindow(shellDialog);
+
+		String path = Paths.get("img", "logo-phpito.png").toString();
+		Label lblLogo = new Label(shellDialog, SWT.WRAP);
+		lblLogo.setImage(new Image(shellPHPito.getDisplay(), new ImageData(path)));
+		lblLogo.setBounds(0, -10, 400, 200);
+		
 		String[] txtLblList = {
 				PHPitoManager.NAME,
 				PHPitoManager.INFO,
@@ -40,11 +50,11 @@ public class LuncherAboutSelctionAdapter extends SelectionAdapter {
 				"Developed by: " + PHPitoManager.AUTHOR
 		};
 		
-		UtilsViewAS.getInstance().printLabelVertical(txtLblList, 10, 120, 350, shellPHPito.getFontHeight(), 15, shellDialog, SWT.CENTER);
+		UtilsViewAS.getInstance().printLabelVertical(txtLblList, 10, 190, 380, shellPHPito.getFontHeight(), 5, shellDialog, SWT.CENTER);
 		
 		Link link = new Link(shellDialog, SWT.CENTER);
 		link.getFont().getFontData()[0].setHeight(shellPHPito.getFontHeight());
-		link.setBounds(145, 260, 80, shellPHPito.getFontHeight() + 6);
+		link.setBounds(160, 290, 80, shellPHPito.getFontHeight() + 6);
 		link.setText("<a href=\"" + PHPitoManager.LINK_GITHUB + "\">Link GitHub</a>");
 		link.addSelectionListener(new SelectionAdapter(){
 			@Override
