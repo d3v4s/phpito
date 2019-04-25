@@ -392,7 +392,8 @@ public class ShellPHPito extends Shell {
 		if (actvtLogMon)
 			new WriterTerminalThread(this, PHPitoManager.getInstance().getReentrantLockLogServer()).start();
 		new EnableStartStopThread(this).start();
-		new UsageCpuThread(this, PHPitoManager.getInstance().getCpuUsageQueue()).start();
+		if (actvtSysInfo)
+			new UsageCpuThread(this, PHPitoManager.getInstance().getCpuUsageQueue()).start();
 	}
 
 	public void autoSetIdProjectSelect() {
