@@ -31,7 +31,6 @@ import org.w3c.dom.DOMException;
 
 import it.as.utils.core.LoggerAS;
 import it.as.utils.core.UtilsAS;
-import it.as.utils.exception.FileException;
 import it.as.utils.view.UtilsViewAS;
 import it.as.utils.view.listener.selection.LuncherFileExplorerSelectionAdapter;
 import it.phpito.controller.PHPitoConf;
@@ -62,8 +61,8 @@ public class ShellPHPito extends Shell {
 	private Canvas canvas;
 	private Label lblCPU;
 	private Long idProjectSelect;
-	private boolean actvtLogMon = true;
-	private boolean actvtSysInfo = true;
+	private boolean actvtLogMon;
+	private boolean actvtSysInfo;
 	private ArrayList<MenuItem> mntmStartList = new ArrayList<MenuItem>();
 	private ArrayList<MenuItem> mntmStopList = new ArrayList<MenuItem>();
 	private ArrayList<MenuItem> mntmProjectList = new ArrayList<MenuItem>();
@@ -208,11 +207,11 @@ public class ShellPHPito extends Shell {
 		}
 
 		GridData gd;
-		try {
-			actvtLogMon = PHPitoConf.getInstance().getActvtLogMonConf();
-		} catch (FileException e) {
-			UtilsViewAS.getInstance().lunchMBError(this, e, PHPitoManager.NAME);
-		}
+		actvtLogMon = PHPitoConf.getInstance().getActvtLogMonConf();
+//		try {
+//		} catch (FileException e) {
+//			UtilsViewAS.getInstance().lunchMBError(this, e, PHPitoManager.NAME);
+//		}
 		if (actvtLogMon) {
 			/* contenitore per la zona alta */
 			Composite topComposite = new Composite(this, SWT.NONE);
@@ -319,11 +318,11 @@ public class ShellPHPito extends Shell {
 			tblclmn.getColumn().setMoveable(true);
 		}
 
-		try {
-			actvtSysInfo = PHPitoConf.getInstance().getActvtSysInfoConf();
-		} catch (FileException e) {
-			UtilsViewAS.getInstance().lunchMBError(this, e, PHPitoManager.NAME);
-		}
+		actvtSysInfo = PHPitoConf.getInstance().getActvtSysInfoConf();
+//		try {
+//		} catch (FileException e) {
+//			UtilsViewAS.getInstance().lunchMBError(this, e, PHPitoManager.NAME);
+//		}
 
 		if (actvtSysInfo) {
 			Composite compositeBottom = new Composite(shellPHPito, SWT.NONE);

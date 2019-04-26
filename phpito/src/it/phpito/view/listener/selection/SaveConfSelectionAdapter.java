@@ -8,6 +8,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Spinner;
 
 import it.as.utils.core.UtilsAS;
 import it.as.utils.exception.FileException;
@@ -31,12 +32,17 @@ public class SaveConfSelectionAdapter extends SelectionAdapter {
 	public void widgetSelected(SelectionEvent se) {
 		HashMap<String, String> confMap = new HashMap<String, String>();
 		HashMap<String, Button> chckBttnMap = shellDialogPHPito.getConfChckBttnMap();
+		HashMap<String, Spinner> spinnerMap = shellDialogPHPito.getConfSpinnerMap();
 		for (String key : chckBttnMap.keySet())
 			confMap.put(key, String.valueOf(chckBttnMap.get(key).getSelection()));
+		for (String key : spinnerMap.keySet()) {
+			confMap.put(key, String.valueOf(spinnerMap.get(key).getSelection()));
+		}
 		try {
 			PHPitoConf.getInstance().saveConf(confMap);
 			shellDialogPHPito.dispose();
-			String msg = "Attenzione per visualizzare le modifiche e' necessario riavviare l'applicazione. Confermi???";
+			String msg = "Attenzione per visualizzare alcune modifiche e' necessario riavviare l'applicazione.\n"
+					+ "Riavviare ora???";
 			int res = UtilsViewAS.getInstance().lunchMB(shellPHPito, SWT.YES | SWT.NO, "Confermi???", msg);
 			if (res == SWT.YES)
 				UtilsAS.getInstance().restartApp();
