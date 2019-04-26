@@ -9,15 +9,13 @@ import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Slider;
+import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
-import it.as.utils.exception.FileException;
 import it.as.utils.view.UtilsViewAS;
 import it.as.utils.view.listener.selection.CloserShellSelectionAdpter;
 import it.phpito.controller.PHPitoConf;
-import it.phpito.controller.PHPitoManager;
 import it.phpito.view.shell.ShellDialogPHPito;
 import it.phpito.view.shell.ShellPHPito;
 import swing2swt.layout.BorderLayout;
@@ -31,7 +29,7 @@ public class LuncherSettingSelctionAdapter extends SelectionAdapter {
 	}
 	
 	@Override
-	public void widgetSelected(SelectionEvent e) {
+	public void widgetSelected(SelectionEvent se) {
 		ShellDialogPHPito shellDialog = new ShellDialogPHPito(shellPHPito);
 		lunchSettingPHPito(shellDialog);
 	}
@@ -42,7 +40,9 @@ public class LuncherSettingSelctionAdapter extends SelectionAdapter {
 		shellDialog.setText("Impostazioni PHPito");
 		shellDialog.setLayout(new BorderLayout(0, 0));
 		shellDialog.setConfChckBttnMap(new HashMap<String, Button>());
+		shellDialog.setConfSpinnerMap(new HashMap<String, Spinner>());
 		UtilsViewAS.getInstance().centerWindow(shellDialog);
+		Label lbl;
 
 		TabFolder tabFolder = new TabFolder(shellDialog, SWT.NONE);
 		tabFolder.setLayoutData(BorderLayout.CENTER);
@@ -54,14 +54,31 @@ public class LuncherSettingSelctionAdapter extends SelectionAdapter {
 		tabItemLog.setControl(compositeLog);
 
 		Button chckBttnActiveLogMonitor = new Button(compositeLog, SWT.CHECK);
-		chckBttnActiveLogMonitor.setBounds(20, 15 + shellPHPito.getFontHeight(), 170,  + shellPHPito.getFontHeight());
+		chckBttnActiveLogMonitor.setBounds(20, 15 + shellPHPito.getFontHeight(), 170, shellPHPito.getFontHeight());
 		chckBttnActiveLogMonitor.setText("Attiva Log Monitor");
-		try {
-			chckBttnActiveLogMonitor.setSelection(PHPitoConf.getInstance().getActvtLogMonConf());
-		} catch (FileException e) {
-			UtilsViewAS.getInstance().lunchMBError(shellDialog, e, PHPitoManager.NAME);
-		}
+		chckBttnActiveLogMonitor.setSelection(PHPitoConf.getInstance().getActvtLogMonConf());
+//		try {
+//		} catch (FileException e) {
+//			UtilsViewAS.getInstance().lunchMBError(shellDialog, e, PHPitoManager.NAME);
+//			chckBttnActiveLogMonitor.setSelection(true);
+//		}
 		shellDialog.getConfChckBttnMap().put(PHPitoConf.K_CONF_ACTVT_LOG_MON, chckBttnActiveLogMonitor);
+
+		lbl = new Label(compositeLog, SWT.NONE);
+		lbl.setBounds(20, 70, 100, shellPHPito.getFontHeight());
+		lbl.setText("N. righe log");
+		Spinner spinner = new Spinner(compositeLog, SWT.BORDER);
+		spinner.setMinimum(1);
+		spinner.setMaximum(10);
+		spinner.setIncrement(1);
+		spinner.setBounds(110, 65, 150, 30);
+		spinner.setSelection(PHPitoConf.getInstance().getRowLog());
+//		try {
+//		} catch (FileException e) {
+//			UtilsViewAS.getInstance().lunchMBError(shellDialog, e, PHPitoManager.NAME);
+//			spinner.setSelection(10);
+//		}
+		shellDialog.getConfSpinnerMap().put(PHPitoConf.K_CONF_ROW_LOG_MON, spinner);
 		
 		TabItem tabItemSys = new TabItem(tabFolder, SWT.NONE);
 		tabItemSys.setText("System Info");
@@ -70,13 +87,14 @@ public class LuncherSettingSelctionAdapter extends SelectionAdapter {
 		tabItemSys.setControl(compositeSys);
 		
 		Button chckBttnActiveSystemInfo = new Button(compositeSys, SWT.CHECK);
-		chckBttnActiveSystemInfo.setBounds(20, 15 + shellPHPito.getFontHeight(), 170,  + shellPHPito.getFontHeight());
+		chckBttnActiveSystemInfo.setBounds(20, 15 + shellPHPito.getFontHeight(), 170, shellPHPito.getFontHeight());
 		chckBttnActiveSystemInfo.setText("Attiva System Info");
-		try {
-			chckBttnActiveSystemInfo.setSelection(PHPitoConf.getInstance().getActvtSysInfoConf());
-		} catch (FileException e) {
-			UtilsViewAS.getInstance().lunchMBError(shellDialog, e, PHPitoManager.NAME);
-		}
+		chckBttnActiveSystemInfo.setSelection(PHPitoConf.getInstance().getActvtSysInfoConf());
+//		try {
+//		} catch (FileException e) {
+//			UtilsViewAS.getInstance().lunchMBError(shellDialog, e, PHPitoManager.NAME);
+//			chckBttnActiveSystemInfo.setSelection(true);
+//		}
 		shellDialog.getConfChckBttnMap().put(PHPitoConf.K_CONF_ACTVT_SYS_INFO, chckBttnActiveSystemInfo);
 
 		Composite compositeBottom = new Composite(shellDialog, SWT.NONE);

@@ -6,6 +6,7 @@ import org.w3c.dom.DOMException;
 
 import it.as.utils.core.LogErrorAS;
 import it.as.utils.exception.FileException;
+import it.phpito.controller.PHPitoConf;
 import it.phpito.controller.PHPitoManager;
 import it.phpito.controller.lock.ReentrantLockLogServer;
 import it.phpito.data.Project;
@@ -38,8 +39,13 @@ public class WriterTerminalThread extends Thread {
 					shellPHPito.getDisplay().asyncExec(new Runnable() {
 						@Override
 						public void run() {
-							String out = reentrantLockLogServer.readLog(project, 10);
+							String out = reentrantLockLogServer.readLog(project, PHPitoConf.getInstance().getRowLog());
 							shellPHPito.getLogOutText().setText(out);
+//							try {
+//							} catch (FileException e) {
+//								// TODO Auto-generated catch block
+//								e.printStackTrace();
+//							}
 						}
 					});
 					lastPrint = LocalDateTime.now();
