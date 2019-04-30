@@ -1,4 +1,4 @@
-package it.phpito.view.listener.selection;
+package it.phpito.view.listener.selection.luncher;
 
 import java.util.HashMap;
 
@@ -11,6 +11,9 @@ import org.eclipse.swt.widgets.Text;
 import it.as.utils.view.UtilsViewAS;
 import it.as.utils.view.listener.selection.LuncherSelectPathSelectionAdapter;
 import it.phpito.data.Project;
+import it.phpito.view.listener.selection.project.UpdateProjectSelctionAdapter;
+import it.phpito.view.listener.selection.text.ResetTextSelectionAdapter;
+import it.phpito.view.listener.selection.text.TextFocusSelectionAdapter;
 import it.phpito.view.shell.ShellDialogPHPito;
 import it.phpito.view.shell.ShellPHPito;
 

@@ -3,6 +3,7 @@ package it.phpito.view.listener.selection;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
+import it.phpito.view.listener.selection.luncher.LuncherModifyProjectSelectionAdapter;
 import it.phpito.view.shell.ShellDialogPHPito;
 import it.phpito.view.shell.ShellPHPito;
 

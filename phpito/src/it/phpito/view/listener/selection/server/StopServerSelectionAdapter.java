@@ -1,4 +1,4 @@
-package it.phpito.view.listener.selection;
+package it.phpito.view.listener.selection.server;
 
 import java.io.IOException;
 

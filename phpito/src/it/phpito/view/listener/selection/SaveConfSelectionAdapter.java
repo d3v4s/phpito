@@ -15,32 +15,34 @@ import it.as.utils.exception.FileException;
 import it.as.utils.view.UtilsViewAS;
 import it.phpito.controller.PHPitoConf;
 import it.phpito.controller.PHPitoManager;
-import it.phpito.view.shell.ShellDialogPHPito;
+import it.phpito.view.shell.ShellDialogSettings;
 import it.phpito.view.shell.ShellPHPito;
 
 public class SaveConfSelectionAdapter extends SelectionAdapter {
-	private ShellDialogPHPito shellDialogPHPito;
 	private ShellPHPito shellPHPito;
+	private ShellDialogSettings shellDialogSettings;
 
-	public SaveConfSelectionAdapter(ShellDialogPHPito shellDialogPHPito) {
+	public SaveConfSelectionAdapter(ShellDialogSettings shellDialogPHPito) {
 		super();
-		this.shellDialogPHPito = shellDialogPHPito;
+		this.shellDialogSettings = shellDialogPHPito;
 		shellPHPito = shellDialogPHPito.getShellPHPito();
 	}
 
 	@Override
 	public void widgetSelected(SelectionEvent se) {
 		HashMap<String, String> confMap = new HashMap<String, String>();
-		HashMap<String, Button> chckBttnMap = shellDialogPHPito.getConfChckBttnMap();
-		HashMap<String, Spinner> spinnerMap = shellDialogPHPito.getConfSpinnerMap();
+		HashMap<String, Button> chckBttnMap = shellDialogSettings.getConfChckBttnMap();
+		HashMap<String, Spinner> spinnerMap = shellDialogSettings.getConfSpinnerMap();
+		HashMap<String, String> colorsLogMonMap = shellDialogSettings.getConfColorLogMonMap(); 
 		for (String key : chckBttnMap.keySet())
 			confMap.put(key, String.valueOf(chckBttnMap.get(key).getSelection()));
-		for (String key : spinnerMap.keySet()) {
+		for (String key : spinnerMap.keySet())
 			confMap.put(key, String.valueOf(spinnerMap.get(key).getSelection()));
-		}
+		for (String key : colorsLogMonMap.keySet())
+			confMap.put(key, colorsLogMonMap.get(key));
 		try {
 			PHPitoConf.getInstance().saveConf(confMap);
-			shellDialogPHPito.dispose();
+			shellDialogSettings.dispose();
 			String msg = "Attenzione per visualizzare alcune modifiche e' necessario riavviare l'applicazione.\n"
 					+ "Riavviare ora???";
 			int res = UtilsViewAS.getInstance().lunchMB(shellPHPito, SWT.YES | SWT.NO, "Confermi???", msg);

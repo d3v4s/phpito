@@ -1,4 +1,4 @@
-package it.phpito.view.listener.selection;
+package it.phpito.view.listener.selection.text;
 
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;

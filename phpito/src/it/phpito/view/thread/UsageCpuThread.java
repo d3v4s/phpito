@@ -20,12 +20,15 @@ public class UsageCpuThread extends Thread {
 			try {
 				double sysAdvrg = UtilsAS.getInstance().getSystemLoadAdverage() * 100;
 				cpuUsage.put(sysAdvrg);
-//				System.out.println(UtilsAS.getInstance().getSystemLoadAdverage() * 100);
 				shellPHPito.getDisplay().asyncExec(new Runnable() {
 					@Override
 					public void run() {
-						shellPHPito.getCanvas().redraw();
-						shellPHPito.getLblCPU().setText("CPU: " + String.format("%.0f", sysAdvrg) + "%");
+						if (shellPHPito.getCanvas() != null) {
+							shellPHPito.getCanvas().setToolTipText("CPU: " + String.format("%.0f", sysAdvrg) + "%");
+							shellPHPito.getCanvas().redraw();
+						}
+						if (shellPHPito.getLblCPU() != null)
+							shellPHPito.getLblCPU().setText("CPU: " + String.format("%.0f", sysAdvrg) + "%");
 					}
 				});
 				Thread.sleep(1000);

@@ -1,4 +1,4 @@
-package it.phpito.view.listener.selection;
+package it.phpito.view.listener.selection.project;
 
 import java.util.HashMap;
 

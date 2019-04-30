@@ -16,5 +16,6 @@
 	<classpathentry kind="lib" path="ext/gen/org.eclipse.ui.workbench_3.112.100.v20181127-1518.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/java-8-openjdk-amd64"/>
 	<classpathentry kind="lib" path="ext/swt/swt_linux_gtk_x64.jar"/>
+	<classpathentry kind="lib" path="ext/utils/jun-1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

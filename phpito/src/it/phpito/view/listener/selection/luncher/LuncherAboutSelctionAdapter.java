@@ -1,7 +1,5 @@
-package it.phpito.view.listener.selection;
+package it.phpito.view.listener.selection.luncher;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
 import org.eclipse.swt.SWT;
@@ -10,9 +8,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Link;
 
-import it.as.utils.core.UtilsAS;
 import it.as.utils.view.UtilsViewAS;
 import it.phpito.controller.PHPitoManager;
 import it.phpito.view.shell.ShellDialogPHPito;
@@ -52,21 +48,21 @@ public class LuncherAboutSelctionAdapter extends SelectionAdapter {
 		
 		UtilsViewAS.getInstance().printLabelVertical(txtLblList, 10, 190, 380, shellPHPito.getFontHeight(), 5, shellDialog, SWT.CENTER);
 		
-		Link link = new Link(shellDialog, SWT.CENTER);
-		link.getFont().getFontData()[0].setHeight(shellPHPito.getFontHeight());
-		link.setBounds(160, 290, 80, shellPHPito.getFontHeight() + 6);
-		link.setText("<a href=\"" + PHPitoManager.LINK_GITHUB + "\">Link GitHub</a>");
-		link.addSelectionListener(new SelectionAdapter(){
-			@Override
-			public void widgetSelected(SelectionEvent se) {
-				try {
-					if (!UtilsAS.getInstance().openBorwser(se.text))
-							UtilsViewAS.getInstance().lunchMB(shellPHPito, SWT.OK, "FAIL!!!", "Impossibile aprire il browser!!!");
-				} catch (IOException | URISyntaxException e) {
-					UtilsViewAS.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
-				}
-			}
-		});
+//		Link link = new Link(shellDialog, SWT.CENTER);
+//		link.getFont().getFontData()[0].setHeight(shellPHPito.getFontHeight());
+//		link.setBounds(160, 290, 80, shellPHPito.getFontHeight() + 6);
+//		link.setText("<a href=\"" + PHPitoManager.LINK_GITHUB + "\">Link GitHub</a>");
+//		link.addSelectionListener(new SelectionAdapter(){
+//			@Override
+//			public void widgetSelected(SelectionEvent se) {
+//				try {
+//					if (!UtilsAS.getInstance().openBorwser(se.text))
+//							UtilsViewAS.getInstance().lunchMB(shellPHPito, SWT.OK, "FAIL!!!", "Impossibile aprire il browser!!!");
+//				} catch (IOException | URISyntaxException e) {
+//					UtilsViewAS.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
+//				}
+//			}
+//		});
 		
 		shellDialog.open();
 	}

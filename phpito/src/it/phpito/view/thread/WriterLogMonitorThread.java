@@ -12,11 +12,11 @@ import it.phpito.controller.lock.ReentrantLockLogServer;
 import it.phpito.data.Project;
 import it.phpito.view.shell.ShellPHPito;
 
-public class WriterTerminalThread extends Thread {
+public class WriterLogMonitorThread extends Thread {
 	private ShellPHPito shellPHPito;
 	private Project project;
 	private ReentrantLockLogServer reentrantLockLogServer;
-	public WriterTerminalThread(ShellPHPito shellPHPito, ReentrantLockLogServer reentrantLockLogServer) {
+	public WriterLogMonitorThread(ShellPHPito shellPHPito, ReentrantLockLogServer reentrantLockLogServer) {
 		super();
 		this.shellPHPito = shellPHPito;
 		this.reentrantLockLogServer = reentrantLockLogServer;
@@ -34,18 +34,12 @@ public class WriterTerminalThread extends Thread {
 				lastMod = reentrantLockLogServer.getLocalDateTimeLastModifyLogServer((project));
 				if ((shellPHPito.getIdProjectSelect() != null && id != shellPHPito.getIdProjectSelect()) ||
 						lastPrint.isBefore(lastMod)) {
-//					project = shellPHPito.getProjectSelect();
 					id = shellPHPito.getIdProjectSelect();
 					shellPHPito.getDisplay().asyncExec(new Runnable() {
 						@Override
 						public void run() {
-							String out = reentrantLockLogServer.readLog(project, PHPitoConf.getInstance().getRowLog());
+							String out = reentrantLockLogServer.readLog(project, PHPitoConf.getInstance().getRowLogConf());
 							shellPHPito.getLogOutText().setText(out);
-//							try {
-//							} catch (FileException e) {
-//								// TODO Auto-generated catch block
-//								e.printStackTrace();
-//							}
 						}
 					});
 					lastPrint = LocalDateTime.now();
