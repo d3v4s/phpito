@@ -38,12 +38,15 @@ public class ColorsLogMonListSelectionAdapter extends SelectionAdapter{
 			shellDialogSettings.getViewerColorCanvas().setGreen(colorMap.get(PHPitoConf.K_COLOR_GREEN));
 			shellDialogSettings.getViewerColorCanvas().setBlue(colorMap.get(PHPitoConf.K_COLOR_BLUE));
 			shellDialogSettings.getViewerColorCanvas().redraw();
+
+			HashMap<String, Scale> colorsScaleMap = shellDialogSettings.getColorScaleMap();
+			for (String key : colorsScaleMap.keySet()) {
+				colorsScaleMap.get(key).setSelection(colorMap.get(key));
+			}
+			
+			shellDialogSettings.getHexColorLbl().setText(shellDialogSettings.getHexColors());
 		} catch (FormatException e) {
 			UtilsViewAS.getInstance().lunchMBError(shellDialogSettings, e, PHPitoManager.NAME);
-		}
-		HashMap<String, Scale> colorsScaleMap = shellDialogSettings.getColorScaleMap();
-		for (String key : colorsScaleMap.keySet()) {
-			colorsScaleMap.get(key).setSelection(colorMap.get(key));
 		}
 	}
 }

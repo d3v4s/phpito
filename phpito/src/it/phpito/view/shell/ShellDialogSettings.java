@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Spinner;
@@ -23,6 +24,7 @@ public class ShellDialogSettings extends ShellDialogPHPito {
 	private ArrayList<Control> sysInfoControlList;
 	private List elementLogList;
 	private ViewerColorCanvas viewerColorCanvas;
+	private Label hexColorLbl;
 	
 	/* costruttore */
 	public ShellDialogSettings(ShellPHPito shellPHPito, int style) {
@@ -94,6 +96,12 @@ public class ShellDialogSettings extends ShellDialogPHPito {
 	public void setSysInfoControlList(ArrayList<Control> sysInfoControlList) {
 		this.sysInfoControlList = sysInfoControlList;
 	}
+	public Label getHexColorLbl() {
+		return hexColorLbl;
+	}
+	public void setHexColorLbl(Label hexColorLbl) {
+		this.hexColorLbl = hexColorLbl;
+	}
 
 	public Control[] getLogMonControlArray() {
 		Control[] controls = new Control[logMonControlList.size()];
@@ -114,6 +122,13 @@ public class ShellDialogSettings extends ShellDialogPHPito {
 		for (String key : PHPitoConf.K_COLORS_LIST)
 			colorRGBMap.put(key, Integer.valueOf(colorScaleMap.get(key).getSelection()));
 		return colorRGBMap;
+	}
+	
+	public String getHexColors() {
+		int red = getColorsRGBMap().get(PHPitoConf.K_COLOR_RED);
+		int green = getColorsRGBMap().get(PHPitoConf.K_COLOR_GREEN);
+		int blue = getColorsRGBMap().get(PHPitoConf.K_COLOR_BLUE);
+		return "#" + Integer.toHexString(red) + Integer.toHexString(green) + Integer.toHexString(blue);
 	}
 
 	public HashMap<String, String> getConfColorLogMonMap(){

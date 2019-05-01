@@ -50,7 +50,7 @@ public class LuncherSettingSelctionAdapter extends SelectionAdapter {
 
 	/* metodo per lanciare finestra delle impostazioni */
 	public void lunchSettingPHPito() {
-		shellDialog.setSize(370, 400);
+		shellDialog.setSize(370, 420);
 		shellDialog.setText("Impostazioni PHPito");
 		shellDialog.setLayout(new BorderLayout(0, 0));
 		shellDialog.setConfChckBttnMap(new HashMap<String, Button>());
@@ -139,7 +139,7 @@ public class LuncherSettingSelctionAdapter extends SelectionAdapter {
 		shellDialog.getElementLogList().setEnabled(enable);
 
 		Composite compositeRGB = new Composite(compositeLog, SWT.BORDER);
-		compositeRGB.setBounds(20, 170, 320, 100);
+		compositeRGB.setBounds(20, 170, 320, 110);
 
 		String[] namesLabel = {"R", "G", "B"};
 		for (int i = 0; i < namesLabel.length; i++) {
@@ -165,7 +165,7 @@ public class LuncherSettingSelctionAdapter extends SelectionAdapter {
 			scale.setMinimum(0);
 			scale.setMaximum(255);
 			scale.setIncrement(1);
-			scale.setBounds(30, 20 * (i+1), 180, 20);
+			scale.setBounds(30, 20 * (i + 1), 180, 20);
 			scale.setSelection(shellDialog.getColorBackgrndLogMonMap().get(PHPitoConf.K_COLORS_LIST[i]));
 			scale.addSelectionListener(new ColorsScaleSelectionAdapter(shellDialog));
 			scale.setCursor(new Cursor(shellDialog.getDisplay(), SWT.CURSOR_SIZEWE));
@@ -174,6 +174,10 @@ public class LuncherSettingSelctionAdapter extends SelectionAdapter {
 			shellDialog.getLogMonControlList().add(scale);
 		}
 		chckBttnActiveLogMonitor.addSelectionListener(new DisablerControlSelctionAdapter(shellDialog.getLogMonControlArray()));
+		
+		shellDialog.setHexColorLbl(new Label(compositeRGB, SWT.NONE));
+		shellDialog.getHexColorLbl().setText(shellDialog.getHexColors());
+		shellDialog.getHexColorLbl().setBounds(240, 80, 70, 20);
 	}
 
 	/* metodo che crea tabitem per impostazioni del system info */
@@ -209,6 +213,5 @@ public class LuncherSettingSelctionAdapter extends SelectionAdapter {
 		shellDialog.getSysInfoControlList().add(chckBttnViewOtherInfo);
 		
 		chckBttnActiveSystemInfo.addSelectionListener(new DisablerControlSelctionAdapter(shellDialog.getSysInfoControlArray()));
-		
 	}
 }
