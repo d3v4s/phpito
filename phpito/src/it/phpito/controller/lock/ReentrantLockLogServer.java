@@ -20,7 +20,7 @@ public class ReentrantLockLogServer {
 
 	/* metodo per scriver logo del progetto */
 	public void writeLog(String write, Project project) {
-		if (project != null) {
+		if (project != null && project.isLogActive()) {
 			try {
 				if (reentrantLock.tryLock(30, TimeUnit.SECONDS)) {
 					try {
@@ -44,7 +44,7 @@ public class ReentrantLockLogServer {
 	public String readLog(Project project, int numRows) {
 		String rows = "PHPito -- PHP Server Manager\n"
 						+ "Developed by Andrea Serra";
-		if (project != null) {
+		if (project != null && project.isLogActive()) {
 			try {
 				if (reentrantLock.tryLock(30, TimeUnit.SECONDS)) {
 					try {

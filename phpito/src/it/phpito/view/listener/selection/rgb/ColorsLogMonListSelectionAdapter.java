@@ -34,10 +34,10 @@ public class ColorsLogMonListSelectionAdapter extends SelectionAdapter{
 			return;
 		}
 		try {
-			shellDialogSettings.getViewerColorCanvas().setRed(colorMap.get(PHPitoConf.K_COLOR_RED));
-			shellDialogSettings.getViewerColorCanvas().setGreen(colorMap.get(PHPitoConf.K_COLOR_GREEN));
-			shellDialogSettings.getViewerColorCanvas().setBlue(colorMap.get(PHPitoConf.K_COLOR_BLUE));
-			shellDialogSettings.getViewerColorCanvas().redraw();
+			shellDialogSettings.getViewColorLabel().setRed(colorMap.get(PHPitoConf.K_COLOR_RED));
+			shellDialogSettings.getViewColorLabel().setGreen(colorMap.get(PHPitoConf.K_COLOR_GREEN));
+			shellDialogSettings.getViewColorLabel().setBlue(colorMap.get(PHPitoConf.K_COLOR_BLUE));
+			shellDialogSettings.getViewColorLabel().redraw();
 
 			HashMap<String, Scale> colorsScaleMap = shellDialogSettings.getColorScaleMap();
 			for (String key : colorsScaleMap.keySet()) {

@@ -19,10 +19,12 @@ import it.phpito.view.shell.ShellPHPito;
 
 public class LuncherModifyProjectSelectionAdapter extends SelectionAdapter {
 	private ShellPHPito shellPHPito;
+	private Project project;
 
 	public LuncherModifyProjectSelectionAdapter(ShellPHPito shellPHPito) {
 		super();
 		this.shellPHPito = shellPHPito;
+		this.project = shellPHPito.getProjectSelect();
 	}
 
 	@Override
@@ -40,14 +42,14 @@ public class LuncherModifyProjectSelectionAdapter extends SelectionAdapter {
 		
 		/* ciclo per label */
 		String[] txtLbl = {"Id:", "Nome:", "Path:", "Indirizzo:", "Porta:"};
-		UtilsViewAS.getInstance().printLabelVertical(txtLbl, 30, 30, 60, shellPHPito.getFontHeight(), 30, shellDialog, SWT.NONE);
+		UtilsViewAS.getInstance().printLabelVertical(txtLbl, 20, 30, 60, shellPHPito.getFontHeight(), 20, shellDialog, SWT.NONE);
 		
 		/* ciclo per text */
 		String[] keyList = Project.getArrayKeyProject();
-		int[] width = {70, 150, 150, 150, 150};
-		UtilsViewAS.getInstance().printTextVertical(110, 28, width, shellPHPito.getFontHeight(), 30, shellDialog, keyList, shellDialog.getTextMap(), new int[] {0});
-		
-		/* add listener ad aree di testo */
+		int[] width = {70, 160, 160, 160, 160};
+		UtilsViewAS.getInstance().printTextVertical(100, 18, width, shellPHPito.getFontHeight(), 20, shellDialog, keyList, shellDialog.getTextMap(), new int[] {0});
+
+		/* set aree di testo e aggiunta listener */
 		SelectionAdapter[] selAdptList = new SelectionAdapter[] {
 				null,
 				new TextFocusSelectionAdapter(shellDialog.getTextMap().get(Project.K_PATH)),
@@ -55,24 +57,28 @@ public class LuncherModifyProjectSelectionAdapter extends SelectionAdapter {
 				new TextFocusSelectionAdapter(shellDialog.getTextMap().get(Project.K_PORT)),
 				new UpdateProjectSelctionAdapter(shellDialog)
 		};
-		HashMap<String, String> mapProject = shellPHPito.getProjectSelect().getHashMap();
+		HashMap<String, String> mapProject = project.getHashMap();
 		for (int i = 0; i < keyList.length; i++) {
 			if (selAdptList[i] != null)
 				shellDialog.getTextMap().get(keyList[i]).addSelectionListener(selAdptList[i]);
 			shellDialog.getTextMap().get(keyList[i]).setText(mapProject.get(keyList[i]));
 		}
+
+		shellDialog.setChckBttnLogActv(new Button(shellDialog, SWT.CHECK));
+		shellDialog.getChckBttnLogActv().setBounds(20, 230, 100, 20);
+		shellDialog.getChckBttnLogActv().setText("Attiva Log");
+		shellDialog.getChckBttnLogActv().setSelection(project.isLogActive());
+		
+		Button bttn = new Button(shellDialog, SWT.PUSH);
+		bttn.addSelectionListener(new LuncherSelectPathSelectionAdapter(shellDialog, shellDialog.getTextMap().get(Project.K_PATH)));
+		bttn.setBounds(270, 95, 80, 30);
+		bttn.setText("Scegli");
 		
 		selAdptList = new SelectionAdapter[] {
 				new ResetTextSelectionAdapter(shellDialog),
 				new UpdateProjectSelctionAdapter(shellDialog),
 		};
 		String[] namesButton = new String[] {"Annulla", "Salva"};
-		
-		Button bttn = new Button(shellDialog, SWT.PUSH);
-		bttn.addSelectionListener(new LuncherSelectPathSelectionAdapter(shellDialog, shellDialog.getTextMap().get(Project.K_PATH)));
-		bttn.setBounds(270, 75, 80, 30);
-		bttn.setText("Scegli");
-
 		UtilsViewAS.getInstance().printButtonHorizontal(namesButton, 130, 280, 100, 30, 20, shellDialog, selAdptList);
 		
 		shellDialog.open();

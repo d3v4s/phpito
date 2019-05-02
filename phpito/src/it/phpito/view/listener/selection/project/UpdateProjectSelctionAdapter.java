@@ -51,6 +51,7 @@ public class UpdateProjectSelctionAdapter extends SelectionAdapter {
 			}
 			String oldIdName = project.getIdAndName();
 			project.setName(shellDialog.getTextMap().get(Project.K_NAME).getText());
+			project.setLogActive(shellDialog.getChckBttnLogActv().getSelection());
 			project.getServer().setPath(shellDialog.getTextMap().get(Project.K_PATH).getText());
 			project.getServer().setAddress(shellDialog.getTextMap().get(Project.K_ADDRESS).getText());
 			project.getServer().setPortString(shellDialog.getTextMap().get(Project.K_PORT).getText());
@@ -60,7 +61,7 @@ public class UpdateProjectSelctionAdapter extends SelectionAdapter {
 			if (res == SWT.YES) {
 				PHPitoManager.getInstance().getReentrantLockXMLServer().updateProject(project);
 				PHPitoManager.getInstance().getReentrantLockLogServer().renameDirProjectLog(oldIdName, project.getIdAndName());
-				UtilsViewAS.getInstance().lunchMB(shellDialog, SWT.OK, "OK", "Modifiche salvate con sucesso.");
+//				UtilsViewAS.getInstance().lunchMB(shellDialog, SWT.OK, "OK", "Modifiche salvate con sucesso.");
 				if (restart && !PHPitoManager.getInstance().startServer(project))
 					UtilsViewAS.getInstance().lunchMB(shellDialog, SWT.OK, "FAIL!!!", "L'avvio del server non ha avuto sucesso.");
 				ShellPHPito shellPHPito = shellDialog.getShellPHPito();

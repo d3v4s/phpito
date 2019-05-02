@@ -346,7 +346,7 @@ public class ShellPHPito extends Shell {
 	}
 
 	/* metodo che riscrive tabella da hashmap di progetti */
-	public void printProjectsOnTable(HashMap<String, Project> mapProjects) {
+	private void printProjectsOnTable(HashMap<String, Project> mapProjects) {
 		TableItem ti;
 		Project p;
 		table.removeAll();

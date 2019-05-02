@@ -33,7 +33,7 @@ public class WriterLogMonitorThread extends Thread {
 				project = shellPHPito.getProjectSelect();
 				lastMod = reentrantLockLogServer.getLocalDateTimeLastModifyLogServer((project));
 				if ((shellPHPito.getIdProjectSelect() != null && id != shellPHPito.getIdProjectSelect()) ||
-						lastPrint.isBefore(lastMod)) {
+							lastPrint.isBefore(lastMod)) {
 					id = shellPHPito.getIdProjectSelect();
 					shellPHPito.getDisplay().asyncExec(new Runnable() {
 						@Override

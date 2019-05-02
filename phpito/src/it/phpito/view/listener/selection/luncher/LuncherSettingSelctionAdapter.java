@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.TabItem;
 
 import it.as.utils.exception.FormatException;
 import it.as.utils.view.UtilsViewAS;
-import it.as.utils.view.canvas.ViewerColorCanvas;
+import it.as.utils.view.label.ViewColorLabel;
 import it.as.utils.view.listener.selection.CloserShellSelectionAdpter;
 import it.as.utils.view.listener.selection.DisablerControlSelctionAdapter;
 import it.phpito.controller.PHPitoConf;
@@ -149,7 +149,7 @@ public class LuncherSettingSelctionAdapter extends SelectionAdapter {
 		}
 
 		try {
-			shellDialog.setViewerColorCanvas(new ViewerColorCanvas(compositeRGB, SWT.BORDER,
+			shellDialog.setViewColorLabel(new ViewColorLabel(compositeRGB, SWT.BORDER,
 					shellDialog.getColorBackgrndLogMonMap().get(PHPitoConf.K_COLOR_RED),
 					shellDialog.getColorBackgrndLogMonMap().get(PHPitoConf.K_COLOR_GREEN),
 					shellDialog.getColorBackgrndLogMonMap().get(PHPitoConf.K_COLOR_BLUE)
@@ -157,7 +157,7 @@ public class LuncherSettingSelctionAdapter extends SelectionAdapter {
 		} catch (FormatException e) {
 			UtilsViewAS.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
 		}
-		shellDialog.getViewerColorCanvas().setBounds(240, 25, 50, 50);
+		shellDialog.getViewColorLabel().setBounds(240, 25, 50, 50);
 
 		Scale scale;
 		for (int i = 0; i < PHPitoConf.K_COLORS_LIST.length ; i++) {

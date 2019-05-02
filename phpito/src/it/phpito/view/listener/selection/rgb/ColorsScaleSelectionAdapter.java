@@ -27,10 +27,10 @@ public class ColorsScaleSelectionAdapter extends SelectionAdapter {
 			else if (shellDialogSettings.getElementLogList().getSelectionIndex() == 1)
 				shellDialogSettings.setColorForegrndLogMonMap(colorsRGBMap);
 
-			shellDialogSettings.getViewerColorCanvas().setRed(colorsRGBMap.get(PHPitoConf.K_COLOR_RED));
-			shellDialogSettings.getViewerColorCanvas().setGreen(colorsRGBMap.get(PHPitoConf.K_COLOR_GREEN));
-			shellDialogSettings.getViewerColorCanvas().setBlue(colorsRGBMap.get(PHPitoConf.K_COLOR_BLUE));
-			shellDialogSettings.getViewerColorCanvas().redraw();
+			shellDialogSettings.getViewColorLabel().setRed(colorsRGBMap.get(PHPitoConf.K_COLOR_RED));
+			shellDialogSettings.getViewColorLabel().setGreen(colorsRGBMap.get(PHPitoConf.K_COLOR_GREEN));
+			shellDialogSettings.getViewColorLabel().setBlue(colorsRGBMap.get(PHPitoConf.K_COLOR_BLUE));
+			shellDialogSettings.getViewColorLabel().redraw();
 
 			shellDialogSettings.getHexColorLbl().setText(shellDialogSettings.getHexColors());
 		} catch (FormatException e) {

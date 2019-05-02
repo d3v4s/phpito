@@ -3,6 +3,7 @@ package it.phpito.view.shell;
 import java.util.HashMap;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -12,6 +13,7 @@ import it.phpito.data.Project;
 public class ShellDialogPHPito extends Shell {
 	private ShellPHPito shellPHPito;
 	private HashMap<String, Text> textMap;
+	private Button chckBttnLogActv;
 	
 	/* costruttore */
 	public ShellDialogPHPito(ShellPHPito shellPHPito, int style) {
@@ -42,6 +44,12 @@ public class ShellDialogPHPito extends Shell {
 	}
 	public void setTextMap(HashMap<String, Text> textMap) {
 		this.textMap = textMap;
+	}
+	public Button getChckBttnLogActv() {
+		return chckBttnLogActv;
+	}
+	public void setChckBttnLogActv(Button chckBttnLogActv) {
+		this.chckBttnLogActv = chckBttnLogActv;
 	}
 
 	/* metodo che controlla che le aree di testo passate con hashmap siano vuote */

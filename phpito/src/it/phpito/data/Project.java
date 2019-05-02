@@ -1,16 +1,21 @@
 package it.phpito.data;
 
 import java.util.HashMap;
+import java.util.regex.Pattern;
+
+import it.phpito.exception.ProjectException;
 
 public class Project {
 	private Long id;
 	private String name;
 	private Server server;
+	private Boolean logActive;
 	public static final String K_ID = "id";
 	public static final String K_NAME = "name";
 	public static final String K_PATH = "path";
 	public static final String K_ADDRESS = "address";
 	public static final String K_PORT = "port";
+	public static final String K_LOG = "log";
 
 	/* get e set */
 	public Long getId() {
@@ -32,13 +37,30 @@ public class Project {
 		server.setProject(this);
 		this.server = server;
 	}
-
+	public Boolean isLogActive() {
+		return logActive;
+	}
+	public void setLogActive(Boolean log) {
+		this.logActive = log;
+	}
 	public String getIdString() {
 		if (id == null)
 			return null;
 		return String.valueOf(id);
 	}
-	
+	public void setIdString(String id) throws ProjectException {
+		if (!Pattern.matches("\\d{1,}", id))
+			throw new ProjectException("Id non valido");
+		this.id = Long.parseLong(id);
+	}
+	public void setLogActiveString(String logActive) {
+		this.logActive = Boolean.parseBoolean(logActive);
+	}
+	public String isLogActiveString() {
+		if (logActive == null)
+			return null;
+		return String.valueOf(logActive);
+	}
 	public String getIdAndName() {
 		return String.format("%04d", id) + "-" + name;
 	}
@@ -60,6 +82,7 @@ public class Project {
 		projectMap.put(K_PATH, server.getPath());
 		projectMap.put(K_ADDRESS, server.getAddress());
 		projectMap.put(K_PORT, server.getPortString());
+		projectMap.put(K_LOG, isLogActiveString());
 		return projectMap;
 	}
 
@@ -72,7 +95,6 @@ public class Project {
 		return ret;
 	}
 	
-	
 	@Override
 	public boolean equals(Object obj) {
 		if (!obj.getClass().equals(this.getClass()))
@@ -84,6 +106,7 @@ public class Project {
 		Project clone = new Project();
 		clone.setId(new Long(id));
 		clone.setName(new String(name));
+		clone.setLogActive(new Boolean(logActive));
 		clone.setServer(server.clone());
 		return clone;
 	}

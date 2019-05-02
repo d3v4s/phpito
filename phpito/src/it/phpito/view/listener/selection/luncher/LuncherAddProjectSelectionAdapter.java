@@ -41,12 +41,12 @@ public class LuncherAddProjectSelectionAdapter extends SelectionAdapter {
 
 		/* ciclo per label */
 		String[] txtLbl = {"Nome:", "Path:", "Indirizzo:", "Porta:"};
-		UtilsViewAS.getInstance().printLabelVertical(txtLbl, 30, 30, 60, shellPHPito.getFontHeight(), 30, shellDialog, SWT.NONE);
+		UtilsViewAS.getInstance().printLabelVertical(txtLbl, 20, 30, 60, shellPHPito.getFontHeight(), 20, shellDialog, SWT.NONE);
 
 		/* ciclo per text */
 		String[] keyList = Project.getArrayKeyProjectNoId();
-		int[] width = {150, 150, 150, 150};
-		UtilsViewAS.getInstance().printTextVertical(110, 28, width, shellPHPito.getFontHeight(), 30, shellDialog, keyList, shellDialog.getTextMap(), new int[] {});
+		int[] width = {160, 160, 160, 160};
+		UtilsViewAS.getInstance().printTextVertical(90, 28, width, shellPHPito.getFontHeight(), 20, shellDialog, keyList, shellDialog.getTextMap(), new int[] {});
 
 		/* add listener ad aree di testo */
 		SelectionAdapter[] selAdptList = new SelectionAdapter[] {
@@ -57,19 +57,22 @@ public class LuncherAddProjectSelectionAdapter extends SelectionAdapter {
 		};
 		for (int i = 0; i < keyList.length; i++)
 			shellDialog.getTextMap().get(keyList[i]).addSelectionListener(selAdptList[i]);
+		
+		shellDialog.setChckBttnLogActv(new Button(shellDialog, SWT.CHECK));
+		shellDialog.getChckBttnLogActv().setBounds(20, 200, 100, 20);
+		shellDialog.getChckBttnLogActv().setText("Attiva Log");
 
+		Button bttn = new Button(shellDialog, SWT.PUSH);
+		bttn.addSelectionListener(new LuncherSelectPathSelectionAdapter(shellDialog, shellDialog.getTextMap().get(Project.K_PATH)));
+		bttn.setBounds(270, 65, 80, 30);
+		bttn.setText("Scegli");
+		bttn.setCursor(new Cursor(shellPHPito.getDisplay(), SWT.CURSOR_HAND));
+		
 		selAdptList = new SelectionAdapter[] {
 				new CancelTextSelectionAdapter(shellDialog),
 				new AddProjectSelectionAdapter(shellDialog),
 		};
 		String[] namesButton = new String[] {"Annulla", "Aggiungi"};
-
-		Button bttn = new Button(shellDialog, SWT.PUSH);
-		bttn.addSelectionListener(new LuncherSelectPathSelectionAdapter(shellDialog, shellDialog.getTextMap().get(Project.K_PATH)));
-		bttn.setBounds(270, 75, 80, 30);
-		bttn.setText("Scegli");
-		bttn.setCursor(new Cursor(shellPHPito.getDisplay(), SWT.CURSOR_HAND));
-
 		UtilsViewAS.getInstance().printButtonHorizontal(namesButton, 130, 250, 100, 30, 20, shellDialog, selAdptList);
 
 		shellDialog.open();
