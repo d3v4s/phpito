@@ -27,6 +27,7 @@ public class ReentrantLockXMLServer {
 	private final String XML_ADDRESS = "address";
 	private final String XML_PORT = "port";
 	private final String XML_PID = "pid";
+	private final String XML_LOG = "log";
 
 	/* meotodo che ritorna hashmap dei progetti con key id */
 	public HashMap<String, Project> getProjectsMap() {
@@ -42,11 +43,12 @@ public class ReentrantLockXMLServer {
 					for (String id : mapNode.keySet()) {
 						node = mapNode.get(id);
 						project = new Project();
-						project.setId(Long.valueOf(id));
+						project.setIdString(id);
 						project.setName(xmlAS.getArrayChildNode(node, XML_NAME).get(0).getTextContent());
+						project.setLogActiveString(xmlAS.getArrayChildNode(node, XML_LOG).get(0).getTextContent());
 						project.setServer(new Server());
 						project.getServer().setAddress(xmlAS.getArrayChildNode(node, XML_ADDRESS).get(0).getTextContent());
-						project.getServer().setPort(Integer.parseInt(xmlAS.getArrayChildNode(node, XML_PORT).get(0).getTextContent()));
+						project.getServer().setPortString(xmlAS.getArrayChildNode(node, XML_PORT).get(0).getTextContent());
 						project.getServer().setPath(xmlAS.getArrayChildNode(node, XML_PATH).get(0).getTextContent());
 						if (!xmlAS.getArrayChildNode(node, XML_PID).isEmpty()) {
 							pid = xmlAS.getArrayChildNode(node, XML_PID).get(0).getTextContent();
@@ -106,6 +108,7 @@ public class ReentrantLockXMLServer {
 					mapChild.put(XML_PATH, project.getServer().getPath());
 					mapChild.put(XML_ADDRESS, project.getServer().getAddress());
 					mapChild.put(XML_PORT, project.getServer().getPortString());
+					mapChild.put(XML_LOG, project.isLogActiveString());
 					mapChild.put(XML_PID, "");
 					xmlAS.addElementWithChild(PATH_FILE_XML, "server", getNextProjectId(), mapChild);
 				} catch (FileException e) {
@@ -134,6 +137,7 @@ public class ReentrantLockXMLServer {
 					xmlAS.getArrayChildNode(node, XML_PATH).get(0).setTextContent(project.getServer().getPath());
 					xmlAS.getArrayChildNode(node, XML_ADDRESS).get(0).setTextContent(project.getServer().getAddress());
 					xmlAS.getArrayChildNode(node, XML_PORT).get(0).setTextContent(project.getServer().getPortString());
+					xmlAS.getArrayChildNode(node, XML_LOG).get(0).setTextContent(project.isLogActiveString());
 					if (!xmlAS.getArrayChildNode(node, XML_PID).isEmpty())
 						xmlAS.getArrayChildNode(node, XML_PID).get(0).setTextContent(project.getServer().getPIDString());
 					else

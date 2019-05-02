@@ -10,7 +10,7 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Spinner;
 
-import it.as.utils.view.canvas.ViewerColorCanvas;
+import it.as.utils.view.label.ViewColorLabel;
 import it.phpito.controller.PHPitoConf;
 
 public class ShellDialogSettings extends ShellDialogPHPito {
@@ -23,7 +23,7 @@ public class ShellDialogSettings extends ShellDialogPHPito {
 	private ArrayList<Control> logMonControlList;
 	private ArrayList<Control> sysInfoControlList;
 	private List elementLogList;
-	private ViewerColorCanvas viewerColorCanvas;
+	private ViewColorLabel viewColorLabel;
 	private Label hexColorLbl;
 	
 	/* costruttore */
@@ -78,11 +78,11 @@ public class ShellDialogSettings extends ShellDialogPHPito {
 	public void setElementLogList(List elementLogList) {
 		this.elementLogList = elementLogList;
 	}
-	public ViewerColorCanvas getViewerColorCanvas() {
-		return viewerColorCanvas;
+	public ViewColorLabel getViewColorLabel() {
+		return viewColorLabel;
 	}
-	public void setViewerColorCanvas(ViewerColorCanvas viewerColorCanvas) {
-		this.viewerColorCanvas = viewerColorCanvas;
+	public void setViewColorLabel(ViewColorLabel viewColorlabel) {
+		this.viewColorLabel = viewColorlabel;
 	}
 	public ArrayList<Control> getLogMonControlList() {
 		return logMonControlList;

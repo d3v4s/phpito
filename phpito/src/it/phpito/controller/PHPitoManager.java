@@ -92,7 +92,7 @@ public class PHPitoManager {
 		Long pid = null;
 		LocalDateTime maxTime = LocalDateTime.now().plusSeconds(5L);
 		while ((stdoStart = (br.ready()) ? br.readLine() : "") != null) {
-			if (!stdoStart.isEmpty())
+			if (!stdoStart.isEmpty() && project.isLogActive())
 				reentrantLockLogServer.writeLog(stdoStart, project);
 			if (Pattern.matches(regexError, stdoStart)) {
 				String reasonError = "";
@@ -107,7 +107,10 @@ public class PHPitoManager {
 			} else if ((pid = getPIDServer(project.getServer())) != null) {
 				project.getServer().setProcessId(pid);
 				reentrantLockXMLServer.updateProject(project);
-				new ReadOutputServerThread(project, br).start();
+				if (project.isLogActive())
+					new ReadOutputServerThread(project, br).start();
+				else 
+					br.close();
 				return true;
 			} else if (LocalDateTime.now().isAfter(maxTime)) {
 				br.close();
@@ -253,7 +256,8 @@ public class PHPitoManager {
 			BufferedReader br = new BufferedReader(isr);
 			String stdo = null;
 			while ((stdo = br.readLine()) != null) {
-				reentrantLockLogServer.writeLog(stdo, project);
+				if (project.isLogActive())
+					reentrantLockLogServer.writeLog(stdo, project);
 				if (Pattern.matches(regexFail, stdo)) {
 					br.close();
 					flushRunningServers();

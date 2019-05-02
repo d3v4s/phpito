@@ -9,10 +9,3 @@ echo "[*] Directory root: %DIRECTORY%"
 
 @echo on
 cd %directory% && php -S %address%
-
-REM for /f "tokens=2 delims==; " %%a in (' wmic process call create "php -S %address% -t %directory%" ^| find "ProcessId" ') do set PID=%%a
-REM echo "[*] Process ID: %PID%"
-REM timeout /t 30
-
-REM taskkill /PID %PID% /F
-REM echo "[*] Finish"
