@@ -31,10 +31,11 @@ public class StopServerSelectionAdapter extends SelectionAdapter {
 			Project p = PHPitoManager.getInstance().getProjectById(shellPHPito.getIdProjectSelect());
 			if (!PHPitoManager.getInstance().stopServer(p))
 				UtilsViewAS.getInstance().lunchMB(shellPHPito, SWT.OK, "FAIL!!!", "L'arresto del server non ha avuto sucesso.");
-			shellPHPito.flushTable();
-			shellPHPito.getTable().forceFocus();
 		} catch (IOException | ServerException | ProjectException e) {
 			UtilsViewAS.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
+		} finally {
+			shellPHPito.flushTable();
+			shellPHPito.getTable().forceFocus();
 		}
 	}
 }

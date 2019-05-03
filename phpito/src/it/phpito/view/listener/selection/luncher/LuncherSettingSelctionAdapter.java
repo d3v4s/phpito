@@ -109,7 +109,7 @@ public class LuncherSettingSelctionAdapter extends SelectionAdapter {
 		boolean enable = chckBttnActiveLogMonitor.getSelection();
 
 		lbl = new Label(compositeLog, SWT.NONE);
-		lbl.setBounds(20, 60, 100, shellPHPito.getFontHeight());
+		lbl.setBounds(20, 60, 75, shellPHPito.getFontHeight());
 		lbl.setText("N. righe log");
 		Spinner spinner = new Spinner(compositeLog, SWT.NONE);
 		spinner.setMinimum(1);

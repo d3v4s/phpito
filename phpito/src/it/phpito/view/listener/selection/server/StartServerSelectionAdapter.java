@@ -31,10 +31,11 @@ public class StartServerSelectionAdapter extends SelectionAdapter {
 			Project p = PHPitoManager.getInstance().getProjectById(shellPHPito.getIdProjectSelect());
 			if (!PHPitoManager.getInstance().startServer(p))
 				UtilsViewAS.getInstance().lunchMB(shellPHPito, SWT.OK, "FAIL!!!", "L'avvio del server non ha avuto sucesso.");
-			shellPHPito.flushTable();
-			shellPHPito.getTable().forceFocus();
 		} catch (ServerException | IOException | ProjectException e) {
 			UtilsViewAS.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
+		} finally {
+			shellPHPito.flushTable();
+			shellPHPito.getTable().forceFocus();
 		}
 	}
 }

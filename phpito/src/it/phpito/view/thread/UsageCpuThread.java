@@ -2,7 +2,10 @@ package it.phpito.view.thread;
 
 import java.util.concurrent.ArrayBlockingQueue;
 
+import it.as.utils.core.LogErrorAS;
 import it.as.utils.core.UtilsAS;
+import it.as.utils.exception.FileException;
+import it.phpito.controller.PHPitoManager;
 import it.phpito.view.shell.ShellPHPito;
 
 public class UsageCpuThread extends Thread {
@@ -32,7 +35,13 @@ public class UsageCpuThread extends Thread {
 					}
 				});
 				Thread.sleep(1000);
-			} catch (InterruptedException e) {
+			} catch (Exception e) {
+				e.printStackTrace();
+				try {
+					LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
+				} catch (FileException e1) {
+					e1.printStackTrace();
+				}
 			}
 		}
 	}

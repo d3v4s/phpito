@@ -50,7 +50,6 @@ import it.phpito.view.listener.selection.luncher.LuncherSettingSelctionAdapter;
 import it.phpito.view.listener.selection.project.DeleteProjectSelectionAdapter;
 import it.phpito.view.listener.selection.server.StartServerSelectionAdapter;
 import it.phpito.view.listener.selection.server.StopServerSelectionAdapter;
-import it.phpito.view.thread.EnableStartStopThread;
 import it.phpito.view.thread.UsageCpuThread;
 import it.phpito.view.thread.WriterLogMonitorThread;
 import swing2swt.layout.BorderLayout;
@@ -358,13 +357,9 @@ public class ShellPHPito extends Shell {
 			ti.setText(2, p.getServer().getAddressAndPort());
 			ti.setText(3, p.getServer().getPath());
 			ti.setText(4, p.getServer().getStatePIDString());
-			try {
-				if (p.getServer().isRunnig()) {
-					ti.setBackground(new Color(getDisplay(), new RGB(20, 255, 20)));
-					ti.setForeground(new Color(getDisplay(), new RGB(0, 0, 0)));
-				}
-			} catch (IOException e) {
-				UtilsViewAS.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
+			if (p.getServer().isRunning()) {
+				ti.setBackground(new Color(getDisplay(), new RGB(20, 255, 20)));
+				ti.setForeground(new Color(getDisplay(), new RGB(0, 0, 0)));
 			}
 		}
 	}
@@ -378,17 +373,54 @@ public class ShellPHPito extends Shell {
 			indexTable = 0;
 		table.setSelection(indexTable);
 		autoSetIdProjectSelect();
+		autoEnableButtonProject();
 	}
 
 	@Override
 	public void open() {
 		super.open();
+		try {
+			PHPitoManager.getInstance().flushRunningServers();
+		} catch (NumberFormatException | IOException | ProjectException e) {
+			UtilsViewAS.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
+		}
 		flushTable();
 		if (actvtLogMon)
 			new WriterLogMonitorThread(this, PHPitoManager.getInstance().getReentrantLockLogServer()).start();
 		if (actvtSysInfo)
 			new UsageCpuThread(this, PHPitoManager.getInstance().getCpuUsageQueue()).start();
-		new EnableStartStopThread(this).start();
+	}
+	
+	private void autoEnableButtonProject() {
+		Project project = shellPHPito.getProjectSelect();
+		Boolean isRunnig = (project != null) ? project.getServer().isRunning() : null;
+		if (isRunnig != null) {
+			for (Button bttn : shellPHPito.getBttnProjectList())
+				bttn.setEnabled(true);
+			for (MenuItem mntm : shellPHPito.getMntmProjectList())
+				mntm.setEnabled(true);
+			for (Button bttn : shellPHPito.getBttnStartList())
+				bttn.setEnabled(!isRunnig);
+			for (MenuItem mntm : shellPHPito.getMntmStartList())
+				mntm.setEnabled(!isRunnig);
+			for (Button bttn : shellPHPito.getBttnStopList())
+				bttn.setEnabled(isRunnig);
+			for (MenuItem mntm : shellPHPito.getMntmStopList())
+				mntm.setEnabled(isRunnig);
+		} else {
+			for (Button bttn : shellPHPito.getBttnProjectList())
+				bttn.setEnabled(false);
+			for (MenuItem mntm : shellPHPito.getMntmProjectList())
+				mntm.setEnabled(false);
+			for (Button bttn : shellPHPito.getBttnStartList())
+				bttn.setEnabled(false);
+			for (MenuItem mntm : shellPHPito.getMntmStartList())
+				mntm.setEnabled(false);
+			for (Button bttn : shellPHPito.getBttnStopList())
+				bttn.setEnabled(false);
+			for (MenuItem mntm : shellPHPito.getMntmStopList())
+				mntm.setEnabled(false);
+		}
 	}
 
 	public void autoSetIdProjectSelect() {
@@ -396,6 +428,7 @@ public class ShellPHPito extends Shell {
 		if (table.getSelectionIndex() >= 0)
 			id = Long.parseLong(table.getItem(table.getSelectionIndex()).getText(0));
 		idProjectSelect = id;
+		autoEnableButtonProject();
 	}
 }
 

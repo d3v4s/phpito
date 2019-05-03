@@ -34,7 +34,7 @@ public class UpdateProjectSelctionAdapter extends SelectionAdapter {
 		Project project = shellDialog.getShellPHPito().getProjectSelect();
 		try {
 			boolean restart = false;
-			if (project.getServer().isRunnig()) {
+			if (project.getServer().isRunning()) {
 				String msg = "Attenzione!!! Il server e' in esecuzione, per continuare il server dovra' essere arrestato.\n"
 								+ "Il server verra' riavviato dopo aver concluso le modifiche. Continui???";
 				int res = UtilsViewAS.getInstance().lunchMB(shellDialog, SWT.YES | SWT.NO, "Attenzione!!!", msg);
