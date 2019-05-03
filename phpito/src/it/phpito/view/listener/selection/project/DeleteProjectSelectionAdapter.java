@@ -26,7 +26,7 @@ public class DeleteProjectSelectionAdapter extends SelectionAdapter {
 		Project project = shellPHPito.getProjectSelect();
 		int res;
 		try {
-			if (project.getServer().isRunnig()) {
+			if (project.getServer().isRunning()) {
 				String msg = "Attenzione!!! Il progetto che si vuole eliminare e' in esecuzione?\nContinuare???";
 				res = UtilsViewAS.getInstance().lunchMB(shellPHPito, SWT.YES | SWT.NO, "ATTENZIONE!!!", msg);
 				if (res == SWT.NO)

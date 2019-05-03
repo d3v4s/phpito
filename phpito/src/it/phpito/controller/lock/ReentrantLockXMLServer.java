@@ -37,7 +37,6 @@ public class ReentrantLockXMLServer {
 				try {
 					Project project;
 					Node node;
-					String pid;
 					XMLManagerAS xmlAS = XMLManagerAS.getInstance();
 					HashMap<String, Node> mapNode = xmlAS.getMapIdElement(PATH_FILE_XML, XML_SERVER);
 					for (String id : mapNode.keySet()) {
@@ -51,13 +50,14 @@ public class ReentrantLockXMLServer {
 						project.getServer().setPortString(xmlAS.getArrayChildNode(node, XML_PORT).get(0).getTextContent());
 						project.getServer().setPath(xmlAS.getArrayChildNode(node, XML_PATH).get(0).getTextContent());
 						if (!xmlAS.getArrayChildNode(node, XML_PID).isEmpty()) {
-							pid = xmlAS.getArrayChildNode(node, XML_PID).get(0).getTextContent();
+							String pid = xmlAS.getArrayChildNode(node, XML_PID).get(0).getTextContent();
 							project.getServer().setProcessIdString(pid);
 						}
 						mapProjects.put(id, project);
 					}
 					
 				} catch (DOMException | ProjectException | FileException e) {
+					e.printStackTrace();
 					try {
 						LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
 					} catch (FileException e1) {
@@ -68,8 +68,58 @@ public class ReentrantLockXMLServer {
 				}
 			}
 		} catch (InterruptedException e) {
+			e.printStackTrace();
+			try {
+				LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
+			} catch (FileException e1) {
+				e1.printStackTrace();
+			}
 		}
 		return mapProjects;
+	}
+
+	public Project getProject(String id) {
+		Project project = null;
+		try {
+			if (reentrantLock.tryLock(30, TimeUnit.SECONDS)) {
+				try {
+					XMLManagerAS xmlAS = XMLManagerAS.getInstance();
+					Node node = xmlAS.getMapIdElement(PATH_FILE_XML, XML_SERVER).get(id);
+					if (node == null)
+						return null;
+					project = new Project();
+					project.setIdString(id);
+					project.setName(xmlAS.getArrayChildNode(node, XML_NAME).get(0).getTextContent());
+					project.setLogActiveString(xmlAS.getArrayChildNode(node, XML_LOG).get(0).getTextContent());
+					project.setServer(new Server());
+					project.getServer().setAddress(xmlAS.getArrayChildNode(node, XML_ADDRESS).get(0).getTextContent());
+					project.getServer().setPortString(xmlAS.getArrayChildNode(node, XML_PORT).get(0).getTextContent());
+					project.getServer().setPath(xmlAS.getArrayChildNode(node, XML_PATH).get(0).getTextContent());
+					if (!xmlAS.getArrayChildNode(node, XML_PID).isEmpty()) {
+						String pid = xmlAS.getArrayChildNode(node, XML_PID).get(0).getTextContent();
+						project.getServer().setProcessIdString(pid);
+					}
+				} catch (FileException | DOMException | ProjectException e) {
+					e.printStackTrace();
+					try {
+						LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
+					} catch (FileException e1) {
+						e1.printStackTrace();
+					}
+				} finally {
+					reentrantLock.unlock();
+				}
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			try {
+				LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
+			} catch (FileException e1) {
+				e1.printStackTrace();
+			}
+		}
+		
+		return project;
 	}
 
 	/* meotodo che ritorna il rpssimpo id da utilizzare */
@@ -83,6 +133,7 @@ public class ReentrantLockXMLServer {
 					long idLong = xmlAS.getGreatId(setId) + 1;
 					id = String.valueOf((idLong < 1L) ? 1 : idLong);
 				} catch (FileException e) {
+					e.printStackTrace();
 					try {
 						LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
 					} catch (FileException e1) {
@@ -93,6 +144,12 @@ public class ReentrantLockXMLServer {
 				}
 			}
 		} catch (InterruptedException e) {
+			e.printStackTrace();
+			try {
+				LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
+			} catch (FileException e1) {
+				e1.printStackTrace();
+			}
 		}
 		return id;
 	}
@@ -112,6 +169,7 @@ public class ReentrantLockXMLServer {
 					mapChild.put(XML_PID, "");
 					xmlAS.addElementWithChild(PATH_FILE_XML, "server", getNextProjectId(), mapChild);
 				} catch (FileException e) {
+					e.printStackTrace();
 					try {
 						LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
 					} catch (FileException e1) {
@@ -122,6 +180,12 @@ public class ReentrantLockXMLServer {
 				}
 			}
 		} catch (InterruptedException e) {
+			e.printStackTrace();
+			try {
+				LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
+			} catch (FileException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 
@@ -144,6 +208,7 @@ public class ReentrantLockXMLServer {
 						xmlAS.addChildElement(XML_PID, project.getServer().getPIDString(), node);
 					xmlAS.flush(node.getOwnerDocument(), PATH_FILE_XML);
 				} catch (DOMException | FileException e) {
+					e.printStackTrace();
 					try {
 						LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
 					} catch (FileException e1) {
@@ -154,6 +219,12 @@ public class ReentrantLockXMLServer {
 				}
 			}
 		} catch (InterruptedException e) {
+			e.printStackTrace();
+			try {
+				LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
+			} catch (FileException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 
@@ -164,6 +235,7 @@ public class ReentrantLockXMLServer {
 				try {
 					XMLManagerAS.getInstance().deleteNode(PATH_FILE_XML, XML_SERVER, id, true);
 				} catch (FileException e) {
+					e.printStackTrace();
 					try {
 						LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
 					} catch (FileException e1) {
@@ -173,6 +245,12 @@ public class ReentrantLockXMLServer {
 					reentrantLock.unlock();
 				}
 		} catch (InterruptedException e) {
+			e.printStackTrace();
+			try {
+				LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
+			} catch (FileException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 }

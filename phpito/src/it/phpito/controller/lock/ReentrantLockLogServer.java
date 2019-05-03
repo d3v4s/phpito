@@ -1,12 +1,8 @@
 package it.phpito.controller.lock;
 
-import java.io.File;
-import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
-
-import com.ibm.icu.text.SimpleDateFormat;
 
 import it.as.utils.core.LogErrorAS;
 import it.as.utils.core.LoggerAS;
@@ -26,6 +22,7 @@ public class ReentrantLockLogServer {
 					try {
 						LoggerAS.getInstance().writeLog(write, "server", null, new String[] {"server", project.getIdAndName()});
 					} catch (FileException e) {
+						e.printStackTrace();
 						try {
 							LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
 						} catch (FileException e1) {
@@ -36,6 +33,12 @@ public class ReentrantLockLogServer {
 					}
 				}
 			} catch (InterruptedException e) {
+				e.printStackTrace();
+				try {
+					LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
+				} catch (FileException e1) {
+					e1.printStackTrace();
+				}
 			}
 		}
 	}
@@ -53,6 +56,7 @@ public class ReentrantLockLogServer {
 						if (rows.isEmpty() && Pattern.matches(".*[/]log[_].*[-][0]{6}\\.log$", pathFileLog))
 							rows = "404 Log not found";
 					} catch (FileException e) {
+						e.printStackTrace();
 						try {
 							LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
 						} catch (FileException e1) {
@@ -63,6 +67,12 @@ public class ReentrantLockLogServer {
 					}
 				}
 			} catch (InterruptedException e) {
+				e.printStackTrace();
+				try {
+					LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
+				} catch (FileException e1) {
+					e1.printStackTrace();
+				}
 			}
 		}
 		return rows;
@@ -81,6 +91,12 @@ public class ReentrantLockLogServer {
 					}
 				}
 			} catch (InterruptedException e) {
+				e.printStackTrace();
+				try {
+					LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
+				} catch (FileException e1) {
+					e1.printStackTrace();
+				}
 			}
 		}
 	}
@@ -101,21 +117,12 @@ public class ReentrantLockLogServer {
 				}
 			}
 		} catch (InterruptedException e) {
+			e.printStackTrace();
+			try {
+				LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
+			} catch (FileException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
-
-	public LocalDateTime getLocalDateTimeLastModifyLogServer(Project project) throws FileException {
-		if (project == null)
-			return LocalDateTime.MAX;
-		File logFile = LoggerAS.getInstance().getFileLog("server", null, new String[] {"server", project.getIdAndName()});
-		long lastMod = logFile.lastModified();
-		Integer year = Integer.valueOf(new SimpleDateFormat("yyyy").format(lastMod));
-		Integer month = Integer.valueOf(new SimpleDateFormat("MM").format(lastMod));
-		Integer dayOfMonth = Integer.valueOf(new SimpleDateFormat("dd").format(lastMod));
-		Integer hour = Integer.valueOf(new SimpleDateFormat("HH").format(lastMod));
-		Integer minute = Integer.valueOf(new SimpleDateFormat("mm").format(lastMod));
-		Integer second = Integer.valueOf(new SimpleDateFormat("ss").format(lastMod));
-		return LocalDateTime.of(year, month, dayOfMonth, hour, minute, second);
-	}
-
 }

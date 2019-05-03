@@ -39,8 +39,9 @@ public class AddProjectSelectionAdapter extends SelectionAdapter {
 			project.getServer().setPath(textMap.get(Project.K_PATH).getText());
 			project.getServer().setAddress(textMap.get(Project.K_ADDRESS).getText());
 			project.getServer().setPortString(textMap.get(Project.K_PORT).getText());
-			
-			int res = UtilsViewAS.getInstance().lunchMB(shellDialog, SWT.YES | SWT.NO, "AGGIUNGO???", "Sei sicuro di voler aggiungere il seguente progetto???\n" + project.toString());
+
+			String msg = "Sei sicuro di voler aggiungere il seguente progetto???\n" + project.toString();
+			int res = UtilsViewAS.getInstance().lunchMB(shellDialog, SWT.YES | SWT.NO, "AGGIUNGO???", msg);
 			if (res == SWT.YES) {
 				PHPitoManager.getInstance().getReentrantLockXMLServer().addProject(project);
 //				UtilsViewAS.getInstance().lunchMB(shellDialog, SWT.OK, "OK", "Nuovo progetto aggiunto con sucesso.");

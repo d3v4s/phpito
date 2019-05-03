@@ -61,6 +61,7 @@ public class LuncherAddProjectSelectionAdapter extends SelectionAdapter {
 		shellDialog.setChckBttnLogActv(new Button(shellDialog, SWT.CHECK));
 		shellDialog.getChckBttnLogActv().setBounds(20, 200, 100, 20);
 		shellDialog.getChckBttnLogActv().setText("Attiva Log");
+		shellDialog.getChckBttnLogActv().setSelection(true);
 
 		Button bttn = new Button(shellDialog, SWT.PUSH);
 		bttn.addSelectionListener(new LuncherSelectPathSelectionAdapter(shellDialog, shellDialog.getTextMap().get(Project.K_PATH)));

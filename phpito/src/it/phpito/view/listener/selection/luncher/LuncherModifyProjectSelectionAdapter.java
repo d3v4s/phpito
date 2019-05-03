@@ -24,17 +24,17 @@ public class LuncherModifyProjectSelectionAdapter extends SelectionAdapter {
 	public LuncherModifyProjectSelectionAdapter(ShellPHPito shellPHPito) {
 		super();
 		this.shellPHPito = shellPHPito;
-		this.project = shellPHPito.getProjectSelect();
 	}
 
 	@Override
 	public void widgetSelected(SelectionEvent e) {
-		ShellDialogPHPito shellDialog = new ShellDialogPHPito(shellPHPito);
-		lunchModifyProject(shellDialog);
+		lunchModifyProject();
 	}
 	
 	/* metodo per lanciare finestra che aggiunge il progetto */
-	public void lunchModifyProject(ShellDialogPHPito shellDialog) {
+	public void lunchModifyProject() {
+		ShellDialogPHPito shellDialog = new ShellDialogPHPito(shellPHPito);
+		project = shellPHPito.getProjectSelect();
 		shellDialog.setSize(370, 360);
 		shellDialog.setText("Modifica Progetto");
 		UtilsViewAS.getInstance().centerWindow(shellDialog);

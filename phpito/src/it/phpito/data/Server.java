@@ -1,9 +1,7 @@
 package it.phpito.data;
 
-import java.io.IOException;
 import java.util.regex.Pattern;
 
-import it.phpito.controller.PHPitoManager;
 import it.phpito.exception.ProjectException;
 
 public class Server {
@@ -12,6 +10,7 @@ public class Server {
 	private Integer port;
 	private Long processID;
 	private Project project;
+//	private Boolean running;
 
 	/* get e set */
 	public String getPath() {
@@ -50,7 +49,17 @@ public class Server {
 	public void setProject(Project project) {
 		this.project = project;
 	}
-	
+	public Boolean isRunning() {
+		if (processID == null) return false;
+		return true;
+	}
+//	public void setRunning(Boolean running) {
+//		this.running = running;
+//	}
+//	public void setProcessID(Long processID) {
+//		this.processID = processID;
+//	}
+
 	/* metodo che setta porta da String */
 	public void setPortString(String port) throws ProjectException {
 		if (port == null || port.isEmpty() || !Pattern.matches("[\\d]{1,}", port))
@@ -84,9 +93,9 @@ public class Server {
 		return processID != null ? String.valueOf(processID) : "";
 	}
 	
-	public boolean isRunnig() throws IOException {
-		return PHPitoManager.getInstance().isServerRunning(this);
-	}
+//	public boolean isRunnig() throws IOException {
+//		return PHPitoManager.getInstance().isServerRunning(this);
+//	}
 
 	/* metodo che ritorna lo stato del server (ONLINE o OFFLINE) e il PID */ 
 	public String getStatePIDString() {
@@ -99,9 +108,7 @@ public class Server {
 			clone.setAddress(new String(address));
 			clone.setPath(new String(path));
 			clone.setPort(new Integer(port));
-			if (processID != null)
-				clone.setProcessId(new Long(processID));
-			
+			if (processID != null) clone.setProcessId(new Long(processID));
 		} catch (ProjectException e) {
 		}
 		return clone;

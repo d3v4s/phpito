@@ -34,7 +34,7 @@ public class PHPitoManager {
 	private final String SCRIPT_STOP_SERVER = "stop-server" + EXT_SCRIPT;
 	private final String SCRIPT_PID_SERVER = "pid-server" + EXT_SCRIPT;
 	private final String SCRIPT_CHECK_SERVER = "check-server" + EXT_SCRIPT;
-	private final String RUN = (UtilsAS.getInstance().getOsName().contains("win")) ? "" : "./";
+	private final String RUN = (UtilsAS.getInstance().getOsName().contains("win")) ? "cmd.exe": "./";
 	public static final String NAME = "PHPito";
 	public static final String INFO = "PHP Server Manager";
 	public static final String VERSION = "1.0";
@@ -66,7 +66,7 @@ public class PHPitoManager {
 	public Project getProjectById(Long id) {
 		if (id == null)
 			return null;
-		return reentrantLockXMLServer.getProjectsMap().get(String.valueOf(id));
+		return reentrantLockXMLServer.getProject(String.valueOf(id));
 	}
 
 	/* metodo per avviare un server */
@@ -75,7 +75,13 @@ public class PHPitoManager {
 			throw new ProjectException("Errore!!! Nessun server selezionato");
 		if (!NetworkAS.getInstance().isAvaiblePort(project.getServer().getPort()))
 			throw new ServerException("Errore!!! La porta scelta e' gia' in uso.");
-		String[] cmndStart = new String[] {RUN + SCRIPT_START_SERVER,
+		String[] cmndStart;
+		if (UtilsAS.getInstance().getOsName().contains("win"))
+			cmndStart = new String[] {RUN, "/c" ,SCRIPT_START_SERVER,
+									project.getServer().getAddressAndPort(),
+									project.getServer().getPath(), "test.log"};
+		else
+			cmndStart = new String[] {RUN + SCRIPT_START_SERVER,
 									project.getServer().getAddressAndPort(),
 									project.getServer().getPath(), "test.log"};
 		String regexError = ".*Failed to listen on " + project.getServer().getAddressAndPort() + ".*";
@@ -163,38 +169,43 @@ public class PHPitoManager {
 	/* metodo che aggiorna i server in esecuzione sull'xml */
 	public void flushRunningServers() throws IOException, NumberFormatException, ProjectException {
 		HashMap<String, Project> projectMap = reentrantLockXMLServer.getProjectsMap();
-		Project prjct = null;
+		Project project = null;
 		for (String id : projectMap.keySet()) {
-			prjct = projectMap.get(id);
-			if (isServerRunning(prjct.getServer())) {
-				prjct.getServer().setProcessId(getPIDServer(prjct.getServer()));
+			project = projectMap.get(id);
+			if (project.getServer().isRunning()) {
+				project.getServer().setProcessId(getPIDServer(project.getServer()));
 			} else {
-				prjct.getServer().setProcessId(null);
+				project.getServer().setProcessId(null);
 			}
-			reentrantLockXMLServer.updateProject(prjct);
+			reentrantLockXMLServer.updateProject(project);
 		}
 	}
 
 	/* metodo che ritorna i server in esecuzione */
 	public ArrayList<Server> getRunningServers() throws IOException, ProjectException {
 		ArrayList<Server> serverList = new ArrayList<Server>();
-		flushRunningServers();
+//		flushRunningServers();
 		HashMap<String, Project> projectMap = reentrantLockXMLServer.getProjectsMap();
 		for (String id : projectMap.keySet())
-			if (isServerRunning(projectMap.get(id).getServer()))
+			if (projectMap.get(id).getServer().isRunning())
 				serverList.add(projectMap.get(id).getServer());
 		
 		return serverList;
 	}
 
 	/* metodo che ritorna il PID del server */
-	public Long getPIDServer(Server server) throws NumberFormatException, IOException, ProjectException {
+	private Long getPIDServer(Server server) throws NumberFormatException, IOException, ProjectException {
 		if (server == null)
 			throw new ProjectException("Errore!!! Nessun server selezionato");
-		String regexPID = (UtilsAS.getInstance().getOsName().contains("win")) ?
-				".*TCP.*" + server.getAddressAndPortRegex() + ".*LISTENING[\\D]*([\\d]{1,})[\\D]*" :
-				".*tcp.*" + server.getAddressAndPortRegex() + ".*LISTEN[\\D]*([\\d]{1,})/php.*";
-		String[] cmnd = new String[] {RUN + SCRIPT_PID_SERVER, server.getAddressAndPortRegex()};
+		String regexPID;
+		String[] cmnd;
+		if (UtilsAS.getInstance().getOsName().contains("win")) {
+			cmnd = new String[] {RUN, "/c", SCRIPT_PID_SERVER, server.getAddressAndPortRegex()};
+			regexPID  = ".*TCP.*" + server.getAddressAndPortRegex() + ".*LISTENING[\\D]*([\\d]{1,})[\\D]*";
+		} else {
+			cmnd = new String[] {RUN + SCRIPT_PID_SERVER, server.getAddressAndPortRegex()};
+			regexPID = ".*tcp.*" + server.getAddressAndPortRegex() + ".*LISTEN[\\D]*([\\d]{1,})/php.*";
+		}
 		ProcessBuilder pb = new ProcessBuilder(cmnd);
 		pb.directory(new File(DIR_SCRIPT));
 		pb.redirectErrorStream(true);
@@ -214,13 +225,18 @@ public class PHPitoManager {
 	}
 
 	/* metodo che controlla se il server e' in esecuzione */
-	public boolean isServerRunning(Server server) throws IOException {
+	private boolean isServerRunning(Server server) throws IOException {
 		if (server.getProcessID() == null)
 			return false;
-		String[] cmnd = new String[] {RUN + SCRIPT_CHECK_SERVER, server.getAddressAndPortRegex(), server.getPIDString()};
-		String regex = (UtilsAS.getInstance().getOsName().contains("win")) ?
-				".*TCP.*" + server.getAddressAndPortRegex() + ".*LISTENING[\\D]*" + server.getPIDString() + "[\\D]*.*" :
-				".*tcp.*" + server.getAddressAndPortRegex() + ".*LISTEN[\\D]*" + server.getPIDString() + "/php.*";
+		String[] cmnd;
+		String regex;
+		if (UtilsAS.getInstance().getOsName().contains("win")) {
+			cmnd = new String[] {RUN, "/c", SCRIPT_CHECK_SERVER, server.getAddressAndPortRegex(), server.getPIDString()};
+			regex = ".*TCP.*" + server.getAddressAndPortRegex() + ".*LISTENING[\\D]*" + server.getPIDString() + "[\\D]*.*";
+		} else {
+			cmnd = new String[] {RUN + SCRIPT_CHECK_SERVER, server.getAddressAndPortRegex(), server.getPIDString()};
+			regex = ".*tcp.*" + server.getAddressAndPortRegex() + ".*LISTEN[\\D]*" + server.getPIDString() + "/php.*";
+		}
 		ProcessBuilder pb = new ProcessBuilder(cmnd);
 		pb.directory(new File(DIR_SCRIPT));
 		pb.redirectErrorStream(true);
@@ -243,11 +259,15 @@ public class PHPitoManager {
 	public boolean stopServer(Project project) throws IOException, ServerException, ProjectException {
 		if (project == null)
 			throw new ProjectException("Errore!!! Nessun server selezionato");
-		if (isServerRunning(project.getServer())) {
-			String[] cmnd = new String[] {RUN + SCRIPT_STOP_SERVER, project.getServer().getPIDString()};
-			String regexStop = ".*[\\W]{3}[\\s]PHPito stopped server at [\\d]{4}-[\\d]{2}-[\\d]{2}[\\s][\\d]{2}:[\\d]{2}:[\\d]{2}.*";
-			String regexFail = ".*[\\W]{3}[\\s]Error!!! Fail to stop server.*";
-			ProcessBuilder pb = new ProcessBuilder(cmnd);
+		if (project.getServer().isRunning()) {
+			String[] cmndStop;
+			if (UtilsAS.getInstance().getOsName().contains("win"))
+				cmndStop = new String[] {RUN, "/c", SCRIPT_STOP_SERVER, project.getServer().getPIDString()};
+			else
+				cmndStop = new String[] {RUN + SCRIPT_STOP_SERVER, project.getServer().getPIDString()};
+			String regexStop = ".*PHPito stopped server at.*";
+			String regexFail = ".*Error!!! Fail to stop server.*";
+			ProcessBuilder pb = new ProcessBuilder(cmndStop);
 			pb.directory(new File(DIR_SCRIPT));
 			pb.redirectErrorStream(true);
 			Process prs = pb.start();
