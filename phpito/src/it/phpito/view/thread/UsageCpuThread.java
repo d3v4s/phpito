@@ -31,7 +31,7 @@ public class UsageCpuThread extends Thread {
 							shellPHPito.getCanvas().redraw();
 						}
 						if (shellPHPito.getLblCPU() != null)
-							shellPHPito.getLblCPU().setText("CPU: " + String.format("%.0f", sysAdvrg) + "%");
+							shellPHPito.getLblCPU().setText(PHPitoManager.getInstance().getSystemInfo());
 					}
 				});
 				Thread.sleep(1000);

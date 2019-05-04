@@ -113,7 +113,7 @@ public class LuncherSettingSelctionAdapter extends SelectionAdapter {
 		lbl.setText("N. righe log");
 		Spinner spinner = new Spinner(compositeLog, SWT.NONE);
 		spinner.setMinimum(1);
-		spinner.setMaximum(10);
+		spinner.setMaximum(50);
 		spinner.setIncrement(1);
 		spinner.setBounds(110, 55, 150, 30);
 		spinner.setSelection(PHPitoConf.getInstance().getRowLogConf());
