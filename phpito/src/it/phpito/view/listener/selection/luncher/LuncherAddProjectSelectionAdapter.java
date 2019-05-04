@@ -34,19 +34,19 @@ public class LuncherAddProjectSelectionAdapter extends SelectionAdapter {
 	
 	/* metodo per lanciare finestra che aggiunge il progetto */
 	private void lunchAddProject(ShellDialogPHPito shellDialog) {
-		shellDialog.setSize(370, 330);
+		shellDialog.setSize(370, 320);
 		shellDialog.setText("Nuovo Progetto");
 		UtilsViewAS.getInstance().centerWindow(shellDialog);
 		shellDialog.setTextMap(new 	HashMap<String, Text>());
 
 		/* ciclo per label */
 		String[] txtLbl = {"Nome:", "Path:", "Indirizzo:", "Porta:"};
-		UtilsViewAS.getInstance().printLabelVertical(txtLbl, 20, 30, 60, shellPHPito.getFontHeight(), 20, shellDialog, SWT.NONE);
+		UtilsViewAS.getInstance().printLabelVertical(txtLbl, 20, 30, 65, shellPHPito.getFontHeight(), 20, shellDialog, SWT.NONE);
 
 		/* ciclo per text */
 		String[] keyList = Project.getArrayKeyProjectNoId();
 		int[] width = {160, 160, 160, 160};
-		UtilsViewAS.getInstance().printTextVertical(90, 28, width, shellPHPito.getFontHeight(), 20, shellDialog, keyList, shellDialog.getTextMap(), new int[] {});
+		UtilsViewAS.getInstance().printTextVertical(95, 30, width, shellPHPito.getFontHeight(), 20, shellDialog, keyList, shellDialog.getTextMap(), new int[] {});
 
 		/* add listener ad aree di testo */
 		SelectionAdapter[] selAdptList = new SelectionAdapter[] {
@@ -65,7 +65,7 @@ public class LuncherAddProjectSelectionAdapter extends SelectionAdapter {
 
 		Button bttn = new Button(shellDialog, SWT.PUSH);
 		bttn.addSelectionListener(new LuncherSelectPathSelectionAdapter(shellDialog, shellDialog.getTextMap().get(Project.K_PATH)));
-		bttn.setBounds(270, 65, 80, 30);
+		bttn.setBounds(270, 67, 80, 30);
 		bttn.setText("Scegli");
 		bttn.setCursor(new Cursor(shellPHPito.getDisplay(), SWT.CURSOR_HAND));
 		
@@ -74,7 +74,7 @@ public class LuncherAddProjectSelectionAdapter extends SelectionAdapter {
 				new AddProjectSelectionAdapter(shellDialog),
 		};
 		String[] namesButton = new String[] {"Annulla", "Aggiungi"};
-		UtilsViewAS.getInstance().printButtonHorizontal(namesButton, 130, 250, 100, 30, 20, shellDialog, selAdptList);
+		UtilsViewAS.getInstance().printButtonHorizontal(namesButton, 130, 240, 100, 30, 20, shellDialog, selAdptList);
 
 		shellDialog.open();
 	}

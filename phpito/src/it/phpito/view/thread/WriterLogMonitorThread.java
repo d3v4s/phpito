@@ -42,11 +42,12 @@ public class WriterLogMonitorThread extends Thread {
 						public void run() {
 							String out = reentrantLockLogServer.readLog(project, PHPitoConf.getInstance().getRowLogConf());
 							shellPHPito.getLogOutText().setText(out);
+							shellPHPito.getLogOutText().setSelection(out.length());
 						}
 					});
 					lastPrint = LocalDateTime.now();
 				}
-				Thread.sleep(700);
+				Thread.sleep(500);
 			} catch (Exception e) {
 				e.printStackTrace();
 				try {

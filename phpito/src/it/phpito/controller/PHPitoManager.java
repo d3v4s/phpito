@@ -44,10 +44,6 @@ public class PHPitoManager {
 	/* costruttore */
 	private PHPitoManager() {
 	}
-	
-	public ArrayBlockingQueue<Double> getCpuUsageQueue() {
-		return cpuUsageQueue;
-	}
 
 	/* singleton */
 	public static PHPitoManager getInstance() {
@@ -60,6 +56,20 @@ public class PHPitoManager {
 	}
 	public ReentrantLockLogServer getReentrantLockLogServer() {
 		return reentrantLockLogServer;
+	}
+	/* get quque dell'uso cpu */
+	public ArrayBlockingQueue<Double> getCpuUsageQueue() {
+		return cpuUsageQueue;
+	}
+
+	/* metodo che ritorna stringa con info sistema */
+	public String getSystemInfo() {
+		double sysAdvrg = UtilsAS.getInstance().getSystemLoadAdverage() * 100;
+		StringBuffer cpu = new StringBuffer("CPU: ").append(String.format("%.0f", sysAdvrg)).append("%");
+		return new StringBuffer("OS: ").append(UtilsAS.getInstance().getOsName()).append("\n").append(
+				"Arch: ").append(UtilsAS.getInstance().getOsArch()).append("\n").append(
+				"User: ").append(UtilsAS.getInstance().getOsUser()).append("\n").append(
+				"CPU: ").append(UtilsAS.getInstance().getSystemLoadAdverageString()).append(" ").append(cpu).toString();
 	}
 
 	/* metodo ritorna progetto da id */

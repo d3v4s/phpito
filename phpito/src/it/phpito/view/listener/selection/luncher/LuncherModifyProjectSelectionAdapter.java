@@ -42,12 +42,12 @@ public class LuncherModifyProjectSelectionAdapter extends SelectionAdapter {
 		
 		/* ciclo per label */
 		String[] txtLbl = {"Id:", "Nome:", "Path:", "Indirizzo:", "Porta:"};
-		UtilsViewAS.getInstance().printLabelVertical(txtLbl, 20, 30, 60, shellPHPito.getFontHeight(), 20, shellDialog, SWT.NONE);
+		UtilsViewAS.getInstance().printLabelVertical(txtLbl, 20, 30, 65, shellPHPito.getFontHeight(), 20, shellDialog, SWT.NONE);
 		
 		/* ciclo per text */
 		String[] keyList = Project.getArrayKeyProject();
 		int[] width = {70, 160, 160, 160, 160};
-		UtilsViewAS.getInstance().printTextVertical(100, 18, width, shellPHPito.getFontHeight(), 20, shellDialog, keyList, shellDialog.getTextMap(), new int[] {0});
+		UtilsViewAS.getInstance().printTextVertical(100, 30, width, shellPHPito.getFontHeight(), 20, shellDialog, keyList, shellDialog.getTextMap(), new int[] {0});
 
 		/* set aree di testo e aggiunta listener */
 		SelectionAdapter[] selAdptList = new SelectionAdapter[] {
@@ -65,13 +65,13 @@ public class LuncherModifyProjectSelectionAdapter extends SelectionAdapter {
 		}
 
 		shellDialog.setChckBttnLogActv(new Button(shellDialog, SWT.CHECK));
-		shellDialog.getChckBttnLogActv().setBounds(20, 230, 100, 20);
+		shellDialog.getChckBttnLogActv().setBounds(20, 240, 100, 20);
 		shellDialog.getChckBttnLogActv().setText("Attiva Log");
 		shellDialog.getChckBttnLogActv().setSelection(project.isLogActive());
 		
 		Button bttn = new Button(shellDialog, SWT.PUSH);
 		bttn.addSelectionListener(new LuncherSelectPathSelectionAdapter(shellDialog, shellDialog.getTextMap().get(Project.K_PATH)));
-		bttn.setBounds(270, 95, 80, 30);
+		bttn.setBounds(270, 107, 80, 30);
 		bttn.setText("Scegli");
 		
 		selAdptList = new SelectionAdapter[] {

@@ -7,10 +7,9 @@ import java.util.HashMap;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
@@ -32,7 +31,6 @@ import org.eclipse.swt.widgets.TableItem;
 import org.w3c.dom.DOMException;
 
 import it.as.utils.core.LoggerAS;
-import it.as.utils.core.UtilsAS;
 import it.as.utils.view.UtilsViewAS;
 import it.as.utils.view.listener.selection.LuncherFileExplorerSelectionAdapter;
 import it.phpito.controller.PHPitoConf;
@@ -41,6 +39,7 @@ import it.phpito.data.Project;
 import it.phpito.data.Server;
 import it.phpito.exception.ProjectException;
 import it.phpito.exception.ServerException;
+import it.phpito.view.listener.key.StartStopServerKeyAdapter;
 import it.phpito.view.listener.selection.DrawerCpuUsagePaintListener;
 import it.phpito.view.listener.selection.TableSelectionAdapter;
 import it.phpito.view.listener.selection.luncher.LuncherAboutSelctionAdapter;
@@ -60,7 +59,7 @@ public class ShellPHPito extends Shell {
 	private final int fontHeight = 20;
 	private StyledText logOutText;
 	private Canvas canvas;
-	private Label lblCPU;
+	private CLabel lblInfo;
 	private Long idProjectSelect;
 	private boolean actvtLogMon;
 	private boolean actvtSysInfo;
@@ -140,13 +139,13 @@ public class ShellPHPito extends Shell {
 	public Canvas getCanvas() {
 		return canvas;
 	}
-	public Label getLblCPU() {
-		return lblCPU;
+	public CLabel getLblCPU() {
+		return lblInfo;
 	}
 
 	/* metodo per creare contenuti */
 	public void createContents() throws DOMException {
-		this.setMinimumSize(300, 640);
+		this.setMinimumSize(300, 400);
 		this.setSize(850, 640);
 		this.setText("PHPito");
 		this.setLayout(new BorderLayout(0, 0));
@@ -214,23 +213,27 @@ public class ShellPHPito extends Shell {
 			Composite topComposite = new Composite(this, SWT.NONE);
 			topComposite.setLayoutData(BorderLayout.NORTH);
 			topComposite.setLayout(new GridLayout(1,  false));
-			topComposite.setCursor(new Cursor(getDisplay(), SWT.CURSOR_CROSS));
 			
-			logOutText = new StyledText(topComposite, SWT.BORDER | SWT.MULTI | SWT.WRAP);
+			logOutText = new StyledText(topComposite, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
 			gd = new GridData(GridData.FILL_BOTH);
-			gd.heightHint = 210;
+			gd.heightHint = 150;
 			logOutText.setLayoutData(gd);
 			logOutText.getFont().getFontData()[0].setHeight(fontHeight);
 			logOutText.setForeground(PHPitoConf.getInstance().getColorForegrndLogMonConf());
 			logOutText.setBackground(PHPitoConf.getInstance().getColorBckgrndLogMonConf());
-			logOutText.setEnabled(false);
+			logOutText.setEditable(false);
+			logOutText.setCursor(new Cursor(getDisplay(), SWT.CURSOR_CROSS));
 
 		}
 
 		/* contenitore per la zona laterale destra */
-		Composite rightComposite = new Composite(this, SWT.NONE);
-		rightComposite.setLayoutData(BorderLayout.WEST);
-		rightComposite.setLayout(new GridLayout(1, false));
+		ScrolledComposite rightScrolledComposite = new ScrolledComposite(this, SWT.V_SCROLL);
+		rightScrolledComposite.setLayoutData(BorderLayout.WEST);
+		rightScrolledComposite.setExpandHorizontal(true);
+		rightScrolledComposite.setExpandVertical(true);
+		
+		Composite rightGridComposite = new Composite(rightScrolledComposite, SWT.NONE);
+		rightGridComposite.setLayout(new GridLayout(1, false));
 
 		/* impostazioni Grid Layout per larghezza pulsanti */
 		GridData gdBttnWidth = new GridData();
@@ -242,12 +245,12 @@ public class ShellPHPito extends Shell {
 
 		Button bttn;
 		for (int i = 0; i < menuProjectList.length; i++) {
-			bttn = new Button(rightComposite, SWT.PUSH);
+			bttn = new Button(rightGridComposite, SWT.PUSH);
 			bttn.addSelectionListener(menuProjectSelAdptList[i]);
 			bttn.setLayoutData(gdBttnWidth);
 			bttn.setText(menuProjectList[i]);
 			bttn.setCursor(new Cursor(getDisplay(), SWT.CURSOR_HAND));
-			new Label(rightComposite, SWT.NONE).setLayoutData(gdLblHeight);
+			new Label(rightGridComposite, SWT.NONE).setLayoutData(gdLblHeight);
 			if (menuProjectList[i].equals("Modifica"))
 				bttnProjectList.add(bttn);
 			else if (menuProjectList[i].equals("Elimina"))
@@ -257,6 +260,9 @@ public class ShellPHPito extends Shell {
 			else if (menuProjectList[i].equals("Stop"))
 				bttnStopList.add(bttn);
 		}
+
+		rightScrolledComposite.setContent(rightGridComposite);
+		rightScrolledComposite.setMinSize(rightGridComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
 		/* composite centrale con scroll verticale */
 		ScrolledComposite scrolledComposite = new ScrolledComposite(this, SWT.BORDER | SWT.V_SCROLL);
@@ -272,13 +278,7 @@ public class ShellPHPito extends Shell {
 		scrolledComposite.setContent(table);
 		scrolledComposite.setMinSize(table.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		table.addSelectionListener(new TableSelectionAdapter(this));
-		table.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				e.doit = false;
-			}
-			
-		});
+		table.addKeyListener(new StartStopServerKeyAdapter(this));
 		table.forceFocus();
 
 		/* poupup menu per tabella */
@@ -329,16 +329,10 @@ public class ShellPHPito extends Shell {
 			}
 
 			if (PHPitoConf.getInstance().getOthInfo()) {
-				String[] nameLblList = {
-						"OS: " + UtilsAS.getInstance().getOsName(),
-						"Arch: " + UtilsAS.getInstance().getOsArch(),
-						"User: " + UtilsAS.getInstance().getOsUser()
-				};
-				UtilsViewAS.getInstance().printLabelVertical(nameLblList, xLabel, 8, 200, fontHeight, 0, compositeBottom, SWT.NONE);
+				lblInfo = new CLabel(compositeBottom, SWT.NONE);
+				lblInfo.setBounds(xLabel, 15, 200, 70);
 				
-				lblCPU = new Label(compositeBottom, SWT.NONE);
-				lblCPU.setBounds(xLabel, 68, 200, fontHeight);
-				lblCPU.setText("CPU: " + UtilsAS.getInstance().getSystemLoadAdverageString());
+				lblInfo.setText(PHPitoManager.getInstance().getSystemInfo());
 			}
 			new Label(compositeBottom, SWT.NONE).setBounds(0, 100, 300, 0);
 		}
