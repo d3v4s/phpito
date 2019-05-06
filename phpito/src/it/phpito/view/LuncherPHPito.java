@@ -6,7 +6,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import it.as.utils.view.UtilsViewAS;
+import it.jaswt.core.Jaswt;
 import it.jun.core.Jun;
 import it.jun.exception.FileLockException;
 import it.phpito.controller.PHPitoManager;
@@ -29,13 +29,13 @@ public class LuncherPHPito {
 		} catch (Exception e) {
 			String msg = "Attenzione PHPito e' gia' in esecuzione!!!\n"
 							+ "Forzare la seconda istanza???";
-			int resp = UtilsViewAS.getInstance().lunchMB(new Shell(), SWT.YES | SWT.NO, "Attenzione!!!", msg);
+			int resp = Jaswt.getInstance().lunchMB(new Shell(), SWT.YES | SWT.NO, "Attenzione!!!", msg);
 
 			if (resp == SWT.YES)
 				try {
 					Jun.getInstance().forceLock();
 				} catch (IOException | FileLockException e1) {
-					UtilsViewAS.getInstance().lunchMBError(new Shell(), e1, PHPitoManager.NAME);
+					Jaswt.getInstance().lunchMBError(new Shell(), e1, PHPitoManager.NAME);
 				}
 			else
 				return;
@@ -51,7 +51,7 @@ public class LuncherPHPito {
 				if (!display.readAndDispatch())
 					display.sleep();
 			} catch (Exception e) {
-				UtilsViewAS.getInstance().lunchMBError(new Shell(), e, PHPitoManager.NAME);
+				Jaswt.getInstance().lunchMBError(new Shell(), e, PHPitoManager.NAME);
 			}
 		}
 		Jun.getInstance().unlock();

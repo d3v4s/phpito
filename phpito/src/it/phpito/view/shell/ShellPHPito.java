@@ -30,9 +30,9 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.w3c.dom.DOMException;
 
-import it.as.utils.core.LoggerAS;
-import it.as.utils.view.UtilsViewAS;
-import it.as.utils.view.listener.selection.LuncherFileExplorerSelectionAdapter;
+import it.jaswt.core.Jaswt;
+import it.jaswt.core.listener.selection.LuncherFileExplorerSelectionAdapter;
+import it.jogger.core.Jogger;
 import it.phpito.controller.PHPitoConf;
 import it.phpito.controller.PHPitoManager;
 import it.phpito.data.Project;
@@ -41,6 +41,7 @@ import it.phpito.exception.ProjectException;
 import it.phpito.exception.ServerException;
 import it.phpito.view.listener.key.StartStopServerKeyAdapter;
 import it.phpito.view.listener.selection.DrawerCpuUsagePaintListener;
+import it.phpito.view.listener.selection.FlushTableSelectionAdapter;
 import it.phpito.view.listener.selection.TableSelectionAdapter;
 import it.phpito.view.listener.selection.luncher.LuncherAboutSelctionAdapter;
 import it.phpito.view.listener.selection.luncher.LuncherAddProjectSelectionAdapter;
@@ -81,14 +82,14 @@ public class ShellPHPito extends Shell {
 					if (!serverList.isEmpty()) {
 						String msg = "Attenzione!!! I server in esecuzione verranno fermati.\n"
 										+ "Confermi l'operazione???";
-						int resp = UtilsViewAS.getInstance().lunchMB(shellPHPito, SWT.YES | SWT.NO, "ATTENZIONE!!!", msg);
+						int resp = Jaswt.getInstance().lunchMB(shellPHPito, SWT.YES | SWT.NO, "ATTENZIONE!!!", msg);
 						event.doit = resp == SWT.YES;
 						if (event.doit)
 							for (Server server : serverList)
 								PHPitoManager.getInstance().stopServer(server.getProject());
 					}
 				} catch (DOMException | IOException | ServerException | ProjectException e) {
-					UtilsViewAS.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
+					Jaswt.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
 				}
 			}
 		});
@@ -149,7 +150,7 @@ public class ShellPHPito extends Shell {
 		this.setSize(850, 640);
 		this.setText("PHPito");
 		this.setLayout(new BorderLayout(0, 0));
-		UtilsViewAS.getInstance().centerWindow(this);
+		Jaswt.getInstance().centerWindow(this);
 
 		/* barra menu' della testata */
 		Menu menu = new Menu(this, SWT.BAR);
@@ -164,13 +165,14 @@ public class ShellPHPito extends Shell {
 		mn = new Menu(mntm);
 		mntm.setMenu(mn);
 		
-		String[] menuProjectList = {"Aggiungi", "Modifica", "Elimina", "Start", "Stop"};
+		String[] menuProjectList = {"Aggiungi", "Modifica", "Elimina", "Start", "Stop", "Aggoirna"};
 		SelectionAdapter[] menuProjectSelAdptList = new SelectionAdapter[] {
 				new LuncherAddProjectSelectionAdapter(this),
 				new LuncherModifyProjectSelectionAdapter(this),
 				new DeleteProjectSelectionAdapter(this),
 				new StartServerSelectionAdapter(this),
-				new StopServerSelectionAdapter(this)
+				new StopServerSelectionAdapter(this),
+				new FlushTableSelectionAdapter(this)
 		};
 
 		for (int i = 0; i < menuProjectList.length; i++) {
@@ -196,7 +198,7 @@ public class ShellPHPito extends Shell {
 		String[] menuPHPitoList = {"Impostazioni", "Apri cartella Log", "About"};
 		SelectionAdapter[] menuPHPitoSelAdptList = {
 				new LuncherSettingSelctionAdapter(this),
-				new LuncherFileExplorerSelectionAdapter(this, LoggerAS.getInstance().getPathDirLog("server"), PHPitoManager.NAME),
+				new LuncherFileExplorerSelectionAdapter(this, Jogger.getInstance().getLogDirPath("server"), PHPitoManager.NAME),
 				new LuncherAboutSelctionAdapter(this)
 		};
 
@@ -244,7 +246,7 @@ public class ShellPHPito extends Shell {
 		gdLblHeight.heightHint = 13;
 
 		Button bttn;
-		for (int i = 0; i < menuProjectList.length; i++) {
+		for (int i = 0; i < menuProjectList.length - 1; i++) {
 			bttn = new Button(rightGridComposite, SWT.PUSH);
 			bttn.addSelectionListener(menuProjectSelAdptList[i]);
 			bttn.setLayoutData(gdBttnWidth);
@@ -332,7 +334,11 @@ public class ShellPHPito extends Shell {
 				lblInfo = new CLabel(compositeBottom, SWT.NONE);
 				lblInfo.setBounds(xLabel, 15, 200, 70);
 				
-				lblInfo.setText(PHPitoManager.getInstance().getSystemInfo());
+				try {
+					lblInfo.setText(PHPitoManager.getInstance().getSystemInfo(null));
+				} catch (IOException e) {
+					Jaswt.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
+				}
 			}
 			new Label(compositeBottom, SWT.NONE).setBounds(0, 100, 300, 0);
 		}
@@ -376,7 +382,7 @@ public class ShellPHPito extends Shell {
 		try {
 			PHPitoManager.getInstance().flushRunningServers();
 		} catch (NumberFormatException | IOException | ProjectException e) {
-			UtilsViewAS.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
+			Jaswt.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
 		}
 		flushTable();
 		if (actvtLogMon)

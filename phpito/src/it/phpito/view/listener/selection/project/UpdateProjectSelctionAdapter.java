@@ -6,7 +6,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
-import it.as.utils.view.UtilsViewAS;
+import it.jaswt.core.Jaswt;
 import it.phpito.controller.PHPitoManager;
 import it.phpito.data.Project;
 import it.phpito.exception.ProjectException;
@@ -37,14 +37,14 @@ public class UpdateProjectSelctionAdapter extends SelectionAdapter {
 			if (project.getServer().isRunning()) {
 				String msg = "Attenzione!!! Il server e' in esecuzione, per continuare il server dovra' essere arrestato.\n"
 								+ "Il server verra' riavviato dopo aver concluso le modifiche. Continui???";
-				int res = UtilsViewAS.getInstance().lunchMB(shellDialog, SWT.YES | SWT.NO, "Attenzione!!!", msg);
+				int res = Jaswt.getInstance().lunchMB(shellDialog, SWT.YES | SWT.NO, "Attenzione!!!", msg);
 				
 				if (res == SWT.NO)
 					return;
 				
 				restart = true;
 				if (!PHPitoManager.getInstance().stopServer(project)) {
-					UtilsViewAS.getInstance().lunchMB(shellDialog, SWT.OK, "FAIL!!!", "L'arresto del server non ha avuto sucesso.");
+					Jaswt.getInstance().lunchMB(shellDialog, SWT.OK, "FAIL!!!", "L'arresto del server non ha avuto sucesso.");
 					return;
 				}
 					
@@ -57,13 +57,13 @@ public class UpdateProjectSelctionAdapter extends SelectionAdapter {
 			project.getServer().setPortString(shellDialog.getTextMap().get(Project.K_PORT).getText());
 
 			String msg = "Sei sicuro di voler salvare le modifiche del seguente progetto???\n" + project.toString();
-			int res = UtilsViewAS.getInstance().lunchMB(shellDialog, SWT.YES | SWT.NO, "Confermi???", msg);
+			int res = Jaswt.getInstance().lunchMB(shellDialog, SWT.YES | SWT.NO, "Confermi???", msg);
 			if (res == SWT.YES) {
 				PHPitoManager.getInstance().getReentrantLockXMLServer().updateProject(project);
 				PHPitoManager.getInstance().getReentrantLockLogServer().renameDirProjectLog(oldIdName, project.getIdAndName());
-//				UtilsViewAS.getInstance().lunchMB(shellDialog, SWT.OK, "OK", "Modifiche salvate con sucesso.");
+//				Jaswt.getInstance().lunchMB(shellDialog, SWT.OK, "OK", "Modifiche salvate con sucesso.");
 				if (restart && !PHPitoManager.getInstance().startServer(project))
-					UtilsViewAS.getInstance().lunchMB(shellDialog, SWT.OK, "FAIL!!!", "L'avvio del server non ha avuto sucesso.");
+					Jaswt.getInstance().lunchMB(shellDialog, SWT.OK, "FAIL!!!", "L'avvio del server non ha avuto sucesso.");
 				ShellPHPito shellPHPito = shellDialog.getShellPHPito();
 				shellDialog.dispose();
 				shellPHPito.flushTable();
@@ -71,7 +71,7 @@ public class UpdateProjectSelctionAdapter extends SelectionAdapter {
 				
 			}
 		} catch (ProjectException | IOException | ServerException e) {
-			UtilsViewAS.getInstance().lunchMBError(shellDialog, e, PHPitoManager.NAME);
+			Jaswt.getInstance().lunchMBError(shellDialog, e, PHPitoManager.NAME);
 		}
 	}
 

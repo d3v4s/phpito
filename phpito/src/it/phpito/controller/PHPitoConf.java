@@ -7,8 +7,8 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
-import it.as.utils.core.UtilsAS;
-import it.as.utils.exception.FileException;
+import it.jutilas.core.Jutilas;
+import it.jutilas.exception.FileException;
 
 public class PHPitoConf {
 	private static PHPitoConf phpItoConf;
@@ -154,13 +154,13 @@ public class PHPitoConf {
 	public HashMap<String, String> getConfMap() throws FileException {
 		HashMap<String, String> confMap = new HashMap<String, String>();
 		for (String key : K_CONF_LIST)
-			confMap.put(key,UtilsAS.getInstance().getConf(FILE_CONF_PATH, key));
+			confMap.put(key,Jutilas.getInstance().getConf(FILE_CONF_PATH, key));
 		return confMap;
 	}
 	
 	public void saveConf(HashMap<String, String> confMap) throws FileException {
 		for (String key : confMap.keySet())
-			UtilsAS.getInstance().setConf(FILE_CONF_PATH, key, confMap.get(key), MSG_CONF);
+			Jutilas.getInstance().setConf(FILE_CONF_PATH, key, confMap.get(key), MSG_CONF);
 	}
 
 }

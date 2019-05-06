@@ -5,8 +5,8 @@ import java.util.HashMap;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
-import it.as.utils.exception.FormatException;
-import it.as.utils.view.UtilsViewAS;
+import it.jaswt.core.Jaswt;
+import it.jaswt.exception.ParameterException;
 import it.phpito.controller.PHPitoConf;
 import it.phpito.controller.PHPitoManager;
 import it.phpito.view.shell.ShellDialogSettings;
@@ -33,8 +33,8 @@ public class ColorsScaleSelectionAdapter extends SelectionAdapter {
 			shellDialogSettings.getViewColorLabel().redraw();
 
 			shellDialogSettings.getHexColorLbl().setText(shellDialogSettings.getHexColors());
-		} catch (FormatException e) {
-			UtilsViewAS.getInstance().lunchMBError(shellDialogSettings, e, PHPitoManager.NAME);
+		} catch (ParameterException e) {
+			Jaswt.getInstance().lunchMBError(shellDialogSettings, e, PHPitoManager.NAME);
 		}
 	}
 }

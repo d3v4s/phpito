@@ -4,10 +4,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
-import it.as.utils.core.LogErrorAS;
-import it.as.utils.core.LoggerAS;
-import it.as.utils.core.UtilsAS;
-import it.as.utils.exception.FileException;
+import it.jogger.core.Jogger;
+import it.jogger.core.JoggerError;
+import it.jogger.exception.FileLogException;
+import it.jutilas.core.Jutilas;
+import it.jutilas.exception.FileException;
 import it.phpito.controller.PHPitoManager;
 import it.phpito.data.Project;
 
@@ -20,12 +21,12 @@ public class ReentrantLockLogServer {
 			try {
 				if (reentrantLock.tryLock(30, TimeUnit.SECONDS)) {
 					try {
-						LoggerAS.getInstance().writeLog(write, "server", null, new String[] {"server", project.getIdAndName()});
-					} catch (FileException e) {
+						Jogger.getInstance().writeLog(write, "server", null, new String[] {"server", project.getIdAndName()});
+					} catch (FileLogException e) {
 						e.printStackTrace();
 						try {
-							LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
-						} catch (FileException e1) {
+							JoggerError.getInstance().writeLog(e, PHPitoManager.NAME, null);
+						} catch (FileLogException e1) {
 							e1.printStackTrace();
 						}
 					} finally {
@@ -35,8 +36,8 @@ public class ReentrantLockLogServer {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 				try {
-					LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
-				} catch (FileException e1) {
+					JoggerError.getInstance().writeLog(e, PHPitoManager.NAME, null);
+				} catch (FileLogException e1) {
 					e1.printStackTrace();
 				}
 			}
@@ -51,15 +52,15 @@ public class ReentrantLockLogServer {
 			try {
 				if (reentrantLock.tryLock(30, TimeUnit.SECONDS)) {
 					try {
-						String pathFileLog = LoggerAS.getInstance().getPathFileLog("server", null, new String[] {"server", project.getIdAndName()});
-						rows = UtilsAS.getInstance().getLastRowFile(pathFileLog, numRows);
+						String pathFileLog = Jogger.getInstance().getLogFilePath("server", null, new String[] {"server", project.getIdAndName()});
+						rows = Jutilas.getInstance().getLastRowFile(pathFileLog, numRows);
 						if (rows.isEmpty() && Pattern.matches(".*[/]log[_].*[-][0]{6}\\.log$", pathFileLog))
 							rows = "404 Log not found";
-					} catch (FileException e) {
+					} catch (FileLogException | FileException e) {
 						e.printStackTrace();
 						try {
-							LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
-						} catch (FileException e1) {
+							JoggerError.getInstance().writeLog(e, PHPitoManager.NAME, null);
+						} catch (FileLogException e1) {
 							e1.printStackTrace();
 						}
 					} finally {
@@ -69,8 +70,8 @@ public class ReentrantLockLogServer {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 				try {
-					LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
-				} catch (FileException e1) {
+					JoggerError.getInstance().writeLog(e, PHPitoManager.NAME, null);
+				} catch (FileLogException e1) {
 					e1.printStackTrace();
 				}
 			}
@@ -84,8 +85,8 @@ public class ReentrantLockLogServer {
 			try {
 				if (reentrantLock.tryLock(30 , TimeUnit.SECONDS)) {
 					try {
-						String dirLoString = LoggerAS.getInstance().getPathDirLog(new String[] {"server", project.getIdAndName()});
-						UtilsAS.getInstance().recursiveDelete(dirLoString);
+						String dirLoString = Jogger.getInstance().getLogDirPath(new String[] {"server", project.getIdAndName()});
+						Jutilas.getInstance().recursiveDelete(dirLoString);
 					} finally {
 						reentrantLock.unlock();
 					}
@@ -93,8 +94,8 @@ public class ReentrantLockLogServer {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 				try {
-					LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
-				} catch (FileException e1) {
+					JoggerError.getInstance().writeLog(e, PHPitoManager.NAME, null);
+				} catch (FileLogException e1) {
 					e1.printStackTrace();
 				}
 			}
@@ -105,11 +106,11 @@ public class ReentrantLockLogServer {
 		try {
 			if (reentrantLock.tryLock(30,TimeUnit.SECONDS)) {
 				try {
-					UtilsAS.getInstance().renameFile(LoggerAS.getInstance().getPathDirLog("server", name), newName);
+					Jutilas.getInstance().renameFile(Jogger.getInstance().getLogDirPath("server", name), newName);
 				} catch (FileException e) {
 					try {
-						LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
-					} catch (FileException e1) {
+						JoggerError.getInstance().writeLog(e, PHPitoManager.NAME, null);
+					} catch (FileLogException e1) {
 						e1.printStackTrace();
 					}
 				} finally {
@@ -119,8 +120,8 @@ public class ReentrantLockLogServer {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 			try {
-				LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
-			} catch (FileException e1) {
+				JoggerError.getInstance().writeLog(e, PHPitoManager.NAME, null);
+			} catch (FileLogException e1) {
 				e1.printStackTrace();
 			}
 		}

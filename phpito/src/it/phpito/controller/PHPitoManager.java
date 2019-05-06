@@ -12,10 +12,10 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import it.as.utils.core.LogErrorAS;
-import it.as.utils.core.NetworkAS;
-import it.as.utils.core.UtilsAS;
-import it.as.utils.exception.FileException;
+import it.jogger.core.JoggerError;
+import it.jogger.exception.FileLogException;
+import it.jutilas.core.JutilasNet;
+import it.jutilas.core.JutilasSys;
 import it.phpito.controller.lock.ReentrantLockLogServer;
 import it.phpito.controller.lock.ReentrantLockXMLServer;
 import it.phpito.data.Project;
@@ -28,13 +28,13 @@ public class PHPitoManager {
 	private final ReentrantLockXMLServer reentrantLockXMLServer = new ReentrantLockXMLServer();
 	private final ReentrantLockLogServer reentrantLockLogServer = new ReentrantLockLogServer();
 	private final ArrayBlockingQueue<Double> cpuUsageQueue = new ArrayBlockingQueue<Double>(80);
-	private final String DIR_SCRIPT = Paths.get(UtilsAS.getInstance().getRunPath(), "script").toString();
-	private final String EXT_SCRIPT = (UtilsAS.getInstance().getOsName().contains("win")) ? ".bat" : ".sh";
+	private final String DIR_SCRIPT = Paths.get(JutilasSys.getInstance().getRunPath(), "script").toString();
+	private final String EXT_SCRIPT = (JutilasSys.getInstance().getOsName().contains("win")) ? ".bat" : ".sh";
 	private final String SCRIPT_START_SERVER = "start-server" + EXT_SCRIPT;
 	private final String SCRIPT_STOP_SERVER = "stop-server" + EXT_SCRIPT;
 	private final String SCRIPT_PID_SERVER = "pid-server" + EXT_SCRIPT;
 	private final String SCRIPT_CHECK_SERVER = "check-server" + EXT_SCRIPT;
-	private final String RUN = (UtilsAS.getInstance().getOsName().contains("win")) ? "cmd.exe": "./";
+	private final String RUN = (JutilasSys.getInstance().getOsName().contains("win")) ? "cmd.exe": "./";
 	public static final String NAME = "PHPito";
 	public static final String INFO = "PHP Server Manager";
 	public static final String VERSION = "1.0";
@@ -62,14 +62,23 @@ public class PHPitoManager {
 		return cpuUsageQueue;
 	}
 
+//	/* metodo che ritorna stringa con info sistema */
+//	public String getSystemInfo() throws IOException {
+//		double sysAdvrg = JutilasSys.getInstance().getSystemLoadAdverage(1000);
+//		StringBuffer cpu = new StringBuffer("CPU: ").append(String.format("%.2f", sysAdvrg)).append("%");
+//		return new StringBuffer("OS: ").append(JutilasSys.getInstance().getOsName()).append("\n").append(
+//				"Arch: ").append(JutilasSys.getInstance().getOsArch()).append("\n").append(
+//				"User: ").append(JutilasSys.getInstance().getOsUser()).append("\n").append(cpu).toString();
+//	}
+
 	/* metodo che ritorna stringa con info sistema */
-	public String getSystemInfo() {
-		double sysAdvrg = UtilsAS.getInstance().getSystemLoadAdverage() * 100;
-		StringBuffer cpu = new StringBuffer("CPU: ").append(String.format("%.0f", sysAdvrg)).append("%");
-		return new StringBuffer("OS: ").append(UtilsAS.getInstance().getOsName()).append("\n").append(
-				"Arch: ").append(UtilsAS.getInstance().getOsArch()).append("\n").append(
-				"User: ").append(UtilsAS.getInstance().getOsUser()).append("\n").append(
-				"CPU: ").append(UtilsAS.getInstance().getSystemLoadAdverageString()).append(" ").append(cpu).toString();
+	public String getSystemInfo(Double sysAdvrg) throws IOException {
+		if (sysAdvrg == null)
+			sysAdvrg = JutilasSys.getInstance().getSystemLoadAdverage(1000);
+		StringBuffer cpu = new StringBuffer("CPU: ").append(String.format("%.2f", sysAdvrg)).append("%");
+		return new StringBuffer("OS: ").append(JutilasSys.getInstance().getOsName()).append("\n").append(
+				"Arch: ").append(JutilasSys.getInstance().getOsArch()).append("\n").append(
+				"User: ").append(JutilasSys.getInstance().getOsUser()).append("\n").append(cpu).toString();
 	}
 
 	/* metodo ritorna progetto da id */
@@ -83,10 +92,10 @@ public class PHPitoManager {
 	public boolean startServer(Project project) throws IOException, ServerException, NumberFormatException, ProjectException {
 		if (project == null)
 			throw new ProjectException("Errore!!! Nessun server selezionato");
-		if (!NetworkAS.getInstance().isAvaiblePort(project.getServer().getPort()))
+		if (!JutilasNet.getInstance().isAvaiblePort(project.getServer().getPort()))
 			throw new ServerException("Errore!!! La porta scelta e' gia' in uso.");
 		String[] cmndStart;
-		if (UtilsAS.getInstance().getOsName().contains("win"))
+		if (JutilasSys.getInstance().getOsName().contains("win"))
 			cmndStart = new String[] {RUN, "/c" ,SCRIPT_START_SERVER,
 									project.getServer().getAddressAndPort(),
 									project.getServer().getPath(), "test.log"};
@@ -158,8 +167,8 @@ public class PHPitoManager {
 				}
 			} catch (IOException e) {
 				try {
-					LogErrorAS.getInstance().writeLog(e, NAME);
-				} catch (FileException e1) {
+					JoggerError.getInstance().writeLog(e, NAME, null);
+				} catch (FileLogException e1) {
 					e1.printStackTrace();
 				}
 			} finally {
@@ -167,8 +176,8 @@ public class PHPitoManager {
 					bufferedReader.close();
 				} catch (IOException e) {
 					try {
-						LogErrorAS.getInstance().writeLog(e, NAME);
-					} catch (FileException e1) {
+						JoggerError.getInstance().writeLog(e, NAME, null);
+					} catch (FileLogException e1) {
 						e1.printStackTrace();
 					}
 				}
@@ -209,7 +218,7 @@ public class PHPitoManager {
 			throw new ProjectException("Errore!!! Nessun server selezionato");
 		String regexPID;
 		String[] cmnd;
-		if (UtilsAS.getInstance().getOsName().contains("win")) {
+		if (JutilasSys.getInstance().getOsName().contains("win")) {
 			cmnd = new String[] {RUN, "/c", SCRIPT_PID_SERVER, server.getAddressAndPortRegex()};
 			regexPID  = ".*TCP.*" + server.getAddressAndPortRegex() + ".*LISTENING[\\D]*([\\d]{1,})[\\D]*";
 		} else {
@@ -240,7 +249,7 @@ public class PHPitoManager {
 			return false;
 		String[] cmnd;
 		String regex;
-		if (UtilsAS.getInstance().getOsName().contains("win")) {
+		if (JutilasSys.getInstance().getOsName().contains("win")) {
 			cmnd = new String[] {RUN, "/c", SCRIPT_CHECK_SERVER, server.getAddressAndPortRegex(), server.getPIDString()};
 			regex = ".*TCP.*" + server.getAddressAndPortRegex() + ".*LISTENING[\\D]*" + server.getPIDString() + "[\\D]*.*";
 		} else {
@@ -271,7 +280,7 @@ public class PHPitoManager {
 			throw new ProjectException("Errore!!! Nessun server selezionato");
 		if (project.getServer().isRunning()) {
 			String[] cmndStop;
-			if (UtilsAS.getInstance().getOsName().contains("win"))
+			if (JutilasSys.getInstance().getOsName().contains("win"))
 				cmndStop = new String[] {RUN, "/c", SCRIPT_STOP_SERVER, project.getServer().getPIDString()};
 			else
 				cmndStop = new String[] {RUN + SCRIPT_STOP_SERVER, project.getServer().getPIDString()};

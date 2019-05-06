@@ -9,8 +9,8 @@ import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Text;
 
-import it.as.utils.view.UtilsViewAS;
-import it.as.utils.view.listener.selection.LuncherSelectPathSelectionAdapter;
+import it.jaswt.core.Jaswt;
+import it.jaswt.core.listener.selection.LuncherSelectPathSelectionAdapter;
 import it.phpito.data.Project;
 import it.phpito.view.listener.selection.project.AddProjectSelectionAdapter;
 import it.phpito.view.listener.selection.text.CancelTextSelectionAdapter;
@@ -36,17 +36,17 @@ public class LuncherAddProjectSelectionAdapter extends SelectionAdapter {
 	private void lunchAddProject(ShellDialogPHPito shellDialog) {
 		shellDialog.setSize(370, 320);
 		shellDialog.setText("Nuovo Progetto");
-		UtilsViewAS.getInstance().centerWindow(shellDialog);
+		Jaswt.getInstance().centerWindow(shellDialog);
 		shellDialog.setTextMap(new 	HashMap<String, Text>());
 
 		/* ciclo per label */
 		String[] txtLbl = {"Nome:", "Path:", "Indirizzo:", "Porta:"};
-		UtilsViewAS.getInstance().printLabelVertical(txtLbl, 20, 30, 65, shellPHPito.getFontHeight(), 20, shellDialog, SWT.NONE);
+		Jaswt.getInstance().printLabelVertical(txtLbl, 20, 30, 65, shellPHPito.getFontHeight(), 20, shellDialog, SWT.NONE);
 
 		/* ciclo per text */
 		String[] keyList = Project.getArrayKeyProjectNoId();
 		int[] width = {160, 160, 160, 160};
-		UtilsViewAS.getInstance().printTextVertical(95, 30, width, shellPHPito.getFontHeight(), 20, shellDialog, keyList, shellDialog.getTextMap(), new int[] {});
+		Jaswt.getInstance().printTextVertical(95, 30, width, shellPHPito.getFontHeight(), 20, shellDialog, keyList, shellDialog.getTextMap(), new int[] {});
 
 		/* add listener ad aree di testo */
 		SelectionAdapter[] selAdptList = new SelectionAdapter[] {
@@ -74,7 +74,7 @@ public class LuncherAddProjectSelectionAdapter extends SelectionAdapter {
 				new AddProjectSelectionAdapter(shellDialog),
 		};
 		String[] namesButton = new String[] {"Annulla", "Aggiungi"};
-		UtilsViewAS.getInstance().printButtonHorizontal(namesButton, 130, 240, 100, 30, 20, shellDialog, selAdptList);
+		Jaswt.getInstance().printButtonHorizontal(namesButton, 130, 240, 100, 30, 20, shellDialog, selAdptList);
 
 		shellDialog.open();
 	}
