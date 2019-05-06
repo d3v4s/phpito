@@ -5,9 +5,9 @@ import java.time.LocalDateTime;
 
 import com.ibm.icu.text.SimpleDateFormat;
 
-import it.as.utils.core.LogErrorAS;
-import it.as.utils.core.LoggerAS;
-import it.as.utils.exception.FileException;
+import it.jogger.core.Jogger;
+import it.jogger.core.JoggerError;
+import it.jogger.exception.FileLogException;
 import it.phpito.controller.PHPitoConf;
 import it.phpito.controller.PHPitoManager;
 import it.phpito.controller.lock.ReentrantLockLogServer;
@@ -51,18 +51,18 @@ public class WriterLogMonitorThread extends Thread {
 			} catch (Exception e) {
 				e.printStackTrace();
 				try {
-					LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
-				} catch (FileException e1) {
+					JoggerError.getInstance().writeLog(e, PHPitoManager.NAME, null);
+				} catch (FileLogException e1) {
 					e1.printStackTrace();
 				}
 			}
 		}
 	}
 	
-	private LocalDateTime getLocalDateTimeLastModifyLogServer(Project project) throws FileException {
+	private LocalDateTime getLocalDateTimeLastModifyLogServer(Project project) throws FileLogException {
 		if (project == null)
 			return LocalDateTime.MAX;
-		File logFile = LoggerAS.getInstance().getFileLog("server", null, new String[] {"server", project.getIdAndName()});
+		File logFile = Jogger.getInstance().getLogFile("server", null, new String[] {"server", project.getIdAndName()});
 		long lastMod = logFile.lastModified();
 		Integer year = Integer.valueOf(new SimpleDateFormat("yyyy").format(lastMod));
 		Integer month = Integer.valueOf(new SimpleDateFormat("MM").format(lastMod));

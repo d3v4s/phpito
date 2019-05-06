@@ -6,7 +6,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
-import it.as.utils.view.UtilsViewAS;
+import it.jaswt.core.Jaswt;
 import it.phpito.controller.PHPitoManager;
 import it.phpito.data.Project;
 import it.phpito.exception.ProjectException;
@@ -30,9 +30,9 @@ public class StartServerSelectionAdapter extends SelectionAdapter {
 		try {
 			Project p = PHPitoManager.getInstance().getProjectById(shellPHPito.getIdProjectSelect());
 			if (!PHPitoManager.getInstance().startServer(p))
-				UtilsViewAS.getInstance().lunchMB(shellPHPito, SWT.OK, "FAIL!!!", "L'avvio del server non ha avuto sucesso.");
+				Jaswt.getInstance().lunchMB(shellPHPito, SWT.OK, "FAIL!!!", "L'avvio del server non ha avuto sucesso.");
 		} catch (ServerException | IOException | ProjectException e) {
-			UtilsViewAS.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
+			Jaswt.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
 		} finally {
 			shellPHPito.flushTable();
 			shellPHPito.getTable().forceFocus();

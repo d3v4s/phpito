@@ -6,7 +6,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
-import it.as.utils.view.UtilsViewAS;
+import it.jaswt.core.Jaswt;
 import it.phpito.controller.PHPitoManager;
 import it.phpito.data.Project;
 import it.phpito.exception.ProjectException;
@@ -28,20 +28,20 @@ public class DeleteProjectSelectionAdapter extends SelectionAdapter {
 		try {
 			if (project.getServer().isRunning()) {
 				String msg = "Attenzione!!! Il progetto che si vuole eliminare e' in esecuzione?\nContinuare???";
-				res = UtilsViewAS.getInstance().lunchMB(shellPHPito, SWT.YES | SWT.NO, "ATTENZIONE!!!", msg);
+				res = Jaswt.getInstance().lunchMB(shellPHPito, SWT.YES | SWT.NO, "ATTENZIONE!!!", msg);
 				if (res == SWT.NO)
 					return;
 				
 				PHPitoManager.getInstance().stopServer(project);
 			}
 		} catch (IOException | ServerException | ProjectException e) {
-			UtilsViewAS.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
+			Jaswt.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
 		}
-		res = UtilsViewAS.getInstance().lunchMB(shellPHPito, SWT.YES | SWT.NO, "ELIMINO???", "Sei sicuro di voler eliminare il seguente progetto?\n"
+		res = Jaswt.getInstance().lunchMB(shellPHPito, SWT.YES | SWT.NO, "ELIMINO???", "Sei sicuro di voler eliminare il seguente progetto?\n"
 																						+ shellPHPito.getProjectSelect().toString());
 		if (res == SWT.YES) {
 			PHPitoManager.getInstance().getReentrantLockXMLServer().deleteProject(project.getIdString());
-			res = UtilsViewAS.getInstance().lunchMB(shellPHPito, SWT.YES | SWT.NO, "ELIMINO???", "Vuoi eliminare anche i file di log del server?");
+			res = Jaswt.getInstance().lunchMB(shellPHPito, SWT.YES | SWT.NO, "ELIMINO???", "Vuoi eliminare anche i file di log del server?");
 			if (res == SWT.YES)
 				PHPitoManager.getInstance().getReentrantLockLogServer().deleteLog(project);
 			shellPHPito.flushTable();

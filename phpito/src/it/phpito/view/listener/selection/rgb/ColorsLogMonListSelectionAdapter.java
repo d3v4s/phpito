@@ -7,8 +7,8 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Scale;
 
-import it.as.utils.exception.FormatException;
-import it.as.utils.view.UtilsViewAS;
+import it.jaswt.core.Jaswt;
+import it.jaswt.exception.ParameterException;
 import it.phpito.controller.PHPitoConf;
 import it.phpito.controller.PHPitoManager;
 import it.phpito.view.shell.ShellDialogSettings;
@@ -45,8 +45,8 @@ public class ColorsLogMonListSelectionAdapter extends SelectionAdapter{
 			}
 			
 			shellDialogSettings.getHexColorLbl().setText(shellDialogSettings.getHexColors());
-		} catch (FormatException e) {
-			UtilsViewAS.getInstance().lunchMBError(shellDialogSettings, e, PHPitoManager.NAME);
+		} catch (ParameterException e) {
+			Jaswt.getInstance().lunchMBError(shellDialogSettings, e, PHPitoManager.NAME);
 		}
 	}
 }

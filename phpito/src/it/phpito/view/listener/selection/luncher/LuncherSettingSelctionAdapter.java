@@ -19,11 +19,11 @@ import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
-import it.as.utils.exception.FormatException;
-import it.as.utils.view.UtilsViewAS;
-import it.as.utils.view.label.ViewColorLabel;
-import it.as.utils.view.listener.selection.CloserShellSelectionAdpter;
-import it.as.utils.view.listener.selection.DisablerControlSelctionAdapter;
+import it.jaswt.core.Jaswt;
+import it.jaswt.core.label.ViewColorLabel;
+import it.jaswt.core.listener.selection.CloserShellSelectionAdpter;
+import it.jaswt.core.listener.selection.DisablerControlSelctionAdapter;
+import it.jaswt.exception.ParameterException;
 import it.phpito.controller.PHPitoConf;
 import it.phpito.controller.PHPitoManager;
 import it.phpito.view.listener.selection.SaveConfSelectionAdapter;
@@ -60,7 +60,7 @@ public class LuncherSettingSelctionAdapter extends SelectionAdapter {
 		shellDialog.setColorForegrndLogMonMap(PHPitoConf.getInstance().getColorsForegrndLogMonMap());
 		shellDialog.setLogMonControlList(new ArrayList<Control>());
 		shellDialog.setSysInfoControlList(new ArrayList<Control>());
-		UtilsViewAS.getInstance().centerWindow(shellDialog);
+		Jaswt.getInstance().centerWindow(shellDialog);
 
 		TabFolder tabFolder = new TabFolder(shellDialog, SWT.NONE);
 		tabFolder.setLayoutData(BorderLayout.CENTER);
@@ -154,8 +154,8 @@ public class LuncherSettingSelctionAdapter extends SelectionAdapter {
 					shellDialog.getColorBackgrndLogMonMap().get(PHPitoConf.K_COLOR_GREEN),
 					shellDialog.getColorBackgrndLogMonMap().get(PHPitoConf.K_COLOR_BLUE)
 			));
-		} catch (FormatException e) {
-			UtilsViewAS.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
+		} catch (ParameterException e) {
+			Jaswt.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
 		}
 		shellDialog.getViewColorLabel().setBounds(240, 25, 50, 50);
 

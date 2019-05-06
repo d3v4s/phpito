@@ -10,9 +10,9 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Spinner;
 
-import it.as.utils.core.UtilsAS;
-import it.as.utils.exception.FileException;
-import it.as.utils.view.UtilsViewAS;
+import it.jaswt.core.Jaswt;
+import it.jutilas.core.Jutilas;
+import it.jutilas.exception.FileException;
 import it.phpito.controller.PHPitoConf;
 import it.phpito.controller.PHPitoManager;
 import it.phpito.view.shell.ShellDialogSettings;
@@ -44,12 +44,12 @@ public class SaveConfSelectionAdapter extends SelectionAdapter {
 			PHPitoConf.getInstance().saveConf(confMap);
 			shellDialogSettings.dispose();
 			String msg = "Attenzione per visualizzare alcune modifiche e' necessario riavviare l'applicazione.\n"
-					+ "Riavviare ora???";
-			int res = UtilsViewAS.getInstance().lunchMB(shellPHPito, SWT.YES | SWT.NO, "Confermi???", msg);
+						+ "Riavviare ora???";
+			int res = Jaswt.getInstance().lunchMB(shellPHPito, SWT.YES | SWT.NO, "CONFERMI???", msg);
 			if (res == SWT.YES)
-				UtilsAS.getInstance().restartApp();
+				Jutilas.getInstance().restartApp();
 		} catch (FileException | URISyntaxException | IOException e) {
-			UtilsViewAS.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
+			Jaswt.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
 		}
 	}
 }

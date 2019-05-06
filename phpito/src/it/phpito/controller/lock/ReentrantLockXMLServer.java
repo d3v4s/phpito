@@ -9,9 +9,10 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 
-import it.as.utils.core.LogErrorAS;
-import it.as.utils.core.XMLManagerAS;
-import it.as.utils.exception.FileException;
+import it.jogger.core.JoggerError;
+import it.jogger.exception.FileLogException;
+import it.jsx.core.JSX;
+import it.jsx.exception.XMLException;
 import it.phpito.controller.PHPitoConf;
 import it.phpito.controller.PHPitoManager;
 import it.phpito.data.Project;
@@ -37,7 +38,7 @@ public class ReentrantLockXMLServer {
 				try {
 					Project project;
 					Node node;
-					XMLManagerAS xmlAS = XMLManagerAS.getInstance();
+					JSX xmlAS = JSX.getInstance();
 					HashMap<String, Node> mapNode = xmlAS.getMapIdElement(PATH_FILE_XML, XML_SERVER);
 					for (String id : mapNode.keySet()) {
 						node = mapNode.get(id);
@@ -56,11 +57,11 @@ public class ReentrantLockXMLServer {
 						mapProjects.put(id, project);
 					}
 					
-				} catch (DOMException | ProjectException | FileException e) {
+				} catch (DOMException | ProjectException | XMLException e) {
 					e.printStackTrace();
 					try {
-						LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
-					} catch (FileException e1) {
+						JoggerError.getInstance().writeLog(e, PHPitoManager.NAME, null);
+					} catch (FileLogException e1) {
 						e1.printStackTrace();
 					}
 				} finally {
@@ -70,8 +71,8 @@ public class ReentrantLockXMLServer {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 			try {
-				LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
-			} catch (FileException e1) {
+				JoggerError.getInstance().writeLog(e, PHPitoManager.NAME, null);
+			} catch (FileLogException e1) {
 				e1.printStackTrace();
 			}
 		}
@@ -83,7 +84,7 @@ public class ReentrantLockXMLServer {
 		try {
 			if (reentrantLock.tryLock(30, TimeUnit.SECONDS)) {
 				try {
-					XMLManagerAS xmlAS = XMLManagerAS.getInstance();
+					JSX xmlAS = JSX.getInstance();
 					Node node = xmlAS.getMapIdElement(PATH_FILE_XML, XML_SERVER).get(id);
 					if (node == null)
 						return null;
@@ -99,11 +100,11 @@ public class ReentrantLockXMLServer {
 						String pid = xmlAS.getArrayChildNode(node, XML_PID).get(0).getTextContent();
 						project.getServer().setProcessIdString(pid);
 					}
-				} catch (FileException | DOMException | ProjectException e) {
+				} catch (DOMException | ProjectException | XMLException e) {
 					e.printStackTrace();
 					try {
-						LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
-					} catch (FileException e1) {
+						JoggerError.getInstance().writeLog(e, PHPitoManager.NAME, null);
+					} catch (FileLogException e1) {
 						e1.printStackTrace();
 					}
 				} finally {
@@ -113,8 +114,8 @@ public class ReentrantLockXMLServer {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 			try {
-				LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
-			} catch (FileException e1) {
+				JoggerError.getInstance().writeLog(e, PHPitoManager.NAME, null);
+			} catch (FileLogException e1) {
 				e1.printStackTrace();
 			}
 		}
@@ -128,15 +129,15 @@ public class ReentrantLockXMLServer {
 		try {
 			if (reentrantLock.tryLock(30, TimeUnit.SECONDS)) {
 				try {
-					XMLManagerAS xmlAS = XMLManagerAS.getInstance();
+					JSX xmlAS = JSX.getInstance();
 					Set<String> setId = xmlAS.getMapIdElement(PATH_FILE_XML, "server").keySet();
 					long idLong = xmlAS.getGreatId(setId) + 1;
 					id = String.valueOf((idLong < 1L) ? 1 : idLong);
-				} catch (FileException e) {
+				} catch (XMLException e) {
 					e.printStackTrace();
 					try {
-						LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
-					} catch (FileException e1) {
+						JoggerError.getInstance().writeLog(e, PHPitoManager.NAME, null);
+					} catch (FileLogException e1) {
 						e1.printStackTrace();
 					}
 				} finally {
@@ -146,8 +147,8 @@ public class ReentrantLockXMLServer {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 			try {
-				LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
-			} catch (FileException e1) {
+				JoggerError.getInstance().writeLog(e, PHPitoManager.NAME, null);
+			} catch (FileLogException e1) {
 				e1.printStackTrace();
 			}
 		}
@@ -159,7 +160,7 @@ public class ReentrantLockXMLServer {
 		try {
 			if (reentrantLock.tryLock(30, TimeUnit.SECONDS)) {
 				try {
-					XMLManagerAS xmlAS = XMLManagerAS.getInstance();
+					JSX xmlAS = JSX.getInstance();
 					HashMap<String, String> mapChild = new HashMap<String, String>();
 					mapChild.put(XML_NAME, project.getName());
 					mapChild.put(XML_PATH, project.getServer().getPath());
@@ -168,11 +169,11 @@ public class ReentrantLockXMLServer {
 					mapChild.put(XML_LOG, project.isLogActiveString());
 					mapChild.put(XML_PID, "");
 					xmlAS.addElementWithChild(PATH_FILE_XML, "server", getNextProjectId(), mapChild);
-				} catch (FileException e) {
+				} catch (XMLException e) {
 					e.printStackTrace();
 					try {
-						LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
-					} catch (FileException e1) {
+						JoggerError.getInstance().writeLog(e, PHPitoManager.NAME, null);
+					} catch (FileLogException e1) {
 						e1.printStackTrace();
 					}
 				} finally {
@@ -182,8 +183,8 @@ public class ReentrantLockXMLServer {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 			try {
-				LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
-			} catch (FileException e1) {
+				JoggerError.getInstance().writeLog(e, PHPitoManager.NAME, null);
+			} catch (FileLogException e1) {
 				e1.printStackTrace();
 			}
 		}
@@ -194,7 +195,7 @@ public class ReentrantLockXMLServer {
 		try {
 			if (reentrantLock.tryLock(30, TimeUnit.SECONDS)) {
 				try {
-					XMLManagerAS xmlAS = XMLManagerAS.getInstance();
+					JSX xmlAS = JSX.getInstance();
 					HashMap<String, Node> mapNode = xmlAS.getMapIdElement(PATH_FILE_XML, XML_SERVER);
 					Node node = mapNode.get(project.getIdString());
 					xmlAS.getArrayChildNode(node, XML_NAME).get(0).setTextContent(project.getName());
@@ -205,13 +206,13 @@ public class ReentrantLockXMLServer {
 					if (!xmlAS.getArrayChildNode(node, XML_PID).isEmpty())
 						xmlAS.getArrayChildNode(node, XML_PID).get(0).setTextContent(project.getServer().getPIDString());
 					else
-						xmlAS.addChildElement(XML_PID, project.getServer().getPIDString(), node);
-					xmlAS.flush(node.getOwnerDocument(), PATH_FILE_XML);
-				} catch (DOMException | FileException e) {
+						xmlAS.addChildElement(node, XML_PID, project.getServer().getPIDString());
+					xmlAS.flush(node.getOwnerDocument(), PATH_FILE_XML, 4);
+				} catch (DOMException | XMLException e) {
 					e.printStackTrace();
 					try {
-						LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
-					} catch (FileException e1) {
+						JoggerError.getInstance().writeLog(e, PHPitoManager.NAME, null);
+					} catch (FileLogException e1) {
 						e1.printStackTrace();
 					}
 				} finally {
@@ -221,8 +222,8 @@ public class ReentrantLockXMLServer {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 			try {
-				LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
-			} catch (FileException e1) {
+				JoggerError.getInstance().writeLog(e, PHPitoManager.NAME, null);
+			} catch (FileLogException e1) {
 				e1.printStackTrace();
 			}
 		}
@@ -233,12 +234,12 @@ public class ReentrantLockXMLServer {
 		try {
 			if (reentrantLock.tryLock(30, TimeUnit.SECONDS))
 				try {
-					XMLManagerAS.getInstance().deleteNode(PATH_FILE_XML, XML_SERVER, id, true);
-				} catch (FileException e) {
+					JSX.getInstance().deleteNode(PATH_FILE_XML, XML_SERVER, id);
+				} catch (XMLException e) {
 					e.printStackTrace();
 					try {
-						LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
-					} catch (FileException e1) {
+						JoggerError.getInstance().writeLog(e, PHPitoManager.NAME, null);
+					} catch (FileLogException e1) {
 						e1.printStackTrace();
 					}
 				} finally {
@@ -247,8 +248,8 @@ public class ReentrantLockXMLServer {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 			try {
-				LogErrorAS.getInstance().writeLog(e, PHPitoManager.NAME);
-			} catch (FileException e1) {
+				JoggerError.getInstance().writeLog(e, PHPitoManager.NAME, null);
+			} catch (FileLogException e1) {
 				e1.printStackTrace();
 			}
 		}
