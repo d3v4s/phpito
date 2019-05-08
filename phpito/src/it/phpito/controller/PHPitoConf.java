@@ -7,6 +7,8 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
+import it.jogger.exception.FileLogException;
+import it.jogger.exception.LockLogException;
 import it.jutilas.core.Jutilas;
 import it.jutilas.exception.FileException;
 
@@ -19,6 +21,7 @@ public class PHPitoConf {
 	public static final String K_CONF_ROW_LOG_MON = "row-log-mon";
 	public static final String K_CONF_BCKGRND_LOG_MON = "bckgrnd-log-mon";
 	public static final String K_CONF_FOREGRND_LOG_MON = "frgrnd-log-mon";
+	public static final String K_CONF_STYLE_LOG_MON = "style-log-mon";
 	public static final String K_CONF_ACTVT_SYS_INFO = "actvt-sys-info";
 	public static final String K_CONF_ACTVT_CPU_MON = "actvt-cpu-mon";
 	public static final String K_CONF_OTH_INFO = "oth-info";
@@ -27,6 +30,7 @@ public class PHPitoConf {
 			K_CONF_ROW_LOG_MON,
 			K_CONF_BCKGRND_LOG_MON,
 			K_CONF_FOREGRND_LOG_MON,
+			K_CONF_STYLE_LOG_MON,
 			K_CONF_ACTVT_SYS_INFO,
 			K_CONF_ACTVT_CPU_MON,
 			K_CONF_OTH_INFO
@@ -40,6 +44,7 @@ public class PHPitoConf {
 			K_COLOR_BLUE
 	};
 	private final String FILE_CONF_PATH = Paths.get(DIR_CONF, FILE_CONF).toString();
+	private HashMap<String, String> confMap;
 	
 	private PHPitoConf() {
 	}
@@ -61,7 +66,7 @@ public class PHPitoConf {
 		try {
 			return Integer.parseInt(getConfMap().get(K_CONF_ROW_LOG_MON));
 		} catch (Exception e) {
-			return 10;
+			return 20;
 		}
 	}
 	public Color getColorBckgrndLogMonConf() {
@@ -87,6 +92,13 @@ public class PHPitoConf {
 		} catch (Exception e) {
 		}
 		return color;
+	}
+	public int getStyleLogMonConf() {
+		try {
+			return Integer.valueOf(getConfMap().get(K_CONF_STYLE_LOG_MON));
+		} catch (Exception e) {
+			return 0;
+		}
 	}
 	public boolean getActvtSysInfoConf() {
 		try {
@@ -152,15 +164,45 @@ public class PHPitoConf {
 		return colorsMap;
 	}
 	public HashMap<String, String> getConfMap() throws FileException {
-		HashMap<String, String> confMap = new HashMap<String, String>();
+		if (confMap == null)
+			setConfMap();
+		return confMap;
+	}
+
+	private void setConfMap() throws FileException {
+		if (PHPitoManager.getInstance().isDebug())
+			try {
+				PHPitoManager.getInstance().getJoggerDebug().writeLog("Read Configuration From File and Set Configuration Map Attribute");
+			} catch (FileLogException | LockLogException e1) {
+				e1.printStackTrace();
+			}
+		confMap = new HashMap<String, String>();
 		for (String key : K_CONF_LIST)
 			confMap.put(key,Jutilas.getInstance().getConf(FILE_CONF_PATH, key));
-		return confMap;
+		if (PHPitoManager.getInstance().isDebug())
+			try {
+				PHPitoManager.getInstance().getJoggerDebug().writeLog("Read Configuration From File and Set Configuration Map Attribute -- OK");
+			} catch (FileLogException | LockLogException e1) {
+				e1.printStackTrace();
+			}
 	}
 	
 	public void saveConf(HashMap<String, String> confMap) throws FileException {
+		if (PHPitoManager.getInstance().isDebug())
+			try {
+				PHPitoManager.getInstance().getJoggerDebug().writeLog("Save New Configuration");
+			} catch (FileLogException | LockLogException e1) {
+				e1.printStackTrace();
+			}
 		for (String key : confMap.keySet())
 			Jutilas.getInstance().setConf(FILE_CONF_PATH, key, confMap.get(key), MSG_CONF);
+		if (PHPitoManager.getInstance().isDebug())
+			try {
+				PHPitoManager.getInstance().getJoggerDebug().writeLog("Save New Configuration -- OK");
+			} catch (FileLogException | LockLogException e1) {
+				e1.printStackTrace();
+			}
+		setConfMap();
 	}
 
 }

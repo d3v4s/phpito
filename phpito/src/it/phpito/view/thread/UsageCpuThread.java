@@ -1,22 +1,19 @@
 package it.phpito.view.thread;
 
 import java.io.IOException;
-import java.util.concurrent.ArrayBlockingQueue;
 
 import it.jaswt.core.Jaswt;
-import it.jogger.core.JoggerError;
 import it.jogger.exception.FileLogException;
+import it.jogger.exception.LockLogException;
 import it.jutilas.core.JutilasSys;
 import it.phpito.controller.PHPitoManager;
 import it.phpito.view.shell.ShellPHPito;
 
 public class UsageCpuThread extends Thread {
 	private ShellPHPito shellPHPito;
-	private ArrayBlockingQueue<Double> cpuUsage;
 
-	public UsageCpuThread(ShellPHPito shellPHPito, ArrayBlockingQueue<Double> cpuUsage) {
+	public UsageCpuThread(ShellPHPito shellPHPito) {
 		this.shellPHPito = shellPHPito;
-		this.cpuUsage = cpuUsage;
 	}
 
 	@Override
@@ -24,14 +21,14 @@ public class UsageCpuThread extends Thread {
 		while (!shellPHPito.isDisposed()) {
 			try {
 				double sysAdvrg = JutilasSys.getInstance().getSystemLoadAdverage(1000);
-				cpuUsage.put(sysAdvrg);
+				shellPHPito.getCPUMonitorCanvas().getCpuUsageQueue().put(sysAdvrg);
 				if (!shellPHPito.isDisposed()) {
 					shellPHPito.getDisplay().asyncExec(new Runnable() {
 						@Override
 						public void run() {
-							if (shellPHPito.getCanvas() != null) {
-								shellPHPito.getCanvas().setToolTipText("CPU: " + String.format("%.2f", sysAdvrg) + "%");
-								shellPHPito.getCanvas().redraw();
+							if (shellPHPito.getCPUMonitorCanvas() != null) {
+								shellPHPito.getCPUMonitorCanvas().setToolTipText("CPU: " + String.format("%.0f", sysAdvrg) + "%");
+								shellPHPito.getCPUMonitorCanvas().redraw();
 							}
 							if (shellPHPito.getLblCPU() != null)
 								try {
@@ -45,8 +42,8 @@ public class UsageCpuThread extends Thread {
 			} catch (Exception e) {
 				e.printStackTrace();
 				try {
-					JoggerError.getInstance().writeLog(e, PHPitoManager.NAME, null);
-				} catch (FileLogException e1) {
+					PHPitoManager.getInstance().getJoggerError().writeLog(e);
+				} catch (FileLogException | LockLogException e1) {
 					e1.printStackTrace();
 				}
 			}
