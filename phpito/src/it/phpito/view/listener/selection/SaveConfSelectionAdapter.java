@@ -40,6 +40,7 @@ public class SaveConfSelectionAdapter extends SelectionAdapter {
 			confMap.put(key, String.valueOf(spinnerMap.get(key).getSelection()));
 		for (String key : colorsLogMonMap.keySet())
 			confMap.put(key, colorsLogMonMap.get(key));
+		confMap.put(PHPitoConf.K_CONF_STYLE_LOG_MON, String.valueOf(shellDialogSettings.getStyleLogMonCombo().getSelectionIndex()));
 		try {
 			PHPitoConf.getInstance().saveConf(confMap);
 			shellDialogSettings.dispose();

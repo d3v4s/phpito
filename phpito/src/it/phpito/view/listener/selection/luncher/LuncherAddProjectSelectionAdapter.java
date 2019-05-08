@@ -57,6 +57,7 @@ public class LuncherAddProjectSelectionAdapter extends SelectionAdapter {
 		};
 		for (int i = 0; i < keyList.length; i++)
 			shellDialog.getTextMap().get(keyList[i]).addSelectionListener(selAdptList[i]);
+		shellDialog.getTextMap().get(Project.K_ADDRESS).setText("127.0.0.1");
 		
 		shellDialog.setChckBttnLogActv(new Button(shellDialog, SWT.CHECK));
 		shellDialog.getChckBttnLogActv().setBounds(20, 200, 100, 20);

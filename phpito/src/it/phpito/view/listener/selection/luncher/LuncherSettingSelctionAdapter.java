@@ -10,6 +10,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -35,7 +36,7 @@ import swing2swt.layout.BorderLayout;
 
 public class LuncherSettingSelctionAdapter extends SelectionAdapter {
 	private ShellPHPito shellPHPito;
-	private ShellDialogSettings shellDialog;
+	private ShellDialogSettings shellDialogSetting;
 
 	public LuncherSettingSelctionAdapter(ShellPHPito shellPHPito) {
 		super();
@@ -44,38 +45,38 @@ public class LuncherSettingSelctionAdapter extends SelectionAdapter {
 	
 	@Override
 	public void widgetSelected(SelectionEvent se) {
-		shellDialog = new ShellDialogSettings(shellPHPito);
+		shellDialogSetting = new ShellDialogSettings(shellPHPito);
 		lunchSettingPHPito();
 	}
 
 	/* metodo per lanciare finestra delle impostazioni */
 	public void lunchSettingPHPito() {
-		shellDialog.setSize(370, 420);
-		shellDialog.setText("Impostazioni PHPito");
-		shellDialog.setLayout(new BorderLayout(0, 0));
-		shellDialog.setConfChckBttnMap(new HashMap<String, Button>());
-		shellDialog.setConfSpinnerMap(new HashMap<String, Spinner>());
-		shellDialog.setColorScaleMap(new HashMap<String, Scale>());
-		shellDialog.setColorBackgrndLogMonMap(PHPitoConf.getInstance().getColorsBckgrndLogMonMap());
-		shellDialog.setColorForegrndLogMonMap(PHPitoConf.getInstance().getColorsForegrndLogMonMap());
-		shellDialog.setLogMonControlList(new ArrayList<Control>());
-		shellDialog.setSysInfoControlList(new ArrayList<Control>());
-		Jaswt.getInstance().centerWindow(shellDialog);
+		shellDialogSetting.setSize(370, 420);
+		shellDialogSetting.setText("Impostazioni PHPito");
+		shellDialogSetting.setLayout(new BorderLayout(0, 0));
+		shellDialogSetting.setConfChckBttnMap(new HashMap<String, Button>());
+		shellDialogSetting.setConfSpinnerMap(new HashMap<String, Spinner>());
+		shellDialogSetting.setColorScaleMap(new HashMap<String, Scale>());
+		shellDialogSetting.setColorBackgrndLogMonMap(PHPitoConf.getInstance().getColorsBckgrndLogMonMap());
+		shellDialogSetting.setColorForegrndLogMonMap(PHPitoConf.getInstance().getColorsForegrndLogMonMap());
+//		shellDialogSetting.setLogMonControlList(new ArrayList<Control>());
+//		shellDialogSetting.setSysInfoControlList(new ArrayList<Control>());
+		Jaswt.getInstance().centerWindow(shellDialogSetting);
 
-		TabFolder tabFolder = new TabFolder(shellDialog, SWT.NONE);
+		TabFolder tabFolder = new TabFolder(shellDialogSetting, SWT.NONE);
 		tabFolder.setLayoutData(BorderLayout.CENTER);
 
 		createContentsLogMon(tabFolder);
 
 		createContentsSystemInfo(tabFolder);
 
-		Composite compositeBottom = new Composite(shellDialog, SWT.NONE);
+		Composite compositeBottom = new Composite(shellDialogSetting, SWT.NONE);
 		compositeBottom.setLayoutData(BorderLayout.SOUTH);
 
         String[] namesBttnList = {"Annulla", "Salva"};
         SelectionAdapter[] selAdptrBttnList = {
-        		new CloserShellSelectionAdpter(shellDialog),
-        		new SaveConfSelectionAdapter(shellDialog)
+        		new CloserShellSelectionAdpter(shellDialogSetting),
+        		new SaveConfSelectionAdapter(shellDialogSetting)
         };
         Button bttn;
 		for (int i = 0; i < namesBttnList.length; i++) {
@@ -89,7 +90,7 @@ public class LuncherSettingSelctionAdapter extends SelectionAdapter {
 		}
 
 		new Label(compositeBottom, SWT.NONE).setBounds(270, 20, 0, 50);
-		shellDialog.open();
+		shellDialogSetting.open();
 	}
 
 	/* metodo che crea tabitem per impostazioni del log monitor */
@@ -101,11 +102,13 @@ public class LuncherSettingSelctionAdapter extends SelectionAdapter {
 		Composite compositeLog = new Composite(tabFolder, SWT.NONE);
 		tabItemLog.setControl(compositeLog);
 
+		ArrayList<Control> logMonControlList = new ArrayList<Control>();
 		Button chckBttnActiveLogMonitor = new Button(compositeLog, SWT.CHECK);
 		chckBttnActiveLogMonitor.setBounds(20, 15, 170, shellPHPito.getFontHeight());
 		chckBttnActiveLogMonitor.setText("Attiva Log Monitor");
 		chckBttnActiveLogMonitor.setSelection(PHPitoConf.getInstance().getActvtLogMonConf());
-		shellDialog.getConfChckBttnMap().put(PHPitoConf.K_CONF_ACTVT_LOG_MON, chckBttnActiveLogMonitor);
+		shellDialogSetting.getConfChckBttnMap().put(PHPitoConf.K_CONF_ACTVT_LOG_MON, chckBttnActiveLogMonitor);
+		chckBttnActiveLogMonitor.addSelectionListener(new DisablerControlSelctionAdapter(logMonControlList));
 		boolean enable = chckBttnActiveLogMonitor.getSelection();
 
 		lbl = new Label(compositeLog, SWT.NONE);
@@ -118,25 +121,25 @@ public class LuncherSettingSelctionAdapter extends SelectionAdapter {
 		spinner.setBounds(110, 55, 150, 30);
 		spinner.setSelection(PHPitoConf.getInstance().getRowLogConf());
 		spinner.setEnabled(enable);
-		shellDialog.getConfSpinnerMap().put(PHPitoConf.K_CONF_ROW_LOG_MON, spinner);
-		shellDialog.getLogMonControlList().add(spinner);
+		shellDialogSetting.getConfSpinnerMap().put(PHPitoConf.K_CONF_ROW_LOG_MON, spinner);
+		logMonControlList.add(spinner);
 
 		String[] elementLogStringList = {"Background", "Foreground"}; 
-		shellDialog.setElementLogList(new List(compositeLog, SWT.BORDER));
-		shellDialog.getElementLogList().setBounds(20, 110, 220, 52);
-		shellDialog.getElementLogList().addSelectionListener(new ColorsLogMonListSelectionAdapter(shellDialog));
+		shellDialogSetting.setElementLogList(new List(compositeLog, SWT.BORDER));
+		shellDialogSetting.getElementLogList().setBounds(20, 110, 220, 52);
+		shellDialogSetting.getElementLogList().addSelectionListener(new ColorsLogMonListSelectionAdapter(shellDialogSetting));
 		for (String elmntStrng : elementLogStringList)
-			shellDialog.getElementLogList().add(elmntStrng);
-		shellDialog.getElementLogList().select(0);
-		shellDialog.getLogMonControlList().add(shellDialog.getElementLogList());
-		shellDialog.getElementLogList().setCursor(new Cursor(shellPHPito.getDisplay(), SWT.CURSOR_HAND));
-		shellDialog.getElementLogList().addKeyListener(new KeyAdapter() {
+			shellDialogSetting.getElementLogList().add(elmntStrng);
+		shellDialogSetting.getElementLogList().select(0);
+		logMonControlList.add(shellDialogSetting.getElementLogList());
+		shellDialogSetting.getElementLogList().setCursor(new Cursor(shellPHPito.getDisplay(), SWT.CURSOR_HAND));
+		shellDialogSetting.getElementLogList().addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				e.doit = false;
 			}
 		});
-		shellDialog.getElementLogList().setEnabled(enable);
+		shellDialogSetting.getElementLogList().setEnabled(enable);
 
 		Composite compositeRGB = new Composite(compositeLog, SWT.BORDER);
 		compositeRGB.setBounds(20, 170, 320, 110);
@@ -149,15 +152,15 @@ public class LuncherSettingSelctionAdapter extends SelectionAdapter {
 		}
 
 		try {
-			shellDialog.setViewColorLabel(new ViewColorLabel(compositeRGB, SWT.BORDER,
-					shellDialog.getColorBackgrndLogMonMap().get(PHPitoConf.K_COLOR_RED),
-					shellDialog.getColorBackgrndLogMonMap().get(PHPitoConf.K_COLOR_GREEN),
-					shellDialog.getColorBackgrndLogMonMap().get(PHPitoConf.K_COLOR_BLUE)
+			shellDialogSetting.setViewColorLabel(new ViewColorLabel(compositeRGB, SWT.BORDER,
+					shellDialogSetting.getColorBackgrndLogMonMap().get(PHPitoConf.K_COLOR_RED),
+					shellDialogSetting.getColorBackgrndLogMonMap().get(PHPitoConf.K_COLOR_GREEN),
+					shellDialogSetting.getColorBackgrndLogMonMap().get(PHPitoConf.K_COLOR_BLUE)
 			));
 		} catch (ParameterException e) {
 			Jaswt.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
 		}
-		shellDialog.getViewColorLabel().setBounds(240, 25, 50, 50);
+		shellDialogSetting.getViewColorLabel().setBounds(240, 25, 50, 50);
 
 		Scale scale;
 		for (int i = 0; i < PHPitoConf.K_COLORS_LIST.length ; i++) {
@@ -166,18 +169,17 @@ public class LuncherSettingSelctionAdapter extends SelectionAdapter {
 			scale.setMaximum(255);
 			scale.setIncrement(1);
 			scale.setBounds(30, 20 * (i + 1), 180, 20);
-			scale.setSelection(shellDialog.getColorBackgrndLogMonMap().get(PHPitoConf.K_COLORS_LIST[i]));
-			scale.addSelectionListener(new ColorsScaleSelectionAdapter(shellDialog));
-			scale.setCursor(new Cursor(shellDialog.getDisplay(), SWT.CURSOR_SIZEWE));
+			scale.setSelection(shellDialogSetting.getColorBackgrndLogMonMap().get(PHPitoConf.K_COLORS_LIST[i]));
+			scale.addSelectionListener(new ColorsScaleSelectionAdapter(shellDialogSetting));
+			scale.setCursor(new Cursor(shellDialogSetting.getDisplay(), SWT.CURSOR_SIZEWE));
 			scale.setEnabled(enable);
-			shellDialog.getColorScaleMap().put(PHPitoConf.K_COLORS_LIST[i], scale);
-			shellDialog.getLogMonControlList().add(scale);
+			shellDialogSetting.getColorScaleMap().put(PHPitoConf.K_COLORS_LIST[i], scale);
+			logMonControlList.add(scale);
 		}
-		chckBttnActiveLogMonitor.addSelectionListener(new DisablerControlSelctionAdapter(shellDialog.getLogMonControlArray()));
 		
-		shellDialog.setHexColorLbl(new Label(compositeRGB, SWT.NONE));
-		shellDialog.getHexColorLbl().setText(shellDialog.getHexColors());
-		shellDialog.getHexColorLbl().setBounds(240, 80, 70, 20);
+		shellDialogSetting.setHexColorLbl(new Label(compositeRGB, SWT.NONE));
+		shellDialogSetting.getHexColorLbl().setText(shellDialogSetting.getHexColors());
+		shellDialogSetting.getHexColorLbl().setBounds(240, 80, 70, 20);
 	}
 
 	/* metodo che crea tabitem per impostazioni del system info */
@@ -188,12 +190,13 @@ public class LuncherSettingSelctionAdapter extends SelectionAdapter {
 		Composite compositeSys = new Composite(tabFolder, SWT.NONE);
 		tabItemSys.setControl(compositeSys);
 
+		ArrayList<Control> sysInfoControlList = new ArrayList<Control>();
 		Button chckBttnActiveSystemInfo = new Button(compositeSys, SWT.CHECK);
 		chckBttnActiveSystemInfo.setBounds(20, 15, 170, shellPHPito.getFontHeight());
 		chckBttnActiveSystemInfo.setText("Attiva System Info");
 		chckBttnActiveSystemInfo.setSelection(PHPitoConf.getInstance().getActvtSysInfoConf());
-		shellDialog.getConfChckBttnMap().put(PHPitoConf.K_CONF_ACTVT_SYS_INFO, chckBttnActiveSystemInfo);
-		
+		chckBttnActiveSystemInfo.addSelectionListener(new DisablerControlSelctionAdapter(sysInfoControlList));
+		shellDialogSetting.getConfChckBttnMap().put(PHPitoConf.K_CONF_ACTVT_SYS_INFO, chckBttnActiveSystemInfo);
 		boolean enable = chckBttnActiveSystemInfo.getSelection();
 		
 		Button chckBttnActiveCPUMon = new Button(compositeSys, SWT.CHECK);
@@ -201,17 +204,27 @@ public class LuncherSettingSelctionAdapter extends SelectionAdapter {
 		chckBttnActiveCPUMon.setText("Visualizza carico CPU");
 		chckBttnActiveCPUMon.setEnabled(enable);
 		chckBttnActiveCPUMon.setSelection(PHPitoConf.getInstance().getActvtCPUMon());
-		shellDialog.getConfChckBttnMap().put(PHPitoConf.K_CONF_ACTVT_CPU_MON, chckBttnActiveCPUMon);
-		shellDialog.getSysInfoControlList().add(chckBttnActiveCPUMon);
+		shellDialogSetting.getConfChckBttnMap().put(PHPitoConf.K_CONF_ACTVT_CPU_MON, chckBttnActiveCPUMon);
+		sysInfoControlList.add(chckBttnActiveCPUMon);
 
 		Button chckBttnViewOtherInfo = new Button(compositeSys, SWT.CHECK);
 		chckBttnViewOtherInfo.setBounds(20, 80, 170, shellPHPito.getFontHeight());
 		chckBttnViewOtherInfo.setText("Visualizza altre info");
 		chckBttnViewOtherInfo.setSelection(PHPitoConf.getInstance().getOthInfo());
 		chckBttnViewOtherInfo.setEnabled(enable);
-		shellDialog.getConfChckBttnMap().put(PHPitoConf.K_CONF_OTH_INFO, chckBttnViewOtherInfo);
-		shellDialog.getSysInfoControlList().add(chckBttnViewOtherInfo);
+		shellDialogSetting.getConfChckBttnMap().put(PHPitoConf.K_CONF_OTH_INFO, chckBttnViewOtherInfo);
+		sysInfoControlList.add(chckBttnViewOtherInfo);
+
+		String[] styleList = {"1", "2", "3"};
+		shellDialogSetting.setStyleLogMonCombo(new Combo(compositeSys, SWT.DROP_DOWN | SWT.READ_ONLY));
+		shellDialogSetting.getStyleLogMonCombo().setBounds(20, 120, 60, 25);
+		shellDialogSetting.getStyleLogMonCombo().setText("Style CPU Monitor");
+		for (String st : styleList)
+			shellDialogSetting.getStyleLogMonCombo().add(st);
+		shellDialogSetting.getStyleLogMonCombo().select(PHPitoConf.getInstance().getStyleLogMonConf());
+		shellDialogSetting.getStyleLogMonCombo().setEnabled(enable);
+		sysInfoControlList.add(shellDialogSetting.getStyleLogMonCombo());
 		
-		chckBttnActiveSystemInfo.addSelectionListener(new DisablerControlSelctionAdapter(shellDialog.getSysInfoControlArray()));
+		
 	}
 }
