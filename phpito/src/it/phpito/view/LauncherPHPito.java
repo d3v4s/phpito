@@ -11,10 +11,10 @@ import it.jogger.exception.FileLogException;
 import it.jogger.exception.LockLogException;
 import it.jun.core.Jun;
 import it.jun.exception.FileLockException;
-import it.phpito.controller.PHPitoManager;
+import it.phpito.core.PHPitoManager;
 import it.phpito.view.shell.ShellPHPito;
 
-public class LuncherPHPito {
+public class LauncherPHPito {
 	private ShellPHPito shellPHPito;
 	private Display display;
 	
@@ -30,7 +30,7 @@ public class LuncherPHPito {
 				e.printStackTrace();
 			}
 		
-		LuncherPHPito luncherPHPito = new LuncherPHPito();
+		LauncherPHPito luncherPHPito = new LauncherPHPito();
 
 		luncherPHPito.open();
 		if (PHPitoManager.getInstance().isDebug())

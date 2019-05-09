@@ -1,4 +1,4 @@
-package it.phpito.controller;
+package it.phpito.core;
 
 import java.nio.file.Paths;
 import java.util.HashMap;

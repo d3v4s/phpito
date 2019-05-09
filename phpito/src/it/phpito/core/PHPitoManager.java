@@ -1,4 +1,4 @@
-package it.phpito.controller;
+package it.phpito.core;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,8 +17,8 @@ import it.jogger.exception.FileLogException;
 import it.jogger.exception.LockLogException;
 import it.jutilas.core.JutilasNet;
 import it.jutilas.core.JutilasSys;
-import it.phpito.controller.lock.ReentrantLockLogServer;
-import it.phpito.controller.lock.ReentrantLockXMLServer;
+import it.phpito.core.lock.ReentrantLockLogServer;
+import it.phpito.core.lock.ReentrantLockXMLServer;
 import it.phpito.data.Project;
 import it.phpito.data.Server;
 import it.phpito.exception.ProjectException;

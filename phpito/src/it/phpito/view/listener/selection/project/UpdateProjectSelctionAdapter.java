@@ -7,7 +7,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
 import it.jaswt.core.Jaswt;
-import it.phpito.controller.PHPitoManager;
+import it.phpito.core.PHPitoManager;
 import it.phpito.data.Project;
 import it.phpito.exception.ProjectException;
 import it.phpito.exception.ServerException;
@@ -16,10 +16,12 @@ import it.phpito.view.shell.ShellPHPito;
 
 public class UpdateProjectSelctionAdapter extends SelectionAdapter {
 	private ShellDialogPHPito shellDialog;
+	private ShellPHPito shellPHPito;
 
 	public UpdateProjectSelctionAdapter(ShellDialogPHPito shellDialog) {
 		super();
 		this.shellDialog = shellDialog;
+		shellPHPito = shellDialog.getShellPHPito();
 	}
 	
 
@@ -61,17 +63,15 @@ public class UpdateProjectSelctionAdapter extends SelectionAdapter {
 			if (res == SWT.YES) {
 				PHPitoManager.getInstance().getReentrantLockXMLServer().updateProject(project);
 				PHPitoManager.getInstance().getReentrantLockLogServer().renameDirProjectLog(oldIdName, project.getIdAndName());
-//				Jaswt.getInstance().lunchMB(shellDialog, SWT.OK, "OK", "Modifiche salvate con sucesso.");
 				if (restart && !PHPitoManager.getInstance().startServer(project))
 					Jaswt.getInstance().lunchMB(shellDialog, SWT.OK, "FAIL!!!", "L'avvio del server non ha avuto sucesso.");
-				ShellPHPito shellPHPito = shellDialog.getShellPHPito();
-				shellDialog.dispose();
 				shellPHPito.flushTable();
-				shellPHPito.forceFocus();
+				shellPHPito.getTable().forceFocus();
+				shellDialog.dispose();
 				
 			}
 		} catch (ProjectException | IOException | ServerException e) {
-			Jaswt.getInstance().lunchMBError(shellDialog, e, PHPitoManager.NAME);
+			Jaswt.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
 		}
 	}
 

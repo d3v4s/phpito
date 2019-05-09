@@ -8,9 +8,9 @@ import com.ibm.icu.text.SimpleDateFormat;
 import it.jogger.core.Jogger;
 import it.jogger.exception.FileLogException;
 import it.jogger.exception.LockLogException;
-import it.phpito.controller.PHPitoConf;
-import it.phpito.controller.PHPitoManager;
-import it.phpito.controller.lock.ReentrantLockLogServer;
+import it.phpito.core.PHPitoConf;
+import it.phpito.core.PHPitoManager;
+import it.phpito.core.lock.ReentrantLockLogServer;
 import it.phpito.data.Project;
 import it.phpito.view.shell.ShellPHPito;
 

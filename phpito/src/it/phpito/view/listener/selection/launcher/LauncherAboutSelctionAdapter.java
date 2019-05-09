@@ -1,4 +1,4 @@
-package it.phpito.view.listener.selection.luncher;
+package it.phpito.view.listener.selection.launcher;
 
 import java.nio.file.Paths;
 
@@ -10,14 +10,14 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Label;
 
 import it.jaswt.core.Jaswt;
-import it.phpito.controller.PHPitoManager;
+import it.phpito.core.PHPitoManager;
 import it.phpito.view.shell.ShellDialogPHPito;
 import it.phpito.view.shell.ShellPHPito;
 
-public class LuncherAboutSelctionAdapter extends SelectionAdapter {
+public class LauncherAboutSelctionAdapter extends SelectionAdapter {
 	private ShellPHPito shellPHPito;
 
-	public LuncherAboutSelctionAdapter(ShellPHPito shellPHPito) {
+	public LauncherAboutSelctionAdapter(ShellPHPito shellPHPito) {
 		super();
 		this.shellPHPito = shellPHPito;
 	}
@@ -25,11 +25,11 @@ public class LuncherAboutSelctionAdapter extends SelectionAdapter {
 	@Override
 	public void widgetSelected(SelectionEvent e) {
 		ShellDialogPHPito shellDialog = new ShellDialogPHPito(shellPHPito);
-		lunchSettingPHPito(shellDialog);
+		launchSettingPHPito(shellDialog);
 	}
 
 	/* metodo per lanciare finestra che aggiunge il progetto */
-	public void lunchSettingPHPito(ShellDialogPHPito shellDialog) {
+	public void launchSettingPHPito(ShellDialogPHPito shellDialog) {
 		shellDialog.setSize(400, 360);
 		shellDialog.setText("About PHPito");
 		Jaswt.getInstance().centerWindow(shellDialog);

@@ -36,8 +36,8 @@ import it.jaswt.core.listener.selection.LuncherFileExplorerSelectionAdapter;
 import it.jogger.core.Jogger;
 import it.jogger.exception.FileLogException;
 import it.jogger.exception.LockLogException;
-import it.phpito.controller.PHPitoConf;
-import it.phpito.controller.PHPitoManager;
+import it.phpito.core.PHPitoConf;
+import it.phpito.core.PHPitoManager;
 import it.phpito.data.Project;
 import it.phpito.data.Server;
 import it.phpito.exception.ProjectException;
@@ -45,10 +45,10 @@ import it.phpito.exception.ServerException;
 import it.phpito.view.listener.key.StartStopServerKeyAdapter;
 import it.phpito.view.listener.selection.FlushTableSelectionAdapter;
 import it.phpito.view.listener.selection.TableSelectionAdapter;
-import it.phpito.view.listener.selection.luncher.LuncherAboutSelctionAdapter;
-import it.phpito.view.listener.selection.luncher.LuncherAddProjectSelectionAdapter;
-import it.phpito.view.listener.selection.luncher.LuncherModifyProjectSelectionAdapter;
-import it.phpito.view.listener.selection.luncher.LuncherSettingSelctionAdapter;
+import it.phpito.view.listener.selection.launcher.LauncherAboutSelctionAdapter;
+import it.phpito.view.listener.selection.launcher.LauncherAddProjectSelectionAdapter;
+import it.phpito.view.listener.selection.launcher.LauncherModifyProjectSelectionAdapter;
+import it.phpito.view.listener.selection.launcher.LauncherSettingSelctionAdapter;
 import it.phpito.view.listener.selection.project.DeleteProjectSelectionAdapter;
 import it.phpito.view.listener.selection.server.StartServerSelectionAdapter;
 import it.phpito.view.listener.selection.server.StopServerSelectionAdapter;
@@ -177,8 +177,8 @@ public class ShellPHPito extends Shell {
 		
 		String[] menuProjectList = {"Aggiungi", "Modifica", "Elimina", "Start", "Stop", "Aggiorna"};
 		SelectionAdapter[] menuProjectSelAdptList = new SelectionAdapter[] {
-				new LuncherAddProjectSelectionAdapter(this),
-				new LuncherModifyProjectSelectionAdapter(this),
+				new LauncherAddProjectSelectionAdapter(this),
+				new LauncherModifyProjectSelectionAdapter(this),
 				new DeleteProjectSelectionAdapter(this),
 				new StartServerSelectionAdapter(this),
 				new StopServerSelectionAdapter(this),
@@ -207,9 +207,9 @@ public class ShellPHPito extends Shell {
 
 		String[] menuPHPitoList = {"Impostazioni", "Apri cartella Log", "About"};
 		SelectionAdapter[] menuPHPitoSelAdptList = {
-				new LuncherSettingSelctionAdapter(this),
+				new LauncherSettingSelctionAdapter(this),
 				new LuncherFileExplorerSelectionAdapter(this, Jogger.getLogDirPath("server"), PHPitoManager.NAME),
-				new LuncherAboutSelctionAdapter(this)
+				new LauncherAboutSelctionAdapter(this)
 		};
 
 		for (int i = 0; i < menuPHPitoList.length; i++) {

@@ -1,4 +1,4 @@
-package it.phpito.controller.lock;
+package it.phpito.core.lock;
 
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -13,8 +13,8 @@ import it.jogger.exception.FileLogException;
 import it.jogger.exception.LockLogException;
 import it.jsx.core.JSX;
 import it.jsx.exception.XMLException;
-import it.phpito.controller.PHPitoConf;
-import it.phpito.controller.PHPitoManager;
+import it.phpito.core.PHPitoConf;
+import it.phpito.core.PHPitoManager;
 import it.phpito.data.Project;
 import it.phpito.data.Server;
 import it.phpito.exception.ProjectException;

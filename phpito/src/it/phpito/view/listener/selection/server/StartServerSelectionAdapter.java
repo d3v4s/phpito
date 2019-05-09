@@ -7,7 +7,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
 import it.jaswt.core.Jaswt;
-import it.phpito.controller.PHPitoManager;
+import it.phpito.core.PHPitoManager;
 import it.phpito.data.Project;
 import it.phpito.exception.ProjectException;
 import it.phpito.exception.ServerException;
