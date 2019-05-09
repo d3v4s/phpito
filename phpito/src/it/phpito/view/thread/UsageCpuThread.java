@@ -6,7 +6,7 @@ import it.jaswt.core.Jaswt;
 import it.jogger.exception.FileLogException;
 import it.jogger.exception.LockLogException;
 import it.jutilas.core.JutilasSys;
-import it.phpito.controller.PHPitoManager;
+import it.phpito.core.PHPitoManager;
 import it.phpito.view.shell.ShellPHPito;
 
 public class UsageCpuThread extends Thread {

@@ -3,7 +3,7 @@
 BIN_PHPITO=bin
 UTILS=ext/utils
 SWT_GEN=ext/swt/gen
-LUNCHER_PHPITO=it.phpito.view.LuncherPHPito
+LAUNCHER_PHPITO=it.phpito.view.LauncherPHPito
 
 [ -z `getconf LONG_BIT | grep 64` ] && SWT_JAR=ext/swt/swt_linux_gtk_x86.jar || SWT_JAR=ext/swt/swt_linux_gtk_x64.jar
 
@@ -21,4 +21,4 @@ done
 
 PHPITO_DIR=`dirname "$EXC"`
 
-cd $PHPITO_DIR && java -cp "$BIN_PHPITO":"$UTILS"/*:"$SWT_GEN"/*:"$SWT_JAR" "$LUNCHER_PHPITO" debug
+cd $PHPITO_DIR && java -cp "$BIN_PHPITO":"$UTILS"/*:"$SWT_GEN"/*:"$SWT_JAR" "$LAUNCHER_PHPITO" debug

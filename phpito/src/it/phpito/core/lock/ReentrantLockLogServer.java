@@ -1,4 +1,4 @@
-package it.phpito.controller.lock;
+package it.phpito.core.lock;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
@@ -9,7 +9,7 @@ import it.jogger.exception.FileLogException;
 import it.jogger.exception.LockLogException;
 import it.jutilas.core.Jutilas;
 import it.jutilas.exception.FileException;
-import it.phpito.controller.PHPitoManager;
+import it.phpito.core.PHPitoManager;
 import it.phpito.data.Project;
 
 public class ReentrantLockLogServer {

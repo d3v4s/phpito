@@ -1,4 +1,4 @@
-package it.phpito.view.listener.selection.luncher;
+package it.phpito.view.listener.selection.launcher;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,8 +25,8 @@ import it.jaswt.core.label.ViewColorLabel;
 import it.jaswt.core.listener.selection.CloserShellSelectionAdpter;
 import it.jaswt.core.listener.selection.DisablerControlSelctionAdapter;
 import it.jaswt.exception.ParameterException;
-import it.phpito.controller.PHPitoConf;
-import it.phpito.controller.PHPitoManager;
+import it.phpito.core.PHPitoConf;
+import it.phpito.core.PHPitoManager;
 import it.phpito.view.listener.selection.SaveConfSelectionAdapter;
 import it.phpito.view.listener.selection.rgb.ColorsLogMonListSelectionAdapter;
 import it.phpito.view.listener.selection.rgb.ColorsScaleSelectionAdapter;
@@ -34,11 +34,11 @@ import it.phpito.view.shell.ShellDialogSettings;
 import it.phpito.view.shell.ShellPHPito;
 import swing2swt.layout.BorderLayout;
 
-public class LuncherSettingSelctionAdapter extends SelectionAdapter {
+public class LauncherSettingSelctionAdapter extends SelectionAdapter {
 	private ShellPHPito shellPHPito;
 	private ShellDialogSettings shellDialogSetting;
 
-	public LuncherSettingSelctionAdapter(ShellPHPito shellPHPito) {
+	public LauncherSettingSelctionAdapter(ShellPHPito shellPHPito) {
 		super();
 		this.shellPHPito = shellPHPito;
 	}
@@ -46,11 +46,11 @@ public class LuncherSettingSelctionAdapter extends SelectionAdapter {
 	@Override
 	public void widgetSelected(SelectionEvent se) {
 		shellDialogSetting = new ShellDialogSettings(shellPHPito);
-		lunchSettingPHPito();
+		launchSettingPHPito();
 	}
 
 	/* metodo per lanciare finestra delle impostazioni */
-	public void lunchSettingPHPito() {
+	public void launchSettingPHPito() {
 		shellDialogSetting.setSize(370, 420);
 		shellDialogSetting.setText("Impostazioni PHPito");
 		shellDialogSetting.setLayout(new BorderLayout(0, 0));
@@ -59,8 +59,6 @@ public class LuncherSettingSelctionAdapter extends SelectionAdapter {
 		shellDialogSetting.setColorScaleMap(new HashMap<String, Scale>());
 		shellDialogSetting.setColorBackgrndLogMonMap(PHPitoConf.getInstance().getColorsBckgrndLogMonMap());
 		shellDialogSetting.setColorForegrndLogMonMap(PHPitoConf.getInstance().getColorsForegrndLogMonMap());
-//		shellDialogSetting.setLogMonControlList(new ArrayList<Control>());
-//		shellDialogSetting.setSysInfoControlList(new ArrayList<Control>());
 		Jaswt.getInstance().centerWindow(shellDialogSetting);
 
 		TabFolder tabFolder = new TabFolder(shellDialogSetting, SWT.NONE);

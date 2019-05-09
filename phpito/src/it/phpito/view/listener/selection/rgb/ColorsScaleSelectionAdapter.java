@@ -7,8 +7,8 @@ import org.eclipse.swt.events.SelectionEvent;
 
 import it.jaswt.core.Jaswt;
 import it.jaswt.exception.ParameterException;
-import it.phpito.controller.PHPitoConf;
-import it.phpito.controller.PHPitoManager;
+import it.phpito.core.PHPitoConf;
+import it.phpito.core.PHPitoManager;
 import it.phpito.view.shell.ShellDialogSettings;
 
 public class ColorsScaleSelectionAdapter extends SelectionAdapter {

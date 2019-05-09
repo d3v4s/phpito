@@ -1,4 +1,4 @@
-package it.phpito.view.listener.selection.luncher;
+package it.phpito.view.listener.selection.launcher;
 
 import java.util.HashMap;
 
@@ -17,22 +17,22 @@ import it.phpito.view.listener.selection.text.TextFocusSelectionAdapter;
 import it.phpito.view.shell.ShellDialogPHPito;
 import it.phpito.view.shell.ShellPHPito;
 
-public class LuncherModifyProjectSelectionAdapter extends SelectionAdapter {
+public class LauncherModifyProjectSelectionAdapter extends SelectionAdapter {
 	private ShellPHPito shellPHPito;
 	private Project project;
 
-	public LuncherModifyProjectSelectionAdapter(ShellPHPito shellPHPito) {
+	public LauncherModifyProjectSelectionAdapter(ShellPHPito shellPHPito) {
 		super();
 		this.shellPHPito = shellPHPito;
 	}
 
 	@Override
 	public void widgetSelected(SelectionEvent e) {
-		lunchModifyProject();
+		launchModifyProject();
 	}
 	
 	/* metodo per lanciare finestra che aggiunge il progetto */
-	public void lunchModifyProject() {
+	public void launchModifyProject() {
 		ShellDialogPHPito shellDialog = new ShellDialogPHPito(shellPHPito);
 		project = shellPHPito.getProjectSelect();
 		shellDialog.setSize(370, 360);

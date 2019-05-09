@@ -8,7 +8,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Text;
 
 import it.jaswt.core.Jaswt;
-import it.phpito.controller.PHPitoManager;
+import it.phpito.core.PHPitoManager;
 import it.phpito.data.Project;
 import it.phpito.data.Server;
 import it.phpito.exception.ProjectException;
@@ -17,10 +17,12 @@ import it.phpito.view.shell.ShellPHPito;
 
 public class AddProjectSelectionAdapter extends SelectionAdapter {
 	private ShellDialogPHPito shellDialog;
+	private ShellPHPito shellPHPito;
 
 	public AddProjectSelectionAdapter(ShellDialogPHPito shellDialog) {
 		super();
 		this.shellDialog = shellDialog;
+		shellPHPito = shellDialog.getShellPHPito();
 	}
 	
 	@Override
@@ -44,14 +46,12 @@ public class AddProjectSelectionAdapter extends SelectionAdapter {
 			int res = Jaswt.getInstance().lunchMB(shellDialog, SWT.YES | SWT.NO, "AGGIUNGO???", msg);
 			if (res == SWT.YES) {
 				PHPitoManager.getInstance().getReentrantLockXMLServer().addProject(project);
-//				Jaswt.getInstance().lunchMB(shellDialog, SWT.OK, "OK", "Nuovo progetto aggiunto con sucesso.");
-				ShellPHPito shellPHPito = shellDialog.getShellPHPito();
-				shellDialog.dispose();
 				shellPHPito.flushTable();
 				shellPHPito.getTable().forceFocus();
+				shellDialog.dispose();
 			}
 		} catch (ProjectException e) {
-			Jaswt.getInstance().lunchMBError(shellDialog, e, PHPitoManager.NAME);
+			Jaswt.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
 		}
 	}
 }

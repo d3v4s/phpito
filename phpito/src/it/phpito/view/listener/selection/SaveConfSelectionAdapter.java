@@ -13,8 +13,8 @@ import org.eclipse.swt.widgets.Spinner;
 import it.jaswt.core.Jaswt;
 import it.jutilas.core.Jutilas;
 import it.jutilas.exception.FileException;
-import it.phpito.controller.PHPitoConf;
-import it.phpito.controller.PHPitoManager;
+import it.phpito.core.PHPitoConf;
+import it.phpito.core.PHPitoManager;
 import it.phpito.view.shell.ShellDialogSettings;
 import it.phpito.view.shell.ShellPHPito;
 

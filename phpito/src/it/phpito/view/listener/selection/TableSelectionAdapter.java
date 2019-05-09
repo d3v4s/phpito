@@ -3,7 +3,7 @@ package it.phpito.view.listener.selection;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
-import it.phpito.view.listener.selection.luncher.LuncherModifyProjectSelectionAdapter;
+import it.phpito.view.listener.selection.launcher.LauncherModifyProjectSelectionAdapter;
 import it.phpito.view.shell.ShellPHPito;
 
 public class TableSelectionAdapter extends SelectionAdapter {
@@ -16,7 +16,7 @@ public class TableSelectionAdapter extends SelectionAdapter {
 
 	@Override
 	public void widgetDefaultSelected(SelectionEvent e) {
-		new LuncherModifyProjectSelectionAdapter(shellPHPito).lunchModifyProject();;
+		new LauncherModifyProjectSelectionAdapter(shellPHPito).launchModifyProject();;
 	}
 
 	@Override

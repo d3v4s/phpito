@@ -10,7 +10,7 @@ import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Spinner;
 
 import it.jaswt.core.label.ViewColorLabel;
-import it.phpito.controller.PHPitoConf;
+import it.phpito.core.PHPitoConf;
 
 public class ShellDialogSettings extends ShellDialogPHPito {
 	private HashMap<String, Button> confChckBttnMap;
