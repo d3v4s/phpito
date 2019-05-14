@@ -130,8 +130,8 @@ public class ReentrantLockLogServer {
 							e.printStackTrace();
 						}
 					try {
-						String dirLoString = Jogger.getLogDirPath(new String[] {"server", project.getIdAndName()});
-						Jutilas.getInstance().recursiveDelete(dirLoString);
+						String dirLogString = Jogger.getLogDirPath(new String[] {"server", project.getIdAndName()});
+						Jutilas.getInstance().recursiveDelete(dirLogString);
 					} finally {
 						reentrantLock.unlock();
 						if (PHPitoManager.getInstance().isDebug())

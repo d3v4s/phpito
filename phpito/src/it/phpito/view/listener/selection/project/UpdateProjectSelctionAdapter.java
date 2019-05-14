@@ -7,6 +7,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
 import it.jaswt.core.Jaswt;
+import it.jutilas.exception.FileException;
 import it.phpito.core.PHPitoManager;
 import it.phpito.data.Project;
 import it.phpito.exception.ProjectException;
@@ -49,11 +50,11 @@ public class UpdateProjectSelctionAdapter extends SelectionAdapter {
 					Jaswt.getInstance().lunchMB(shellDialog, SWT.OK, "FAIL!!!", "L'arresto del server non ha avuto sucesso.");
 					return;
 				}
-					
 			}
 			String oldIdName = project.getIdAndName();
 			project.setName(shellDialog.getTextMap().get(Project.K_NAME).getText());
-			project.setLogActive(shellDialog.getChckBttnLogActv().getSelection());
+			project.setLogActive(shellDialog.getLogActvChckBttn().getSelection());
+			project.setPhpini(shellDialog.getPhpiniCombo().getSelectionIndex());
 			project.getServer().setPath(shellDialog.getTextMap().get(Project.K_PATH).getText());
 			project.getServer().setAddress(shellDialog.getTextMap().get(Project.K_ADDRESS).getText());
 			project.getServer().setPortString(shellDialog.getTextMap().get(Project.K_PORT).getText());
@@ -63,6 +64,8 @@ public class UpdateProjectSelctionAdapter extends SelectionAdapter {
 			if (res == SWT.YES) {
 				PHPitoManager.getInstance().getReentrantLockXMLServer().updateProject(project);
 				PHPitoManager.getInstance().getReentrantLockLogServer().renameDirProjectLog(oldIdName, project.getIdAndName());
+				PHPitoManager.getInstance().renamePhpini(oldIdName, project.getIdAndName());
+				project.getPhpiniPath();
 				if (restart && !PHPitoManager.getInstance().startServer(project))
 					Jaswt.getInstance().lunchMB(shellDialog, SWT.OK, "FAIL!!!", "L'avvio del server non ha avuto sucesso.");
 				shellPHPito.flushTable();
@@ -70,7 +73,7 @@ public class UpdateProjectSelctionAdapter extends SelectionAdapter {
 				shellDialog.dispose();
 				
 			}
-		} catch (ProjectException | IOException | ServerException e) {
+		} catch (ProjectException | IOException | ServerException | FileException e) {
 			Jaswt.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
 		}
 	}

@@ -7,6 +7,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Text;
 
 import it.jaswt.core.Jaswt;
@@ -34,19 +35,19 @@ public class LauncherAddProjectSelectionAdapter extends SelectionAdapter {
 	
 	/* metodo per lanciare finestra che aggiunge il progetto */
 	private void launchAddProject(ShellDialogPHPito shellDialog) {
-		shellDialog.setSize(370, 320);
+		shellDialog.setSize(370, 350);
 		shellDialog.setText("Nuovo Progetto");
 		Jaswt.getInstance().centerWindow(shellDialog);
 		shellDialog.setTextMap(new 	HashMap<String, Text>());
 
 		/* ciclo per label */
-		String[] txtLbl = {"Nome:", "Path:", "Indirizzo:", "Porta:"};
-		Jaswt.getInstance().printLabelVertical(txtLbl, 20, 30, 65, shellPHPito.getFontHeight(), 20, shellDialog, SWT.NONE);
+		String[] txtLbl = {"Nome:", "Path:", "Indirizzo:", "Porta:" , "php.ini"};
+		Jaswt.getInstance().printLabelVertical(txtLbl, 20, 30, 70, shellPHPito.getFontHeight(), 20, shellDialog, SWT.NONE);
 
 		/* ciclo per text */
 		String[] keyList = Project.getArrayKeyProjectNoId();
 		int[] width = {160, 160, 160, 160};
-		Jaswt.getInstance().printTextVertical(95, 30, width, shellPHPito.getFontHeight(), 20, shellDialog, keyList, shellDialog.getTextMap(), new int[] {});
+		Jaswt.getInstance().printTextVertical(100, 30, width, shellPHPito.getFontHeight(), 20, shellDialog, keyList, shellDialog.getTextMap(), new int[] {});
 
 		/* add listener ad aree di testo */
 		SelectionAdapter[] selAdptList = new SelectionAdapter[] {
@@ -58,11 +59,18 @@ public class LauncherAddProjectSelectionAdapter extends SelectionAdapter {
 		for (int i = 0; i < keyList.length; i++)
 			shellDialog.getTextMap().get(keyList[i]).addSelectionListener(selAdptList[i]);
 		shellDialog.getTextMap().get(Project.K_ADDRESS).setText("127.0.0.1");
-		
-		shellDialog.setChckBttnLogActv(new Button(shellDialog, SWT.CHECK));
-		shellDialog.getChckBttnLogActv().setBounds(20, 200, 100, 20);
-		shellDialog.getChckBttnLogActv().setText("Attiva Log");
-		shellDialog.getChckBttnLogActv().setSelection(true);
+
+		String[] phpiniList = {"Development", "Default", "Custom"};
+		shellDialog.setPhpiniCombo(new Combo(shellDialog, SWT.DROP_DOWN | SWT.READ_ONLY));
+		shellDialog.getPhpiniCombo().setBounds(100, 190, 130, 20);
+		for (String ini : phpiniList)
+			shellDialog.getPhpiniCombo().add(ini);
+		shellDialog.getPhpiniCombo().select(0);
+
+		shellDialog.setLogActvChckBttn(new Button(shellDialog, SWT.CHECK));
+		shellDialog.getLogActvChckBttn().setBounds(20, 240, 100, 20);
+		shellDialog.getLogActvChckBttn().setText("Attiva Log");
+		shellDialog.getLogActvChckBttn().setSelection(true);
 
 		Button bttn = new Button(shellDialog, SWT.PUSH);
 		bttn.addSelectionListener(new LuncherSelectPathSelectionAdapter(shellDialog, shellDialog.getTextMap().get(Project.K_PATH)));
@@ -75,7 +83,7 @@ public class LauncherAddProjectSelectionAdapter extends SelectionAdapter {
 				new AddProjectSelectionAdapter(shellDialog),
 		};
 		String[] namesButton = new String[] {"Annulla", "Aggiungi"};
-		Jaswt.getInstance().printButtonHorizontal(namesButton, 130, 240, 100, 30, 20, shellDialog, selAdptList);
+		Jaswt.getInstance().printButtonHorizontal(namesButton, 130, 280, 100, 30, 20, shellDialog, selAdptList);
 
 		shellDialog.open();
 	}

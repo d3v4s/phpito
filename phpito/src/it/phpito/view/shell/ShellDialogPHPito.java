@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -13,7 +14,8 @@ import it.phpito.data.Project;
 public class ShellDialogPHPito extends Shell {
 	private ShellPHPito shellPHPito;
 	private HashMap<String, Text> textMap;
-	private Button chckBttnLogActv;
+	private Button logActvChckBttn;
+	private Combo phpiniCombo;
 	
 	/* costruttore */
 	public ShellDialogPHPito(ShellPHPito shellPHPito, int style) {
@@ -45,11 +47,18 @@ public class ShellDialogPHPito extends Shell {
 	public void setTextMap(HashMap<String, Text> textMap) {
 		this.textMap = textMap;
 	}
-	public Button getChckBttnLogActv() {
-		return chckBttnLogActv;
+	public Button getLogActvChckBttn() {
+		return logActvChckBttn;
 	}
-	public void setChckBttnLogActv(Button chckBttnLogActv) {
-		this.chckBttnLogActv = chckBttnLogActv;
+	public void setLogActvChckBttn(Button chckBttnLogActv) {
+		this.logActvChckBttn = chckBttnLogActv;
+	}
+	public Combo getPhpiniCombo() {
+		return phpiniCombo;
+	}
+
+	public void setPhpiniCombo(Combo phpiniCombo) {
+		this.phpiniCombo = phpiniCombo;
 	}
 
 	/* metodo che controlla che le aree di testo passate con hashmap siano vuote */

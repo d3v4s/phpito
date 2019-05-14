@@ -6,6 +6,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Text;
 
 import it.jaswt.core.Jaswt;
@@ -35,14 +36,14 @@ public class LauncherModifyProjectSelectionAdapter extends SelectionAdapter {
 	public void launchModifyProject() {
 		ShellDialogPHPito shellDialog = new ShellDialogPHPito(shellPHPito);
 		project = shellPHPito.getProjectSelect();
-		shellDialog.setSize(370, 360);
+		shellDialog.setSize(370, 380);
 		shellDialog.setText("Modifica Progetto");
 		Jaswt.getInstance().centerWindow(shellDialog);
 		shellDialog.setTextMap(new HashMap<String, Text>());
 		
 		/* ciclo per label */
-		String[] txtLbl = {"Id:", "Nome:", "Path:", "Indirizzo:", "Porta:"};
-		Jaswt.getInstance().printLabelVertical(txtLbl, 20, 30, 65, shellPHPito.getFontHeight(), 20, shellDialog, SWT.NONE);
+		String[] txtLbl = {"Id:", "Nome:", "Path:", "Indirizzo:", "Porta:", "php.ini"};
+		Jaswt.getInstance().printLabelVertical(txtLbl, 20, 30, 70, shellPHPito.getFontHeight(), 20, shellDialog, SWT.NONE);
 		
 		/* ciclo per text */
 		String[] keyList = Project.getArrayKeyProject();
@@ -64,22 +65,36 @@ public class LauncherModifyProjectSelectionAdapter extends SelectionAdapter {
 			shellDialog.getTextMap().get(keyList[i]).setText(mapProject.get(keyList[i]));
 		}
 
-		shellDialog.setChckBttnLogActv(new Button(shellDialog, SWT.CHECK));
-		shellDialog.getChckBttnLogActv().setBounds(20, 240, 100, 20);
-		shellDialog.getChckBttnLogActv().setText("Attiva Log");
-		shellDialog.getChckBttnLogActv().setSelection(project.isLogActive());
+		String[] phpiniList = {"Development", "Default", "Custom"};
+		shellDialog.setPhpiniCombo(new Combo(shellDialog, SWT.DROP_DOWN | SWT.READ_ONLY));
+		shellDialog.getPhpiniCombo().setBounds(100, 230, 130, 20);
+		for (String ini : phpiniList)
+			shellDialog.getPhpiniCombo().add(ini);
+		shellDialog.getPhpiniCombo().select(project.getPhpini());
+
+		shellDialog.setLogActvChckBttn(new Button(shellDialog, SWT.CHECK));
+		shellDialog.getLogActvChckBttn().setBounds(20, 280, 100, 20);
+		shellDialog.getLogActvChckBttn().setText("Attiva Log");
+		shellDialog.getLogActvChckBttn().setSelection(project.isLogActive());
 		
-		Button bttn = new Button(shellDialog, SWT.PUSH);
+		Button bttn;
+
+		bttn = new Button(shellDialog, SWT.PUSH);
 		bttn.addSelectionListener(new LuncherSelectPathSelectionAdapter(shellDialog, shellDialog.getTextMap().get(Project.K_PATH)));
 		bttn.setBounds(270, 107, 80, 30);
 		bttn.setText("Scegli");
+
+		bttn = new Button(shellDialog, SWT.PUSH);
+		bttn.addSelectionListener(new LauncherEditorPhpini(shellDialog, project));
+		bttn.setBounds(240, 230, 80, 30);
+		bttn.setText("Apri Editor");
 		
 		selAdptList = new SelectionAdapter[] {
 				new ResetTextSelectionAdapter(shellDialog),
 				new UpdateProjectSelctionAdapter(shellDialog),
 		};
 		String[] namesButton = new String[] {"Annulla", "Salva"};
-		Jaswt.getInstance().printButtonHorizontal(namesButton, 130, 280, 100, 30, 20, shellDialog, selAdptList);
+		Jaswt.getInstance().printButtonHorizontal(namesButton, 130, 310, 100, 30, 20, shellDialog, selAdptList);
 		
 		shellDialog.open();
 	}

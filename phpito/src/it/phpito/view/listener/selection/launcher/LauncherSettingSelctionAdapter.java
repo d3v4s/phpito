@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -51,7 +52,7 @@ public class LauncherSettingSelctionAdapter extends SelectionAdapter {
 
 	/* metodo per lanciare finestra delle impostazioni */
 	public void launchSettingPHPito() {
-		shellDialogSetting.setSize(370, 420);
+		shellDialogSetting.setSize(370, 400);
 		shellDialogSetting.setText("Impostazioni PHPito");
 		shellDialogSetting.setLayout(new BorderLayout(0, 0));
 		shellDialogSetting.setConfChckBttnMap(new HashMap<String, Button>());
@@ -95,7 +96,7 @@ public class LauncherSettingSelctionAdapter extends SelectionAdapter {
 	private void createContentsLogMon(TabFolder tabFolder) {
 		TabItem tabItemLog = new TabItem(tabFolder, SWT.NONE);
 		tabItemLog.setText("Log Monitor");
-		Label lbl;
+		CLabel lbl;
 
 		Composite compositeLog = new Composite(tabFolder, SWT.NONE);
 		tabItemLog.setControl(compositeLog);
@@ -109,14 +110,14 @@ public class LauncherSettingSelctionAdapter extends SelectionAdapter {
 		chckBttnActiveLogMonitor.addSelectionListener(new DisablerControlSelctionAdapter(logMonControlList));
 		boolean enable = chckBttnActiveLogMonitor.getSelection();
 
-		lbl = new Label(compositeLog, SWT.NONE);
-		lbl.setBounds(20, 60, 75, shellPHPito.getFontHeight());
+		lbl = new CLabel(compositeLog, SWT.NONE);
+		lbl.setBounds(20, 60, 90, shellPHPito.getFontHeight());
 		lbl.setText("N. righe log");
 		Spinner spinner = new Spinner(compositeLog, SWT.NONE);
 		spinner.setMinimum(1);
 		spinner.setMaximum(50);
 		spinner.setIncrement(1);
-		spinner.setBounds(110, 55, 150, 30);
+		spinner.setBounds(120, 55, 150, 30);
 		spinner.setSelection(PHPitoConf.getInstance().getRowLogConf());
 		spinner.setEnabled(enable);
 		shellDialogSetting.getConfSpinnerMap().put(PHPitoConf.K_CONF_ROW_LOG_MON, spinner);
@@ -144,8 +145,8 @@ public class LauncherSettingSelctionAdapter extends SelectionAdapter {
 
 		String[] namesLabel = {"R", "G", "B"};
 		for (int i = 0; i < namesLabel.length; i++) {
-			lbl = new Label(compositeRGB, SWT.NONE);
-			lbl.setBounds(10, 20 + (20 * i), 10, 20);
+			lbl = new CLabel(compositeRGB, SWT.NONE);
+			lbl.setBounds(10, 20 + (20 * i), 15, 20);
 			lbl.setText(namesLabel[i]);
 		}
 
@@ -184,6 +185,7 @@ public class LauncherSettingSelctionAdapter extends SelectionAdapter {
 	private void createContentsSystemInfo(TabFolder tabFolder) {
 		TabItem tabItemSys = new TabItem(tabFolder, SWT.NONE);
 		tabItemSys.setText("System Info");
+		CLabel lbl;
 
 		Composite compositeSys = new Composite(tabFolder, SWT.NONE);
 		tabItemSys.setControl(compositeSys);
@@ -213,10 +215,13 @@ public class LauncherSettingSelctionAdapter extends SelectionAdapter {
 		shellDialogSetting.getConfChckBttnMap().put(PHPitoConf.K_CONF_OTH_INFO, chckBttnViewOtherInfo);
 		sysInfoControlList.add(chckBttnViewOtherInfo);
 
+		lbl = new CLabel(compositeSys, SWT.NONE);
+		lbl.setText("Style CPU Monitor");
+		lbl.setBounds(20, 120, 130, 25);
 		String[] styleList = {"1", "2", "3"};
 		shellDialogSetting.setStyleLogMonCombo(new Combo(compositeSys, SWT.DROP_DOWN | SWT.READ_ONLY));
-		shellDialogSetting.getStyleLogMonCombo().setBounds(20, 120, 60, 25);
-		shellDialogSetting.getStyleLogMonCombo().setText("Style CPU Monitor");
+		shellDialogSetting.getStyleLogMonCombo().setBounds(160, 120, 60, 25);
+//		shellDialogSetting.getStyleLogMonCombo().setText("Style CPU Monitor");
 		for (String st : styleList)
 			shellDialogSetting.getStyleLogMonCombo().add(st);
 		shellDialogSetting.getStyleLogMonCombo().select(PHPitoConf.getInstance().getStyleLogMonConf());
