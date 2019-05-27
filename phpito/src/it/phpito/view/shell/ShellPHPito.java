@@ -11,7 +11,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.RGB;
@@ -34,8 +34,6 @@ import it.jaswt.core.Jaswt;
 import it.jaswt.core.canvas.CPUMonitorCanvas;
 import it.jaswt.core.listener.selection.LuncherFileExplorerSelectionAdapter;
 import it.jogger.core.Jogger;
-import it.jogger.exception.FileLogException;
-import it.jogger.exception.LockLogException;
 import it.phpito.core.PHPitoConf;
 import it.phpito.core.PHPitoManager;
 import it.phpito.data.Project;
@@ -45,13 +43,13 @@ import it.phpito.exception.ServerException;
 import it.phpito.view.listener.key.StartStopServerKeyAdapter;
 import it.phpito.view.listener.selection.FlushTableSelectionAdapter;
 import it.phpito.view.listener.selection.TableSelectionAdapter;
-import it.phpito.view.listener.selection.launcher.LauncherAboutSelctionAdapter;
-import it.phpito.view.listener.selection.launcher.LauncherAddProjectSelectionAdapter;
-import it.phpito.view.listener.selection.launcher.LauncherModifyProjectSelectionAdapter;
-import it.phpito.view.listener.selection.launcher.LauncherSettingSelctionAdapter;
 import it.phpito.view.listener.selection.project.DeleteProjectSelectionAdapter;
 import it.phpito.view.listener.selection.server.StartServerSelectionAdapter;
 import it.phpito.view.listener.selection.server.StopServerSelectionAdapter;
+import it.phpito.view.shell.dialog.launcher.LauncherAboutSelctionAdapter;
+import it.phpito.view.shell.dialog.launcher.LauncherAddProjectSelectionAdapter;
+import it.phpito.view.shell.dialog.launcher.LauncherModifyProjectSelectionAdapter;
+import it.phpito.view.shell.dialog.launcher.LauncherSettingSelctionAdapter;
 import it.phpito.view.thread.UsageCpuThread;
 import it.phpito.view.thread.WriterLogMonitorThread;
 import swing2swt.layout.BorderLayout;
@@ -80,10 +78,10 @@ public class ShellPHPito extends Shell {
 			@Override
 			public void handleEvent(Event event) {
 				try {
-					if (PHPitoManager.getInstance().isDebug())
-						PHPitoManager.getInstance().getJoggerDebug().writeLog("Listener closing ShellPHPito");
+					PHPitoManager.getInstance().getJoggerDebug().writeLog("Listener closing ShellPHPito");
 					ArrayList<Server> serverList = PHPitoManager.getInstance().getRunningServers();
 					if (!serverList.isEmpty()) {
+						PHPitoManager.getInstance().getJoggerDebug().writeLog("Servers are running");
 						String msg = "Attenzione!!! I server in esecuzione verranno fermati.\n"
 										+ "Confermi l'operazione???";
 						int resp = Jaswt.getInstance().lunchMB(shellPHPito, SWT.YES | SWT.NO, "ATTENZIONE!!!", msg);
@@ -92,8 +90,8 @@ public class ShellPHPito extends Shell {
 							for (Server server : serverList)
 								PHPitoManager.getInstance().stopServer(server.getProject());
 					}
-				} catch (DOMException | IOException | ServerException | ProjectException | FileLogException | LockLogException e) {
-					Jaswt.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
+				} catch (DOMException | IOException | ServerException | ProjectException e) {
+					Jaswt.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
 				}
 			}
 		});
@@ -150,12 +148,7 @@ public class ShellPHPito extends Shell {
 
 	/* metodo per creare contenuti */
 	public void createContents() throws DOMException {
-		if (PHPitoManager.getInstance().isDebug())
-			try {
-				PHPitoManager.getInstance().getJoggerDebug().writeLog("Create content ShellPHPito");
-			} catch (FileLogException | LockLogException e) {
-				e.printStackTrace();
-			}
+		PHPitoManager.getInstance().getJoggerDebug().writeLog("Create content ShellPHPito");
 		this.setMinimumSize(300, 400);
 		this.setSize(850, 640);
 		this.setText("PHPito");
@@ -176,7 +169,7 @@ public class ShellPHPito extends Shell {
 		mntm.setMenu(mn);
 		
 		String[] menuProjectList = {"Aggiungi", "Modifica", "Elimina", "Start", "Stop", "Aggiorna"};
-		SelectionAdapter[] menuProjectSelAdptList = new SelectionAdapter[] {
+		SelectionListener[] menuProjectSelAdptList = {
 				new LauncherAddProjectSelectionAdapter(this),
 				new LauncherModifyProjectSelectionAdapter(this),
 				new DeleteProjectSelectionAdapter(this),
@@ -206,9 +199,9 @@ public class ShellPHPito extends Shell {
 		mntm.setMenu(mn);
 
 		String[] menuPHPitoList = {"Impostazioni", "Apri cartella Log", "About"};
-		SelectionAdapter[] menuPHPitoSelAdptList = {
+		SelectionListener[] menuPHPitoSelAdptList = {
 				new LauncherSettingSelctionAdapter(this),
-				new LuncherFileExplorerSelectionAdapter(this, Jogger.getLogDirPath("server"), PHPitoManager.NAME),
+				new LuncherFileExplorerSelectionAdapter(this, Jogger.getLogDirPath("server")),
 				new LauncherAboutSelctionAdapter(this)
 		};
 
@@ -221,12 +214,7 @@ public class ShellPHPito extends Shell {
 		GridData gd;
 		actvtLogMon = PHPitoConf.getInstance().getActvtLogMonConf();
 		if (actvtLogMon) {
-			if (PHPitoManager.getInstance().isDebug())
-				try {
-					PHPitoManager.getInstance().getJoggerDebug().writeLog("Create Content ShellPHPito - Log Monitor ON");
-				} catch (FileLogException | LockLogException e) {
-					e.printStackTrace();
-				}
+			PHPitoManager.getInstance().getJoggerDebug().writeLog("Create Content ShellPHPito - Log Monitor ON");
 			/* contenitore per la zona alta */
 			Composite topComposite = new Composite(this, SWT.NONE);
 			topComposite.setLayoutData(BorderLayout.NORTH);
@@ -334,23 +322,13 @@ public class ShellPHPito extends Shell {
 		actvtSysInfo = PHPitoConf.getInstance().getActvtSysInfoConf();
 
 		if (actvtSysInfo) {
-			if (PHPitoManager.getInstance().isDebug())
-				try {
-					PHPitoManager.getInstance().getJoggerDebug().writeLog("Create Content ShellPHPito - Sys Info ON");
-				} catch (FileLogException | LockLogException e) {
-					e.printStackTrace();
-				}
+			PHPitoManager.getInstance().getJoggerDebug().writeLog("Create Content ShellPHPito - Sys Info ON");
 			Composite compositeBottom = new Composite(shellPHPito, SWT.NONE);
 			compositeBottom.setLayoutData(BorderLayout.SOUTH);
 
 			int xLabel = 25;
 			if (PHPitoConf.getInstance().getActvtCPUMon()) {
-				if (PHPitoManager.getInstance().isDebug())
-					try {
-						PHPitoManager.getInstance().getJoggerDebug().writeLog("Create Content ShellPHPito - CPU Monitor ON");
-					} catch (FileLogException | LockLogException e) {
-						e.printStackTrace();
-					}
+				PHPitoManager.getInstance().getJoggerDebug().writeLog("Create Content ShellPHPito - CPU Monitor ON");
 				cpuMonitorCanvas = new CPUMonitorCanvas(compositeBottom, SWT.NONE, new ArrayBlockingQueue<Double>(80));
 				cpuMonitorCanvas.setBounds(20, 20, 80, 60);
 				cpuMonitorCanvas.setStyleCPUMon(PHPitoConf.getInstance().getStyleLogMonConf());
@@ -358,19 +336,14 @@ public class ShellPHPito extends Shell {
 			}
 
 			if (PHPitoConf.getInstance().getOthInfo()) {
-				if (PHPitoManager.getInstance().isDebug())
-					try {
-						PHPitoManager.getInstance().getJoggerDebug().writeLog("Create Content ShellPHPito - Other Info ON");
-					} catch (FileLogException | LockLogException e) {
-						e.printStackTrace();
-					}
+				PHPitoManager.getInstance().getJoggerDebug().writeLog("Create Content ShellPHPito - Other Info ON");
 				lblInfo = new CLabel(compositeBottom, SWT.NONE);
 				lblInfo.setBounds(xLabel, 15, 200, 70);
 				
 				try {
 					lblInfo.setText(PHPitoManager.getInstance().getSystemInfo(null));
 				} catch (IOException e) {
-					Jaswt.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
+					Jaswt.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
 				}
 			}
 			new Label(compositeBottom, SWT.NONE).setBounds(0, 100, 300, 0);
@@ -379,12 +352,7 @@ public class ShellPHPito extends Shell {
 
 	/* metodo che riscrive tabella da hashmap di progetti */
 	private void printProjectsOnTable(HashMap<String, Project> mapProjects) {
-		if (PHPitoManager.getInstance().isDebug())
-			try {
-				PHPitoManager.getInstance().getJoggerDebug().writeLog("ShellPHPito - Print Projects on Table");
-			} catch (FileLogException | LockLogException e) {
-				e.printStackTrace();
-			}
+		PHPitoManager.getInstance().getJoggerDebug().writeLog("ShellPHPito - Print Projects on Table");
 		TableItem ti;
 		Project p;
 		table.removeAll();
@@ -405,12 +373,7 @@ public class ShellPHPito extends Shell {
 
 	/* metodo che riscrive la tabella recuperando i dati dall'xml */
 	public void flushTable() {
-		if (PHPitoManager.getInstance().isDebug())
-			try {
-				PHPitoManager.getInstance().getJoggerDebug().writeLog("ShellPHPito - Flush Table");
-			} catch (FileLogException | LockLogException e) {
-				e.printStackTrace();
-			}
+		PHPitoManager.getInstance().getJoggerDebug().writeLog("ShellPHPito - Flush Table");
 		int indexTable = table.getSelectionIndex();
 		HashMap<String, Project> mapProjects = PHPitoManager.getInstance().getReentrantLockXMLServer().getProjectsMap();
 		printProjectsOnTable(mapProjects);
@@ -423,17 +386,12 @@ public class ShellPHPito extends Shell {
 
 	@Override
 	public void open() {
-		if (PHPitoManager.getInstance().isDebug())
-			try {
-				PHPitoManager.getInstance().getJoggerDebug().writeLog("Open ShellPHPito");
-			} catch (FileLogException | LockLogException e) {
-				e.printStackTrace();
-			}
+		PHPitoManager.getInstance().getJoggerDebug().writeLog("Open ShellPHPito");
 		super.open();
 		try {
 			PHPitoManager.getInstance().flushRunningServers();
 		} catch (NumberFormatException | IOException | ProjectException e) {
-			Jaswt.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
+			Jaswt.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
 		}
 		flushTable();
 		if (actvtLogMon)
@@ -444,12 +402,7 @@ public class ShellPHPito extends Shell {
 
 	/* metodo che abilita o disabilita i pulsanti legati a progetto */
 	private void autoEnableButtonProject() {
-		if (PHPitoManager.getInstance().isDebug())
-			try {
-				PHPitoManager.getInstance().getJoggerDebug().writeLog("ShellPHPito - Enable Disabled Button of Project");
-			} catch (FileLogException | LockLogException e) {
-				e.printStackTrace();
-			}
+		PHPitoManager.getInstance().getJoggerDebug().writeLog("ShellPHPito - Enable Disabled Button of Project");
 		Project project = shellPHPito.getProjectSelect();
 		Boolean isRunnig = (project != null) ? project.getServer().isRunning() : null;
 		if (isRunnig != null) {
@@ -483,12 +436,7 @@ public class ShellPHPito extends Shell {
 
 	/* metodo che setta la variabile id con id progetto selezionato */
 	public void autoSetIdProjectSelect() {
-		if (PHPitoManager.getInstance().isDebug())
-			try {
-				PHPitoManager.getInstance().getJoggerDebug().writeLog("ShellPHPito - Auto Set ID");
-			} catch (FileLogException | LockLogException e) {
-				e.printStackTrace();
-			}
+		PHPitoManager.getInstance().getJoggerDebug().writeLog("ShellPHPito - Auto Set ID");
 		Long id = null;
 		if (table.getSelectionIndex() >= 0)
 			id = Long.parseLong(table.getItem(table.getSelectionIndex()).getText(0));

@@ -32,7 +32,7 @@ public class StopServerSelectionAdapter extends SelectionAdapter {
 			if (!PHPitoManager.getInstance().stopServer(p))
 				Jaswt.getInstance().lunchMB(shellPHPito, SWT.OK, "FAIL!!!", "L'arresto del server non ha avuto sucesso.");
 		} catch (IOException | ServerException | ProjectException e) {
-			Jaswt.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
+			Jaswt.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
 		} finally {
 			shellPHPito.flushTable();
 			shellPHPito.getTable().forceFocus();

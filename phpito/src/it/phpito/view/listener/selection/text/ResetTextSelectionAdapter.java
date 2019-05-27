@@ -8,7 +8,7 @@ import org.eclipse.swt.widgets.Text;
 
 import it.phpito.data.Project;
 import it.phpito.exception.ProjectException;
-import it.phpito.view.shell.ShellDialogPHPito;
+import it.phpito.view.shell.dialog.ShellDialogPHPito;
 
 public class ResetTextSelectionAdapter extends SelectionAdapter {
 	private ShellDialogPHPito shellDialog;

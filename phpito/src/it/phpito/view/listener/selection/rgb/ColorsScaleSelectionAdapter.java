@@ -9,7 +9,7 @@ import it.jaswt.core.Jaswt;
 import it.jaswt.exception.ParameterException;
 import it.phpito.core.PHPitoConf;
 import it.phpito.core.PHPitoManager;
-import it.phpito.view.shell.ShellDialogSettings;
+import it.phpito.view.shell.dialog.ShellDialogSettings;
 
 public class ColorsScaleSelectionAdapter extends SelectionAdapter {
 	private ShellDialogSettings shellDialogSettings;
@@ -34,7 +34,7 @@ public class ColorsScaleSelectionAdapter extends SelectionAdapter {
 
 			shellDialogSettings.getHexColorLbl().setText(shellDialogSettings.getHexColors());
 		} catch (ParameterException e) {
-			Jaswt.getInstance().lunchMBError(shellDialogSettings, e, PHPitoManager.NAME);
+			Jaswt.getInstance().lunchMBError(shellDialogSettings, e, PHPitoManager.getInstance().getJoggerError());
 		}
 	}
 }

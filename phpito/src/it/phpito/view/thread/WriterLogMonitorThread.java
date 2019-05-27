@@ -26,16 +26,16 @@ public class WriterLogMonitorThread extends Thread {
 
 	@Override
 	public void run() {
-		LocalDateTime lastMod;
 		LocalDateTime lastPrint = LocalDateTime.MIN;
 		Long id = shellPHPito.getIdProjectSelect();
 		project = shellPHPito.getProjectSelect();
+		LocalDateTime lastMod;
 		while (!shellPHPito.isDisposed()) {
 			try {
-				project = shellPHPito.getProjectSelect();
 				lastMod = getLocalDateTimeLastModifyLogServer(project);
-				if ((shellPHPito.getIdProjectSelect() != null && id != shellPHPito.getIdProjectSelect()) ||
-						lastPrint.isBefore(lastMod)) {
+				if ((shellPHPito.getIdProjectSelect() != null && id != shellPHPito.getIdProjectSelect())
+								|| lastPrint.isBefore(lastMod)) {
+					project = shellPHPito.getProjectSelect();
 					id = shellPHPito.getIdProjectSelect();
 					shellPHPito.getDisplay().asyncExec(new Runnable() {
 						@Override

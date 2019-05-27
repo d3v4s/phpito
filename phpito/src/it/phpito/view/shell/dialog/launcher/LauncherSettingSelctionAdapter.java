@@ -1,0 +1,234 @@
+package it.phpito.view.shell.dialog.launcher;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Scale;
+import org.eclipse.swt.widgets.Spinner;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
+
+import it.jaswt.core.Jaswt;
+import it.jaswt.core.label.ViewColorLabel;
+import it.jaswt.core.listener.selection.CloserShellSelectionAdpter;
+import it.jaswt.core.listener.selection.DisablerControlSelctionAdapter;
+import it.jaswt.exception.ParameterException;
+import it.phpito.core.PHPitoConf;
+import it.phpito.core.PHPitoManager;
+import it.phpito.view.listener.selection.SaveConfSelectionAdapter;
+import it.phpito.view.listener.selection.rgb.ColorsLogMonListSelectionAdapter;
+import it.phpito.view.listener.selection.rgb.ColorsScaleSelectionAdapter;
+import it.phpito.view.shell.ShellPHPito;
+import it.phpito.view.shell.dialog.ShellDialogSettings;
+import swing2swt.layout.BorderLayout;
+
+public class LauncherSettingSelctionAdapter extends ShellDialogSettings implements SelectionListener {
+
+	public LauncherSettingSelctionAdapter(ShellPHPito shellPHPito) {
+		super(shellPHPito);
+	}
+
+	@Override
+	public void widgetDefaultSelected(SelectionEvent arg0) {
+		
+	}
+
+	@Override
+	public void widgetSelected(SelectionEvent se) {
+		launchSettingPHPito();
+	}
+
+	/* metodo per lanciare finestra delle impostazioni */
+	public void launchSettingPHPito() {
+		this.setSize(370, 400);
+		this.setText("Impostazioni PHPito");
+		this.setLayout(new BorderLayout(0, 0));
+		this.setConfChckBttnMap(new HashMap<String, Button>());
+		this.setConfSpinnerMap(new HashMap<String, Spinner>());
+		this.setColorScaleMap(new HashMap<String, Scale>());
+		this.setColorBackgrndLogMonMap(PHPitoConf.getInstance().getColorsBckgrndLogMonMap());
+		this.setColorForegrndLogMonMap(PHPitoConf.getInstance().getColorsForegrndLogMonMap());
+		Jaswt.getInstance().centerWindow(this);
+
+		TabFolder tabFolder = new TabFolder(this, SWT.NONE);
+		tabFolder.setLayoutData(BorderLayout.CENTER);
+
+		createContentsLogMon(tabFolder);
+
+		createContentsSystemInfo(tabFolder);
+
+		Composite compositeBottom = new Composite(this, SWT.NONE);
+		compositeBottom.setLayoutData(BorderLayout.SOUTH);
+
+        String[] namesBttnList = {"Annulla", "Salva"};
+        SelectionAdapter[] selAdptrBttnList = {
+        		new CloserShellSelectionAdpter(this),
+        		new SaveConfSelectionAdapter(this)
+        };
+        Button bttn;
+		for (int i = 0; i < namesBttnList.length; i++) {
+			bttn = new Button(compositeBottom, SWT.PUSH);
+			bttn.setBounds(130 + (100 + 20) * i, 20, 100, 30);
+			if (selAdptrBttnList[i] != null)
+				bttn.addSelectionListener(selAdptrBttnList[i]);
+			if (namesBttnList[i] != null)
+				bttn.setText(namesBttnList[i]);
+			bttn.setCursor(new Cursor(shellPHPito.getDisplay(), SWT.CURSOR_HAND));
+		}
+
+		new Label(compositeBottom, SWT.NONE).setBounds(270, 20, 0, 50);
+		this.open();
+	}
+
+	/* metodo che crea tabitem per impostazioni del log monitor */
+	private void createContentsLogMon(TabFolder tabFolder) {
+		TabItem tabItemLog = new TabItem(tabFolder, SWT.NONE);
+		tabItemLog.setText("Log Monitor");
+		CLabel lbl;
+
+		Composite compositeLog = new Composite(tabFolder, SWT.NONE);
+		tabItemLog.setControl(compositeLog);
+
+		ArrayList<Control> logMonControlList = new ArrayList<Control>();
+		Button chckBttnActiveLogMonitor = new Button(compositeLog, SWT.CHECK);
+		chckBttnActiveLogMonitor.setBounds(20, 15, 170, shellPHPito.getFontHeight());
+		chckBttnActiveLogMonitor.setText("Attiva Log Monitor");
+		chckBttnActiveLogMonitor.setSelection(PHPitoConf.getInstance().getActvtLogMonConf());
+		this.getConfChckBttnMap().put(PHPitoConf.K_CONF_ACTVT_LOG_MON, chckBttnActiveLogMonitor);
+		chckBttnActiveLogMonitor.addSelectionListener(new DisablerControlSelctionAdapter(logMonControlList));
+		boolean enable = chckBttnActiveLogMonitor.getSelection();
+
+		lbl = new CLabel(compositeLog, SWT.NONE);
+		lbl.setBounds(20, 60, 90, shellPHPito.getFontHeight());
+		lbl.setText("N. righe log");
+		Spinner spinner = new Spinner(compositeLog, SWT.NONE);
+		spinner.setMinimum(1);
+		spinner.setMaximum(50);
+		spinner.setIncrement(1);
+		spinner.setBounds(120, 55, 150, 30);
+		spinner.setSelection(PHPitoConf.getInstance().getRowLogConf());
+		spinner.setEnabled(enable);
+		this.getConfSpinnerMap().put(PHPitoConf.K_CONF_ROW_LOG_MON, spinner);
+		logMonControlList.add(spinner);
+
+		String[] elementLogStringList = {"Background", "Foreground"}; 
+		this.setElementLogList(new List(compositeLog, SWT.BORDER));
+		this.getElementLogList().setBounds(20, 110, 220, 52);
+		this.getElementLogList().addSelectionListener(new ColorsLogMonListSelectionAdapter(this));
+		for (String elmntStrng : elementLogStringList)
+			this.getElementLogList().add(elmntStrng);
+		this.getElementLogList().select(0);
+		logMonControlList.add(this.getElementLogList());
+		this.getElementLogList().setCursor(new Cursor(shellPHPito.getDisplay(), SWT.CURSOR_HAND));
+		this.getElementLogList().addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				e.doit = false;
+			}
+		});
+		this.getElementLogList().setEnabled(enable);
+
+		Composite compositeRGB = new Composite(compositeLog, SWT.BORDER);
+		compositeRGB.setBounds(20, 170, 320, 110);
+
+		String[] namesLabel = {"R", "G", "B"};
+		for (int i = 0; i < namesLabel.length; i++) {
+			lbl = new CLabel(compositeRGB, SWT.NONE);
+			lbl.setBounds(10, 20 + (20 * i), 15, 20);
+			lbl.setText(namesLabel[i]);
+		}
+
+		try {
+			this.setViewColorLabel(new ViewColorLabel(compositeRGB, SWT.BORDER,
+					this.getColorBackgrndLogMonMap().get(PHPitoConf.K_COLOR_RED),
+					this.getColorBackgrndLogMonMap().get(PHPitoConf.K_COLOR_GREEN),
+					this.getColorBackgrndLogMonMap().get(PHPitoConf.K_COLOR_BLUE)
+			));
+		} catch (ParameterException e) {
+			Jaswt.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
+		}
+		this.getViewColorLabel().setBounds(240, 25, 50, 50);
+
+		Scale scale;
+		for (int i = 0; i < PHPitoConf.K_COLORS_LIST.length ; i++) {
+			scale = new Scale(compositeRGB, SWT.HORIZONTAL);
+			scale.setMinimum(0);
+			scale.setMaximum(255);
+			scale.setIncrement(1);
+			scale.setBounds(30, 20 * (i + 1), 180, 20);
+			scale.setSelection(this.getColorBackgrndLogMonMap().get(PHPitoConf.K_COLORS_LIST[i]));
+			scale.addSelectionListener(new ColorsScaleSelectionAdapter(this));
+			scale.setCursor(new Cursor(this.getDisplay(), SWT.CURSOR_SIZEWE));
+			scale.setEnabled(enable);
+			this.getColorScaleMap().put(PHPitoConf.K_COLORS_LIST[i], scale);
+			logMonControlList.add(scale);
+		}
+		
+		this.setHexColorLbl(new Label(compositeRGB, SWT.NONE));
+		this.getHexColorLbl().setText(this.getHexColors());
+		this.getHexColorLbl().setBounds(240, 80, 70, 20);
+	}
+
+	/* metodo che crea tabitem per impostazioni del system info */
+	private void createContentsSystemInfo(TabFolder tabFolder) {
+		TabItem tabItemSys = new TabItem(tabFolder, SWT.NONE);
+		tabItemSys.setText("System Info");
+		CLabel lbl;
+
+		Composite compositeSys = new Composite(tabFolder, SWT.NONE);
+		tabItemSys.setControl(compositeSys);
+
+		ArrayList<Control> sysInfoControlList = new ArrayList<Control>();
+		Button chckBttnActiveSystemInfo = new Button(compositeSys, SWT.CHECK);
+		chckBttnActiveSystemInfo.setBounds(20, 15, 170, shellPHPito.getFontHeight());
+		chckBttnActiveSystemInfo.setText("Attiva System Info");
+		chckBttnActiveSystemInfo.setSelection(PHPitoConf.getInstance().getActvtSysInfoConf());
+		chckBttnActiveSystemInfo.addSelectionListener(new DisablerControlSelctionAdapter(sysInfoControlList));
+		this.getConfChckBttnMap().put(PHPitoConf.K_CONF_ACTVT_SYS_INFO, chckBttnActiveSystemInfo);
+		boolean enable = chckBttnActiveSystemInfo.getSelection();
+		
+		Button chckBttnActiveCPUMon = new Button(compositeSys, SWT.CHECK);
+		chckBttnActiveCPUMon.setBounds(20, 55, 170, shellPHPito.getFontHeight());
+		chckBttnActiveCPUMon.setText("Visualizza carico CPU");
+		chckBttnActiveCPUMon.setEnabled(enable);
+		chckBttnActiveCPUMon.setSelection(PHPitoConf.getInstance().getActvtCPUMon());
+		this.getConfChckBttnMap().put(PHPitoConf.K_CONF_ACTVT_CPU_MON, chckBttnActiveCPUMon);
+		sysInfoControlList.add(chckBttnActiveCPUMon);
+
+		Button chckBttnViewOtherInfo = new Button(compositeSys, SWT.CHECK);
+		chckBttnViewOtherInfo.setBounds(20, 80, 170, shellPHPito.getFontHeight());
+		chckBttnViewOtherInfo.setText("Visualizza altre info");
+		chckBttnViewOtherInfo.setSelection(PHPitoConf.getInstance().getOthInfo());
+		chckBttnViewOtherInfo.setEnabled(enable);
+		this.getConfChckBttnMap().put(PHPitoConf.K_CONF_OTH_INFO, chckBttnViewOtherInfo);
+		sysInfoControlList.add(chckBttnViewOtherInfo);
+
+		lbl = new CLabel(compositeSys, SWT.NONE);
+		lbl.setText("Style CPU Monitor");
+		lbl.setBounds(20, 120, 130, 25);
+		String[] styleList = {"1", "2", "3"};
+		this.setStyleLogMonCombo(new Combo(compositeSys, SWT.DROP_DOWN | SWT.READ_ONLY));
+		this.getStyleLogMonCombo().setBounds(160, 120, 60, 25);
+		for (String st : styleList)
+			this.getStyleLogMonCombo().add(st);
+		this.getStyleLogMonCombo().select(PHPitoConf.getInstance().getStyleLogMonConf());
+		this.getStyleLogMonCombo().setEnabled(enable);
+		sysInfoControlList.add(this.getStyleLogMonCombo());
+		
+		
+	}
+}

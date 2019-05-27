@@ -12,8 +12,8 @@ import it.phpito.core.PHPitoManager;
 import it.phpito.data.Project;
 import it.phpito.data.Server;
 import it.phpito.exception.ProjectException;
-import it.phpito.view.shell.ShellDialogPHPito;
 import it.phpito.view.shell.ShellPHPito;
+import it.phpito.view.shell.dialog.ShellDialogPHPito;
 
 public class AddProjectSelectionAdapter extends SelectionAdapter {
 	private ShellDialogPHPito shellDialog;
@@ -53,7 +53,7 @@ public class AddProjectSelectionAdapter extends SelectionAdapter {
 				shellDialog.dispose();
 			}
 		} catch (ProjectException e) {
-			Jaswt.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
+			Jaswt.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
 		}
 	}
 }

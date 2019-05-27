@@ -36,7 +36,7 @@ public class Project {
 		return name;
 	}
 	public void setName(String name) {
-		this.name = name;
+		this.name = name.replace(" ", "_");
 	}
 	public Server getServer() {
 		return server;

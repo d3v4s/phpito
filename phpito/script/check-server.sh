@@ -1,8 +1,10 @@
 #!/bin/bash 
 
 ADDRESS=$1
-PID=$2
+PORT=$2
+PID=$3
 
-netstat -ltnp | grep -E '.*('$ADDRESS').*LISTEN.*('$PID')/php.*'
+# netstat -ltnp | grep -E '.*('$ADDRESS').*LISTEN.*('$PID')/php.*'
+ss -Hlptn "src = $ADDRESS and sport = $PORT" 
 
 exit 0

@@ -7,8 +7,6 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
-import it.jogger.exception.FileLogException;
-import it.jogger.exception.LockLogException;
 import it.jutilas.core.Jutilas;
 import it.jutilas.exception.FileException;
 
@@ -170,38 +168,18 @@ public class PHPitoConf {
 	}
 
 	private void setConfMap() throws FileException {
-		if (PHPitoManager.getInstance().isDebug())
-			try {
-				PHPitoManager.getInstance().getJoggerDebug().writeLog("Read Configuration From File and Set Configuration Map Attribute");
-			} catch (FileLogException | LockLogException e1) {
-				e1.printStackTrace();
-			}
+		PHPitoManager.getInstance().getJoggerDebug().writeLog("Read Configuration From File and Set Configuration Map Attribute");
 		confMap = new HashMap<String, String>();
 		for (String key : K_CONF_LIST)
 			confMap.put(key,Jutilas.getInstance().getConf(FILE_CONF_PATH, key));
-		if (PHPitoManager.getInstance().isDebug())
-			try {
-				PHPitoManager.getInstance().getJoggerDebug().writeLog("Read Configuration From File and Set Configuration Map Attribute -- OK");
-			} catch (FileLogException | LockLogException e1) {
-				e1.printStackTrace();
-			}
+		PHPitoManager.getInstance().getJoggerDebug().writeLog("Read Configuration From File and Set Configuration Map Attribute -- OK");
 	}
 	
 	public void saveConf(HashMap<String, String> confMap) throws FileException {
-		if (PHPitoManager.getInstance().isDebug())
-			try {
-				PHPitoManager.getInstance().getJoggerDebug().writeLog("Save New Configuration");
-			} catch (FileLogException | LockLogException e1) {
-				e1.printStackTrace();
-			}
+		PHPitoManager.getInstance().getJoggerDebug().writeLog("Save New Configuration");
 		for (String key : confMap.keySet())
 			Jutilas.getInstance().setConf(FILE_CONF_PATH, key, confMap.get(key), MSG_CONF);
-		if (PHPitoManager.getInstance().isDebug())
-			try {
-				PHPitoManager.getInstance().getJoggerDebug().writeLog("Save New Configuration -- OK");
-			} catch (FileLogException | LockLogException e1) {
-				e1.printStackTrace();
-			}
+		PHPitoManager.getInstance().getJoggerDebug().writeLog("Save New Configuration -- OK");
 		setConfMap();
 	}
 

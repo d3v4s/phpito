@@ -43,7 +43,6 @@ public class PHPitoManager {
 	public static final String VERSION = "1.0";
 	public static final String AUTHOR = "Andrea Serra";
 	public static final String LINK_GITHUB = "https://github.com/z4X0r/phpito";
-	private boolean debug = false;
 	private JoggerDebug joggerDebug;
 	private JoggerError joggerError;
 
@@ -60,13 +59,6 @@ public class PHPitoManager {
 		return phpItoManager = phpItoManager == null ? new PHPitoManager() : phpItoManager;
 	}
 
-	/* get set */
-	public boolean isDebug() {
-		return debug;
-	}
-	public void setDebug(boolean debug) {
-		this.debug = debug;
-	}
 	public JoggerDebug getJoggerDebug() {
 		return joggerDebug;
 	}
@@ -101,28 +93,13 @@ public class PHPitoManager {
 
 	/* metodo per avviare un server */
 	public boolean startServer(Project project) throws IOException, ServerException, NumberFormatException, ProjectException {
-		if (PHPitoManager.getInstance().isDebug())
-			try {
-				joggerDebug.writeLog("PHPito Manager - Starting Server");
-			} catch (FileLogException | LockLogException e1) {
-				e1.printStackTrace();
-			}
+		joggerDebug.writeLog("PHPito Manager - Starting Server");
 		if (project == null) {
-			if (PHPitoManager.getInstance().isDebug())
-				try {
-					joggerDebug.writeLog("PHPito Starting Server - Project == null");
-				} catch (FileLogException | LockLogException e1) {
-					e1.printStackTrace();
-				}
+			joggerDebug.writeLog("PHPito Starting Server - Project == null");
 			throw new ProjectException("Errore!!! Nessun server selezionato");
 		}
 		if (!JutilasNet.getInstance().isAvaiblePort(project.getServer().getPort())) {
-			if (PHPitoManager.getInstance().isDebug())
-				try {
-					joggerDebug.writeLog("PHPito Starting Server - Porta gia' in uso");
-				} catch (FileLogException | LockLogException e1) {
-					e1.printStackTrace();
-				}
+			joggerDebug.writeLog("PHPito Starting Server - Porta gia' in uso");
 			throw new ServerException("Errore!!! La porta scelta e' gia' in uso.");
 		}
 		String phpini = project.getPhpiniPath();
@@ -138,14 +115,11 @@ public class PHPitoManager {
 									project.getServer().getAddressAndPort(),
 									project.getServer().getPath(),
 									phpini};
+		
+		System.out.println("PHPitoManager.startServer() CMD = " + cmndStart[0] + " " + cmndStart[1] +" " + cmndStart[2] + " " + cmndStart[3]);
 		String regexError = ".*Failed to listen on " + project.getServer().getAddressAndPort() + ".*";
 		String regexReasError = ".*reason: ([\\w\\s]{1,}).*";
-		if (PHPitoManager.getInstance().isDebug())
-			try {
-				joggerDebug.writeLog("PHPito Starting Server - Execute command");
-			} catch (FileLogException | LockLogException e1) {
-				e1.printStackTrace();
-			}
+		joggerDebug.writeLog("PHPito Starting Server - Execute command");
 		ProcessBuilder pbStart = new ProcessBuilder(cmndStart);
 		pbStart.directory(new File(DIR_SCRIPT));
 		pbStart.redirectErrorStream(true);
@@ -158,21 +132,11 @@ public class PHPitoManager {
 		Long pid = null;
 		LocalDateTime maxTime = LocalDateTime.now().plusSeconds(5L);
 		while ((stdoStart = (br.ready()) ? br.readLine() : "") != null) {
-			if (PHPitoManager.getInstance().isDebug())
-				try {
-					joggerDebug.writeLog("PHPito Starting Server - Read Process Start Server - OUT: '" + stdoStart + "'");
-				} catch (FileLogException | LockLogException e1) {
-					e1.printStackTrace();
-				}
+			joggerDebug.writeLog("PHPito Starting Server - Read Process Start Server - OUT: '" + stdoStart + "'");
 			if (!stdoStart.isEmpty() && project.isLogActive())
 				reentrantLockLogServer.writeLog(stdoStart, project);
 			if (Pattern.matches(regexError, stdoStart)) {
-				if (PHPitoManager.getInstance().isDebug())
-					try {
-						joggerDebug.writeLog("PHPito Starting Server - Read Process Start Server Find Error");
-					} catch (FileLogException | LockLogException e1) {
-						e1.printStackTrace();
-					}
+				joggerDebug.writeLog("PHPito Starting Server - Read Process Start Server Find Error");
 				String reasonError = "";
 				Matcher matchReasError = Pattern.compile(regexReasError).matcher(stdoStart);
 				if (matchReasError.find())
@@ -183,12 +147,7 @@ public class PHPitoManager {
 											(reasonError.isEmpty()) ? "\nMessaggio: " + stdoStart :
 												"\nErrore individuato: " + reasonError));
 			} else if ((pid = getPIDServer(project.getServer())) != null) {
-				if (PHPitoManager.getInstance().isDebug())
-					try {
-						joggerDebug.writeLog("PHPito Starting Server - Read Process Start Server Find PID OK");
-					} catch (FileLogException | LockLogException e1) {
-						e1.printStackTrace();
-					}
+				joggerDebug.writeLog("PHPito Starting Server - Read Process Start Server Find PID OK");
 				project.getServer().setProcessId(pid);
 				reentrantLockXMLServer.updateProject(project);
 				if (project.isLogActive())
@@ -197,23 +156,13 @@ public class PHPitoManager {
 					br.close();
 				return true;
 			} else if (LocalDateTime.now().isAfter(maxTime)) {
-				if (PHPitoManager.getInstance().isDebug())
-					try {
-						joggerDebug.writeLog("PHPito Starting Server - Read Process Timeout Exit");
-					} catch (FileLogException | LockLogException e1) {
-						e1.printStackTrace();
-					}
+				joggerDebug.writeLog("PHPito Starting Server - Read Process Timeout Exit");
 				br.close();
 				flushRunningServers();
 				throw new ServerException("Error Server!!! Avvio del server php fallito!");
 			}
 		}
-		if (PHPitoManager.getInstance().isDebug())
-			try {
-				joggerDebug.writeLog("PHPito Starting Server - Fail Start Server");
-			} catch (FileLogException | LockLogException e1) {
-				e1.printStackTrace();
-			}
+		joggerDebug.writeLog("PHPito Starting Server - Fail Start Server");
 		br.close();
 		flushRunningServers();
 		return false;
@@ -231,42 +180,22 @@ public class PHPitoManager {
 
 		@Override
 		public void run() {
-			if (PHPitoManager.getInstance().isDebug())
-				try {
-					joggerDebug.writeLog("PHPito Start Thread Read Output Server");
-				} catch (FileLogException | LockLogException e1) {
-					e1.printStackTrace();
-				}
+			joggerDebug.writeLog("PHPito Start Thread Read Output Server");
 			try {
 				String outServer = null;
 				while ((outServer = bufferedReader.readLine()) != null) {
-					if (PHPitoManager.getInstance().isDebug())
-						try {
-							joggerDebug.writeLog("PHPito Thread Read Output Server - Write Log");
-						} catch (FileLogException | LockLogException e1) {
-							e1.printStackTrace();
-						}
+					joggerDebug.writeLog("PHPito Thread Read Output Server - Write Log");
 					reentrantLockLogServer.writeLog(outServer, project);
 				}
 			} catch (IOException e) {
-				if (PHPitoManager.getInstance().isDebug())
-					try {
-						joggerDebug.writeLog("PHPito Thread Read Output Server - IOException: " + e.getMessage());
-					} catch (FileLogException | LockLogException e1) {
-						e1.printStackTrace();
-					}
+				joggerDebug.writeLog("PHPito Thread Read Output Server - IOException: " + e.getMessage());
 				try {
 					joggerError.writeLog(e);
 				} catch (FileLogException | LockLogException e1) {
 					e1.printStackTrace();
 				}
 			} finally {
-				if (PHPitoManager.getInstance().isDebug())
-					try {
-						joggerDebug.writeLog("PHPito Thread Read Output Server - Close BufferdReader");
-					} catch (FileLogException | LockLogException e1) {
-						e1.printStackTrace();
-					}
+				joggerDebug.writeLog("PHPito Thread Read Output Server - Close BufferdReader");
 				try {
 					bufferedReader.close();
 				} catch (IOException e) {
@@ -292,12 +221,7 @@ public class PHPitoManager {
 
 	/* metodo che aggiorna i server in esecuzione sull'xml */
 	public void flushRunningServers() throws IOException, NumberFormatException, ProjectException {
-		if (PHPitoManager.getInstance().isDebug())
-			try {
-				joggerDebug.writeLog("PHPito Write Running Server on XML");
-			} catch (FileLogException | LockLogException e1) {
-				e1.printStackTrace();
-			}
+		joggerDebug.writeLog("PHPito Write Running Server on XML");
 		HashMap<String, Project> projectMap = reentrantLockXMLServer.getProjectsMap();
 		Project project = null;
 		for (String id : projectMap.keySet()) {
@@ -309,22 +233,12 @@ public class PHPitoManager {
 			}
 			reentrantLockXMLServer.updateProject(project);
 		}
-		if (PHPitoManager.getInstance().isDebug())
-			try {
-				joggerDebug.writeLog("PHPito Write Running Server on XML OK");
-			} catch (FileLogException | LockLogException e1) {
-				e1.printStackTrace();
-			}
+		joggerDebug.writeLog("PHPito Write Running Server on XML OK");
 	}
 
 	/* metodo che ritorna i server in esecuzione */
 	public ArrayList<Server> getRunningServers() throws IOException, ProjectException {
-		if (PHPitoManager.getInstance().isDebug())
-			try {
-				joggerDebug.writeLog("PHPito Get Running Server");
-			} catch (FileLogException | LockLogException e1) {
-				e1.printStackTrace();
-			}
+		joggerDebug.writeLog("PHPito Get Running Server");
 		ArrayList<Server> serverList = new ArrayList<Server>();
 //		flushRunningServers();
 		HashMap<String, Project> projectMap = reentrantLockXMLServer.getProjectsMap();
@@ -337,19 +251,9 @@ public class PHPitoManager {
 
 	/* metodo che ritorna il PID del server */
 	private Long getPIDServer(Server server) throws NumberFormatException, IOException, ProjectException {
-		if (PHPitoManager.getInstance().isDebug())
-			try {
-				joggerDebug.writeLog("PHPito Get PID Server");
-			} catch (FileLogException | LockLogException e1) {
-				e1.printStackTrace();
-			}
+		joggerDebug.writeLog("PHPito Get PID Server");
 		if (server == null) {
-			if (PHPitoManager.getInstance().isDebug())
-				try {
-					joggerDebug.writeLog("PHPito Get PID Server - Server == null");
-				} catch (FileLogException | LockLogException e1) {
-					e1.printStackTrace();
-				}
+			joggerDebug.writeLog("PHPito Get PID Server - Server == null");
 			throw new ProjectException("Errore!!! Nessun server selezionato");
 		}
 		String regexPID;
@@ -358,15 +262,11 @@ public class PHPitoManager {
 			cmnd = new String[] {RUN, "/c", SCRIPT_PID_SERVER, server.getAddressAndPortRegex()};
 			regexPID  = ".*TCP.*" + server.getAddressAndPortRegex() + ".*LISTENING[\\D]*([\\d]{1,})[\\D]*";
 		} else {
-			cmnd = new String[] {RUN + SCRIPT_PID_SERVER, server.getAddressAndPortRegex()};
-			regexPID = ".*tcp.*" + server.getAddressAndPortRegex() + ".*LISTEN[\\D]*([\\d]{1,})/php.*";
+			cmnd = new String[] {RUN + SCRIPT_PID_SERVER, server.getAddress(), server.getPortString()};
+			// regexPID = ".*tcp.*" + server.getAddressAndPortRegex() + ".*LISTEN[\\D]*([\\d]{1,})/php.*";
+			regexPID = ".*LISTEN.*" + server.getAddressAndPortRegex() + ".*users.*php.*pid=([\\d]{1,})[,].*";
 		}
-		if (PHPitoManager.getInstance().isDebug())
-			try {
-				joggerDebug.writeLog("PHPito Get PID Server - Execute Comand");
-			} catch (FileLogException | LockLogException e1) {
-				e1.printStackTrace();
-			}
+		joggerDebug.writeLog("PHPito Get PID Server - Execute Comand");
 		ProcessBuilder pb = new ProcessBuilder(cmnd);
 		pb.directory(new File(DIR_SCRIPT));
 		pb.redirectErrorStream(true);
@@ -375,49 +275,24 @@ public class PHPitoManager {
 		BufferedReader br = new BufferedReader(isr);
 		String stdo = null;
 		while ((stdo = br.readLine()) != null) {
-			if (PHPitoManager.getInstance().isDebug())
-				try {
-					joggerDebug.writeLog("PHPito Get PID Server - OUT:" + stdo);
-				} catch (FileLogException | LockLogException e1) {
-					e1.printStackTrace();
-				}
+			joggerDebug.writeLog("PHPito Get PID Server - OUT:" + stdo);
 			Matcher match = Pattern.compile(regexPID).matcher(stdo);
 			if (match.find()) {
-				if (PHPitoManager.getInstance().isDebug())
-					try {
-						joggerDebug.writeLog("PHPito Get PID Server - PID Find OK");
-					} catch (FileLogException | LockLogException e1) {
-						e1.printStackTrace();
-					}
+				joggerDebug.writeLog("PHPito Get PID Server - PID Find OK");
 				br.close();
 				return Long.valueOf(match.group(1));
 			}
 		}
-		if (PHPitoManager.getInstance().isDebug())
-			try {
-				joggerDebug.writeLog("PHPito Get PID Server - PID Find FAIL");
-			} catch (FileLogException | LockLogException e1) {
-				e1.printStackTrace();
-			}
+		joggerDebug.writeLog("PHPito Get PID Server - PID Find FAIL");
 		br.close();
 		return null;
 	}
 
 	/* metodo che controlla se il server e' in esecuzione */
 	private boolean isServerRunning(Server server) throws IOException {
-		if (PHPitoManager.getInstance().isDebug())
-			try {
-				joggerDebug.writeLog("PHPito is Server Running");
-			} catch (FileLogException | LockLogException e1) {
-				e1.printStackTrace();
-			}
+		joggerDebug.writeLog("PHPito is Server Running");
 		if (server.getProcessID() == null) {
-			if (PHPitoManager.getInstance().isDebug())
-				try {
-					joggerDebug.writeLog("PHPito is Server Running - No PID Find for Server -- Return FALSE");
-				} catch (FileLogException | LockLogException e1) {
-					e1.printStackTrace();
-				}
+			joggerDebug.writeLog("PHPito is Server Running - No PID Find for Server -- Return FALSE");
 			return false;
 		}
 		String[] cmnd;
@@ -426,15 +301,11 @@ public class PHPitoManager {
 			cmnd = new String[] {RUN, "/c", SCRIPT_CHECK_SERVER, server.getAddressAndPortRegex(), server.getPIDString()};
 			regex = ".*TCP.*" + server.getAddressAndPortRegex() + ".*LISTENING[\\D]*" + server.getPIDString() + "[\\D]*.*";
 		} else {
-			cmnd = new String[] {RUN + SCRIPT_CHECK_SERVER, server.getAddressAndPortRegex(), server.getPIDString()};
-			regex = ".*tcp.*" + server.getAddressAndPortRegex() + ".*LISTEN[\\D]*" + server.getPIDString() + "/php.*";
+			cmnd = new String[] {RUN + SCRIPT_CHECK_SERVER, server.getAddress(), server.getPortString(), server.getPIDString()};
+			// regex = ".*tcp.*" + server.getAddressAndPortRegex() + ".*LISTEN[\\D]*" + server.getPIDString() + "/php.*";
+			regex = ".*LISTEN.*" + server.getAddressAndPortRegex() + ".*users.*php.*pid=" + server.getPIDString() + "[,].*";
 		}
-		if (PHPitoManager.getInstance().isDebug())
-			try {
-				joggerDebug.writeLog("PHPito is Server Running - Execute Command");
-			} catch (FileLogException | LockLogException e1) {
-				e1.printStackTrace();
-			}
+		joggerDebug.writeLog("PHPito is Server Running - Execute Command");
 		ProcessBuilder pb = new ProcessBuilder(cmnd);
 		pb.directory(new File(DIR_SCRIPT));
 		pb.redirectErrorStream(true);
@@ -444,57 +315,27 @@ public class PHPitoManager {
 		BufferedReader br = new BufferedReader(isr);
 		String stdo = null;
 		while ((stdo = br.readLine()) != null) {
-			if (PHPitoManager.getInstance().isDebug())
-				try {
-					joggerDebug.writeLog("PHPito is Server Running - OUT: " + stdo);
-				} catch (FileLogException | LockLogException e1) {
-					e1.printStackTrace();
-				}
+			joggerDebug.writeLog("PHPito is Server Running - OUT: " + stdo);
 			if (Pattern.matches(regex, stdo)) {
-				if (PHPitoManager.getInstance().isDebug())
-					try {
-						joggerDebug.writeLog("PHPito is Server Running -- Return TRUE");
-					} catch (FileLogException | LockLogException e1) {
-						e1.printStackTrace();
-					}
+				joggerDebug.writeLog("PHPito is Server Running -- Return TRUE");
 				br.close();
 				return true;
 			}
 		}
-		if (PHPitoManager.getInstance().isDebug())
-			try {
-				joggerDebug.writeLog("PHPito is Server Running -- Return FALSE");
-			} catch (FileLogException | LockLogException e1) {
-				e1.printStackTrace();
-			}
+		joggerDebug.writeLog("PHPito is Server Running -- Return FALSE");
 		br.close();
 		return false;
 	}
 	
 	/* metodo per stoppare server */
 	public boolean stopServer(Project project) throws IOException, ServerException, ProjectException {
-		if (PHPitoManager.getInstance().isDebug())
-			try {
-				joggerDebug.writeLog("PHPito Stop Server");
-			} catch (FileLogException | LockLogException e1) {
-				e1.printStackTrace();
-			}
+		joggerDebug.writeLog("PHPito Stop Server");
 		if (project == null) {
-			if (PHPitoManager.getInstance().isDebug())
-				try {
-					joggerDebug.writeLog("PHPito Stop Server - Project == null");
-				} catch (FileLogException | LockLogException e1) {
-					e1.printStackTrace();
-				}
+			joggerDebug.writeLog("PHPito Stop Server - Project == null");
 			throw new ProjectException("Errore!!! Nessun server selezionato");
 		}
 		if (project.getServer().isRunning()) {
-			if (PHPitoManager.getInstance().isDebug())
-				try {
-					joggerDebug.writeLog("PHPito Stop Server - Server is Running OK");
-				} catch (FileLogException | LockLogException e1) {
-					e1.printStackTrace();
-				}
+			joggerDebug.writeLog("PHPito Stop Server - Server is Running OK");
 			String[] cmndStop;
 			if (JutilasSys.getInstance().isWindows())
 				cmndStop = new String[] {RUN, "/c", SCRIPT_STOP_SERVER, project.getServer().getPIDString()};
@@ -502,12 +343,7 @@ public class PHPitoManager {
 				cmndStop = new String[] {RUN + SCRIPT_STOP_SERVER, project.getServer().getPIDString()};
 			String regexStop = ".*PHPito stopped server at.*";
 			String regexFail = ".*Error!!! Fail to stop server.*";
-			if (PHPitoManager.getInstance().isDebug())
-				try {
-					joggerDebug.writeLog("PHPito Stop Server - Execute Command");
-				} catch (FileLogException | LockLogException e1) {
-					e1.printStackTrace();
-				}
+			joggerDebug.writeLog("PHPito Stop Server - Execute Command");
 			ProcessBuilder pb = new ProcessBuilder(cmndStop);
 			pb.directory(new File(DIR_SCRIPT));
 			pb.redirectErrorStream(true);
@@ -517,33 +353,18 @@ public class PHPitoManager {
 			BufferedReader br = new BufferedReader(isr);
 			String stdo = null;
 			while ((stdo = br.readLine()) != null) {
-				if (PHPitoManager.getInstance().isDebug())
-					try {
-						joggerDebug.writeLog("PHPito Stop Server - OUT: " + stdo);
-					} catch (FileLogException | LockLogException e1) {
-						e1.printStackTrace();
-					}
+				joggerDebug.writeLog("PHPito Stop Server - OUT: " + stdo);
 				if (project.isLogActive())
 					reentrantLockLogServer.writeLog(stdo, project);
 				if (Pattern.matches(regexFail, stdo)) {
-					if (PHPitoManager.getInstance().isDebug())
-						try {
-							joggerDebug.writeLog("PHPito Stop Server -- FAIL STOP");
-						} catch (FileLogException | LockLogException e1) {
-							e1.printStackTrace();
-						}
+					joggerDebug.writeLog("PHPito Stop Server -- FAIL STOP");
 					br.close();
 					flushRunningServers();
 					throw new ServerException("Errore!!! L'arresto del Server ha ritornato un errore.\n"
 												+ "Indirizzo: " + project.getServer().getAddress() + "\n"
 												+ "PID: " + project.getServer().getPIDString());
 				} else if (Pattern.matches(regexStop, stdo)) {
-					if (PHPitoManager.getInstance().isDebug())
-						try {
-							joggerDebug.writeLog("PHPito Stop Server - Stop OK -- RETURN TRUE");
-						} catch (FileLogException | LockLogException e1) {
-							e1.printStackTrace();
-						}
+					joggerDebug.writeLog("PHPito Stop Server - Stop OK -- RETURN TRUE");
 					br.close();
 					flushRunningServers();
 					return true;
@@ -551,30 +372,15 @@ public class PHPitoManager {
 			}
 			br.close();
 			if (!isServerRunning(project.getServer())) {
-				if (PHPitoManager.getInstance().isDebug())
-					try {
-						joggerDebug.writeLog("PHPito Stop Server - Chech Server Running -- RETURN TRUE");
-					} catch (FileLogException | LockLogException e1) {
-						e1.printStackTrace();
-					}
+				joggerDebug.writeLog("PHPito Stop Server - Chech Server Running -- RETURN TRUE");
 				flushRunningServers();
 				return true;
 			} else {
-				if (PHPitoManager.getInstance().isDebug())
-					try {
-						joggerDebug.writeLog("PHPito Stop Server - Chech Server Running -- RETURN FALSE");
-					} catch (FileLogException | LockLogException e1) {
-						e1.printStackTrace();
-					}
+				joggerDebug.writeLog("PHPito Stop Server - Chech Server Running -- RETURN FALSE");
 				return false;
 			}
 		} else {
-			if (PHPitoManager.getInstance().isDebug())
-				try {
-					joggerDebug.writeLog("PHPito Stop Server - Server already Stopped");
-				} catch (FileLogException | LockLogException e1) {
-					e1.printStackTrace();
-				}
+			joggerDebug.writeLog("PHPito Stop Server - Server already Stopped");
 			flushRunningServers();
 			throw new ServerException("Errore!!! Il server non e' avviato.");
 		}

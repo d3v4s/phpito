@@ -32,7 +32,7 @@ public class StartServerSelectionAdapter extends SelectionAdapter {
 			if (!PHPitoManager.getInstance().startServer(p))
 				Jaswt.getInstance().lunchMB(shellPHPito, SWT.OK, "FAIL!!!", "L'avvio del server non ha avuto sucesso.");
 		} catch (ServerException | IOException | ProjectException e) {
-			Jaswt.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
+			Jaswt.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
 		} finally {
 			shellPHPito.flushTable();
 			shellPHPito.getTable().forceFocus();
