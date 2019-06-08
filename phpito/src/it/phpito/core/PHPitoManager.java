@@ -105,6 +105,7 @@ public class PHPitoManager {
 		String phpini = project.getPhpiniPath();
 		String script_start = phpini.isEmpty() ? SCRIPT_START_SERVER : SCRIPT_START_SERVER_INI;
 		String[] cmndStart;
+		System.out.println("PHPitoManager.startServer() phpini= " + phpini);
 		if (JutilasSys.getInstance().isWindows())
 			cmndStart = new String[] {RUN, "/c" ,script_start,
 									project.getServer().getAddressAndPort(),

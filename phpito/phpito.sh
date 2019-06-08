@@ -5,7 +5,11 @@ UTILS=ext/utils
 SWT_GEN=ext/swt/gen
 LAUNCHER_PHPITO=it.phpito.view.LauncherPHPito
 
-[ -z `getconf LONG_BIT | grep 64` ] && SWT_JAR=ext/swt/swt_linux_gtk_x86.jar || SWT_JAR=ext/swt/swt_linux_gtk_x64.jar
+if [ -z `cat /etc/rpi-issue 2>/dev/null` ] ; then
+	[ -z `getconf LONG_BIT | grep 64` ] && SWT_JAR=ext/swt/swt_linux_gtk_x86.jar || SWT_JAR=ext/swt/swt_linux_gtk_x64.jar
+else
+	SWT_JAR=ext/swt/swt_rasp-gtk-4.6.0.jar
+fi
 
 EXC="$0"
 
