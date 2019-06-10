@@ -25,4 +25,4 @@ done
 
 PHPITO_DIR=`dirname "$EXC"`
 
-cd $PHPITO_DIR && java -cp "$BIN_PHPITO":"$UTILS"/*:"$SWT_GEN"/*:"$SWT_JAR" "$LAUNCHER_PHPITO"
+cd $PHPITO_DIR && java -cp "$BIN_PHPITO":"$UTILS"/*:"$SWT_GEN"/*:"$SWT_JAR" "$LAUNCHER_PHPITO" $1

@@ -86,11 +86,19 @@ public class LauncherModifyProjectSelectionAdapter extends ShellDialogPHPito imp
 		bttn.setBounds(270, 107, 80, 30);
 		bttn.setText("Scegli");
 
-		bttn = new Button(shellDialog, SWT.PUSH);
-		bttn.addSelectionListener(new LauncherEditorPhpini(shellDialog, project));
-		bttn.setBounds(240, 230, 80, 30);
-		bttn.setText("Apri Editor");
+		Button bttnEditor = new Button(shellDialog, SWT.PUSH);
+		bttnEditor.addSelectionListener(new LauncherEditorPhpini(shellDialog, project));
+		bttnEditor.setBounds(240, 230, 80, 30);
+		bttnEditor.setText("Apri Editor");
+		bttnEditor.setEnabled(project.getPhpini() == 2);
 		
+		shellDialog.getPhpiniCombo().addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				bttnEditor.setEnabled(shellDialog.getPhpiniCombo().getSelectionIndex() == 2);
+			}
+		});
+
 		selAdptList = new SelectionAdapter[] {
 				new ResetTextSelectionAdapter(shellDialog),
 				new UpdateProjectSelctionAdapter(shellDialog),

@@ -1,15 +1,15 @@
 package it.phpito.view.shell.dialog.launcher;
 
+import java.awt.Desktop;
+import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 
 import it.jaswt.core.Jaswt;
-import it.jutilas.core.Jutilas;
 import it.phpito.core.PHPitoManager;
 import it.phpito.data.Project;
-import it.phpito.exception.ProjectException;
 import it.phpito.view.shell.dialog.ShellDialogPHPito;
 
 public class LauncherEditorPhpini implements SelectionListener {
@@ -27,8 +27,10 @@ public class LauncherEditorPhpini implements SelectionListener {
 	@Override
 	public void widgetSelected(SelectionEvent se) {
 		try {
-			Jutilas.getInstance().openTextEditor(project.getPhpiniPath());
-		} catch (IOException | ProjectException e) {
+			File file = new File(project.getCustomPhpiniPath());
+			Desktop.getDesktop().open(file);
+//			Jutilas.getInstance().openTextEditor(project.getPhpiniPath());
+		} catch (IOException e) {
 			Jaswt.getInstance().lunchMBError(shellDialogPHPito, e, PHPitoManager.getInstance().getJoggerError());
 		}
 	}
