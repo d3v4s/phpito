@@ -15,8 +15,8 @@ import it.jutilas.core.Jutilas;
 import it.jutilas.exception.FileException;
 import it.phpito.core.PHPitoConf;
 import it.phpito.core.PHPitoManager;
-import it.phpito.view.shell.ShellDialogSettings;
 import it.phpito.view.shell.ShellPHPito;
+import it.phpito.view.shell.dialog.ShellDialogSettings;
 
 public class SaveConfSelectionAdapter extends SelectionAdapter {
 	private ShellPHPito shellPHPito;
@@ -50,7 +50,7 @@ public class SaveConfSelectionAdapter extends SelectionAdapter {
 			if (res == SWT.YES)
 				Jutilas.getInstance().restartApp();
 		} catch (FileException | URISyntaxException | IOException e) {
-			Jaswt.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
+			Jaswt.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
 		}
 	}
 }

@@ -18,20 +18,10 @@ public class ReentrantLockLogServer {
 	/* metodo per scriver logo del progetto */
 	public void writeLog(String write, Project project) {
 		if (project != null && project.isLogActive()) {
-			if (PHPitoManager.getInstance().isDebug())
-				try {
-					PHPitoManager.getInstance().getJoggerDebug().writeLog("Write Log Starting");
-				} catch (FileLogException | LockLogException e) {
-					e.printStackTrace();
-				}
+			PHPitoManager.getInstance().getJoggerDebug().writeLog("Write Log Starting");
 			try {
 				if (reentrantLock.tryLock(30, TimeUnit.SECONDS)) {
-					if (PHPitoManager.getInstance().isDebug())
-						try {
-							PHPitoManager.getInstance().getJoggerDebug().writeLog("Write Log -- LOCK OK");
-						} catch (FileLogException | LockLogException e) {
-							e.printStackTrace();
-						}
+					PHPitoManager.getInstance().getJoggerDebug().writeLog("Write Log -- LOCK OK");
 					try {
 						Jogger.writeLog(write, "server", new String[] {"server", project.getIdAndName()});
 					} catch (FileLogException | LockLogException e) {
@@ -43,12 +33,7 @@ public class ReentrantLockLogServer {
 						}
 					} finally {
 						reentrantLock.unlock();
-						if (PHPitoManager.getInstance().isDebug())
-							try {
-								PHPitoManager.getInstance().getJoggerDebug().writeLog("Write Log -- UNLOCK OK");
-							} catch (FileLogException | LockLogException e) {
-								e.printStackTrace();
-							}
+						PHPitoManager.getInstance().getJoggerDebug().writeLog("Write Log -- UNLOCK OK");
 					}
 				}
 			} catch (InterruptedException e) {
@@ -62,30 +47,15 @@ public class ReentrantLockLogServer {
 		String rows = "PHPito -- PHP Server Manager\n"
 						+ "Developed by Andrea Serra";
 		if (project != null && project.isLogActive()) {
-			if (PHPitoManager.getInstance().isDebug())
-				try {
-					PHPitoManager.getInstance().getJoggerDebug().writeLog("Read Log Starting");
-				} catch (FileLogException | LockLogException e) {
-					e.printStackTrace();
-				}
+			PHPitoManager.getInstance().getJoggerDebug().writeLog("Read Log Starting");
 			try {
 				if (reentrantLock.tryLock(30, TimeUnit.SECONDS)) {
-					if (PHPitoManager.getInstance().isDebug())
-						try {
-							PHPitoManager.getInstance().getJoggerDebug().writeLog("Read Log -- LOCK OK");
-						} catch (FileLogException | LockLogException e) {
-							e.printStackTrace();
-						}
+					PHPitoManager.getInstance().getJoggerDebug().writeLog("Read Log -- LOCK OK");
 					try {
 						String pathFileLog = Jogger.getLogFilePath("server", new String[] {"server", project.getIdAndName()});
 						rows = Jutilas.getInstance().getLastRowFile(pathFileLog, numRows);
 						if (rows.isEmpty() && Pattern.matches(".*log[_].*[-][0]{6}\\.log$", pathFileLog)) {
-							if (PHPitoManager.getInstance().isDebug())
-								try {
-									PHPitoManager.getInstance().getJoggerDebug().writeLog("Read Log -- LOG EMPTY");
-								} catch (FileLogException | LockLogException e) {
-									e.printStackTrace();
-								}
+							PHPitoManager.getInstance().getJoggerDebug().writeLog("Read Log -- LOG EMPTY");
 							rows = "404 Log not found";
 						}
 					} catch (FileLogException | FileException e) {
@@ -97,12 +67,7 @@ public class ReentrantLockLogServer {
 						}
 					} finally {
 						reentrantLock.unlock();
-						if (PHPitoManager.getInstance().isDebug())
-							try {
-								PHPitoManager.getInstance().getJoggerDebug().writeLog("Read Log -- UNLOCK OK");
-							} catch (FileLogException | LockLogException e) {
-								e.printStackTrace();
-							}
+						PHPitoManager.getInstance().getJoggerDebug().writeLog("Read Log -- UNLOCK OK");
 					}
 				}
 			} catch (InterruptedException e) {
@@ -115,31 +80,16 @@ public class ReentrantLockLogServer {
 	/* metodo che elimina log */
 	public void deleteLog(Project project) {
 		if (project != null) {
-			if (PHPitoManager.getInstance().isDebug())
-				try {
-					PHPitoManager.getInstance().getJoggerDebug().writeLog("Delete Log Starting");
-				} catch (FileLogException | LockLogException e) {
-					e.printStackTrace();
-				}
+			PHPitoManager.getInstance().getJoggerDebug().writeLog("Delete Log Starting");
 			try {
 				if (reentrantLock.tryLock(30 , TimeUnit.SECONDS)) {
-					if (PHPitoManager.getInstance().isDebug())
-						try {
-							PHPitoManager.getInstance().getJoggerDebug().writeLog("Delete Log -- LOCK OK");
-						} catch (FileLogException | LockLogException e) {
-							e.printStackTrace();
-						}
+					PHPitoManager.getInstance().getJoggerDebug().writeLog("Delete Log -- LOCK OK");
 					try {
-						String dirLoString = Jogger.getLogDirPath(new String[] {"server", project.getIdAndName()});
-						Jutilas.getInstance().recursiveDelete(dirLoString);
+						String dirLogString = Jogger.getLogDirPath(new String[] {"server", project.getIdAndName()});
+						Jutilas.getInstance().recursiveDelete(dirLogString);
 					} finally {
 						reentrantLock.unlock();
-						if (PHPitoManager.getInstance().isDebug())
-							try {
-								PHPitoManager.getInstance().getJoggerDebug().writeLog("Delete Log -- UNLOCK OK");
-							} catch (FileLogException | LockLogException e) {
-								e.printStackTrace();
-							}
+						PHPitoManager.getInstance().getJoggerDebug().writeLog("Delete Log -- UNLOCK OK");
 					}
 				}
 			} catch (InterruptedException e) {
@@ -149,20 +99,10 @@ public class ReentrantLockLogServer {
 	}
 	
 	public void renameDirProjectLog(String name, String newName) {
-		if (PHPitoManager.getInstance().isDebug())
-			try {
-				PHPitoManager.getInstance().getJoggerDebug().writeLog("Rename Log Starting");
-			} catch (FileLogException | LockLogException e) {
-				e.printStackTrace();
-			}
+		PHPitoManager.getInstance().getJoggerDebug().writeLog("Rename Log Starting");
 		try {
 			if (reentrantLock.tryLock(30,TimeUnit.SECONDS)) {
-				if (PHPitoManager.getInstance().isDebug())
-					try {
-						PHPitoManager.getInstance().getJoggerDebug().writeLog("Rename Log -- LOCK OK");
-					} catch (FileLogException | LockLogException e) {
-						e.printStackTrace();
-					}
+				PHPitoManager.getInstance().getJoggerDebug().writeLog("Rename Log -- LOCK OK");
 				try {
 					Jutilas.getInstance().renameFile(Jogger.getLogDirPath("server", name), newName);
 				} catch (FileException e) {
@@ -173,12 +113,7 @@ public class ReentrantLockLogServer {
 					}
 				} finally {
 					reentrantLock.unlock();
-					if (PHPitoManager.getInstance().isDebug())
-						try {
-							PHPitoManager.getInstance().getJoggerDebug().writeLog("Rename Log -- UNLOCK OK");
-						} catch (FileLogException | LockLogException e) {
-							e.printStackTrace();
-						}
+					PHPitoManager.getInstance().getJoggerDebug().writeLog("Rename Log -- UNLOCK OK");
 				}
 			}
 		} catch (InterruptedException e) {

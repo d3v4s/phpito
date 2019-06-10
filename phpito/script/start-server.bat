@@ -6,4 +6,4 @@ echo [*] PHPito starting server at %date% %time%
 echo [*] Starting PHP server on: %ADDRESS%
 echo [*] Directory root: %DIRECTORY%
 
-cd %DIRECTORY% && php -S %ADDRESS%
+cd "%DIRECTORY%" && php -S %ADDRESS%

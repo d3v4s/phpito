@@ -34,7 +34,7 @@ public class UsageCpuThread extends Thread {
 								try {
 									shellPHPito.getLblCPU().setText(PHPitoManager.getInstance().getSystemInfo(sysAdvrg));
 								} catch (IOException e) {
-									Jaswt.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
+									Jaswt.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
 								}
 						}
 					});

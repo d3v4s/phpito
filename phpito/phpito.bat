@@ -12,4 +12,4 @@ if exist "%SYSTEMDRIVE%\Program Files (x86)" (
 	set SWT_JAR=ext\swt\swt_win32_x86.jar
 )
 
-cd %PHPITO_DIR% && java -cp %BIN_PHPITO%;%UTILS%\*;%SWT_GEN%\*;%SWT_JAR% %LAUNCHER_PHPITO%
+cd %PHPITO_DIR% && java -cp %BIN_PHPITO%;%UTILS%\*;%SWT_GEN%\*;%SWT_JAR% %LAUNCHER_PHPITO% %1

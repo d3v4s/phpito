@@ -12,8 +12,8 @@ import it.phpito.core.PHPitoManager;
 import it.phpito.data.Project;
 import it.phpito.data.Server;
 import it.phpito.exception.ProjectException;
-import it.phpito.view.shell.ShellDialogPHPito;
 import it.phpito.view.shell.ShellPHPito;
+import it.phpito.view.shell.dialog.ShellDialogPHPito;
 
 public class AddProjectSelectionAdapter extends SelectionAdapter {
 	private ShellDialogPHPito shellDialog;
@@ -36,7 +36,8 @@ public class AddProjectSelectionAdapter extends SelectionAdapter {
 		HashMap<String, Text> textMap = shellDialog.getTextMap();
 		try {
 			project.setName(textMap.get(Project.K_NAME).getText());
-			project.setLogActive(shellDialog.getChckBttnLogActv().getSelection());
+			project.setLogActive(shellDialog.getLogActvChckBttn().getSelection());
+			project.setPhpini(shellDialog.getPhpiniCombo().getSelectionIndex());
 			project.setServer(new Server());
 			project.getServer().setPath(textMap.get(Project.K_PATH).getText());
 			project.getServer().setAddress(textMap.get(Project.K_ADDRESS).getText());
@@ -46,12 +47,13 @@ public class AddProjectSelectionAdapter extends SelectionAdapter {
 			int res = Jaswt.getInstance().lunchMB(shellDialog, SWT.YES | SWT.NO, "AGGIUNGO???", msg);
 			if (res == SWT.YES) {
 				PHPitoManager.getInstance().getReentrantLockXMLServer().addProject(project);
+				project.getPhpiniPath();
 				shellPHPito.flushTable();
 				shellPHPito.getTable().forceFocus();
 				shellDialog.dispose();
 			}
 		} catch (ProjectException e) {
-			Jaswt.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
+			Jaswt.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
 		}
 	}
 }

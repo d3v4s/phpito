@@ -35,15 +35,21 @@ public class DeleteProjectSelectionAdapter extends SelectionAdapter {
 				PHPitoManager.getInstance().stopServer(project);
 			}
 		} catch (IOException | ServerException | ProjectException e) {
-			Jaswt.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.NAME);
+			Jaswt.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
 		}
 		res = Jaswt.getInstance().lunchMB(shellPHPito, SWT.YES | SWT.NO, "ELIMINO???", "Sei sicuro di voler eliminare il seguente progetto?\n"
 																						+ shellPHPito.getProjectSelect().toString());
 		if (res == SWT.YES) {
 			PHPitoManager.getInstance().getReentrantLockXMLServer().deleteProject(project.getIdString());
-			res = Jaswt.getInstance().lunchMB(shellPHPito, SWT.YES | SWT.NO, "ELIMINO???", "Vuoi eliminare anche i file di log del server?");
-			if (res == SWT.YES)
+			res = Jaswt.getInstance().lunchMB(shellPHPito, SWT.YES | SWT.NO, "ELIMINO???", "Vuoi eliminare anche i file di log del server e il php.ini?");
+			if (res == SWT.YES) {
 				PHPitoManager.getInstance().getReentrantLockLogServer().deleteLog(project);
+				try {
+					PHPitoManager.getInstance().deletePhpini(project);
+				} catch (ProjectException e) {
+					Jaswt.getInstance().lunchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
+				}
+			}
 			shellPHPito.flushTable();
 			shellPHPito.getTable().forceFocus();
 		}
