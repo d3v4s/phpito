@@ -1,0 +1,6 @@
+phpito/bin/*
+phpito/.settings/*
+phpito/conf/phpini/*
+*.log
+LICENSE
+README.md
