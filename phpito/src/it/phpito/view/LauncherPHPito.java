@@ -15,7 +15,8 @@ import it.phpito.view.shell.ShellPHPito;
 public class LauncherPHPito {
 	private ShellPHPito shellPHPito;
 	private Display display;
-	
+
+	/* main */
 	public static void main(String[] args) {
 		PHPitoManager.getInstance().getJoggerDebug().setDebug(false);
 		for (String arg : args)
@@ -32,7 +33,7 @@ public class LauncherPHPito {
 		System.exit(0);
 	}
 	
-	/* metodo lancio finestra */
+	/* method that open window */
 	public void open() {
 		PHPitoManager.getInstance().getJoggerDebug().writeLog("Starting phpito");
 
@@ -61,8 +62,7 @@ public class LauncherPHPito {
 		PHPitoManager.getInstance().getJoggerDebug().writeLog("PHPito Display Start Read and Dispatch");
 		while (!shellPHPito.isDisposed()) {
 			try {
-				if (!display.readAndDispatch())
-					display.sleep();
+				if (!display.readAndDispatch()) display.sleep();
 			} catch (Exception e) {
 				Jaswt.getInstance().lunchMBError(new Shell(), e, PHPitoManager.getInstance().getJoggerError());
 			}
