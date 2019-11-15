@@ -1,7 +1,8 @@
 # PHPito
 PHP Server Manager
 
-PHPito e' un gestore di server PHP, con cui si possono impostare ed istanziare diversi server PHP da usare anche contemporaneamente.
+PHPito is a PHP server manager, written in Java.
+With PHPito you can instantiate different PHP servers, setting a unique php.ini for each of them or choosing one of those in common.
 
-<h2>Utilizzo</h2>
-Il suo utilizzo e' abbastanza semplice. Basta scaricare il file tar.gz (Linux) o zip (Windows), scompattare il suo contenuto ed eseguire il file phpito.bat in un ambiente Windows oppure phpito.sh in ambiente Linux.
+<h2>Use it</h2>
+To use it you need to download the .tar.gz or .zip file, unpack its contents and run the phpito.sh file under Linux, or phpito.bat under Windows
