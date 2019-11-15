@@ -161,9 +161,9 @@ public class Project {
 
 	public Project clone() {
 		Project clone = new Project();
-		clone.setId(new Long(id));
+		clone.setId(Long.valueOf(id));
 		clone.setName(new String(name));
-		clone.setLogActive(new Boolean(logActive));
+		clone.setLogActive(Boolean.valueOf(logActive));
 		clone.setServer(server.clone());
 		return clone;
 	}

@@ -107,8 +107,8 @@ public class Server {
 		try {
 			clone.setAddress(new String(address));
 			clone.setPath(new String(path));
-			clone.setPort(new Integer(port));
-			if (processID != null) clone.setProcessId(new Long(processID));
+			clone.setPort(Integer.valueOf(port));
+			if (processID != null) clone.setProcessId(Long.valueOf(processID));
 		} catch (ProjectException e) {
 		}
 		return clone;

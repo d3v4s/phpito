@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="ext/utils/jogger-1.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="ext/utils/jogger-1.0.jar"/>
 	<classpathentry kind="lib" path="ext/swt/swt_linux_gtk_x64.jar"/>
 	<classpathentry kind="lib" path="ext/utils/jun-1.0.jar"/>
 	<classpathentry kind="lib" path="ext/swt/gen/com.ibm.icu_63.1.0.v20181030-1705.jar"/>
@@ -25,5 +25,6 @@
 	<classpathentry kind="lib" path="ext/utils/jsx-1.0.jar"/>
 	<classpathentry kind="lib" path="ext/utils/jutilas-1.0.jar"/>
 	<classpathentry kind="lib" path="ext/utils/jini-1.0.jar"/>
+	<classpathentry kind="con" path="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
