@@ -3,7 +3,7 @@
 BIN_PHPITO=bin
 UTILS=ext/utils
 SWT_GEN=ext/swt/gen
-LAUNCHER_PHPITO=it.phpito.view.LauncherPHPito
+LAUNCHER_PHPITO=phpito.view.LauncherPHPito
 
 if [ -z `cat /etc/rpi-issue 2>/dev/null` ] ; then
 	[ -z `getconf LONG_BIT | grep 64` ] && SWT_JAR=ext/swt/swt_linux_gtk_x86.jar || SWT_JAR=ext/swt/swt_linux_gtk_x64.jar
