@@ -6,6 +6,7 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER"/>
 	<classpathentry kind="lib" path="ext/utils/jogger-1.0.jar"/>
 	<classpathentry kind="lib" path="ext/swt/swt_linux_gtk_x64.jar"/>
 	<classpathentry kind="lib" path="ext/utils/jun-1.0.jar"/>
@@ -21,10 +22,8 @@
 	<classpathentry kind="lib" path="ext/swt/gen/org.eclipse.ui.forms_3.7.400.v20181123-1505.jar"/>
 	<classpathentry kind="lib" path="ext/swt/gen/org.eclipse.ui.workbench_3.112.100.v20181127-1518.jar"/>
 	<classpathentry kind="lib" path="ext/swt/gen/swing2swt.jar"/>
-	<classpathentry kind="lib" path="ext/utils/jaswt-1.0.jar"/>
+	<classpathentry kind="lib" path="ext/utils/jaswt/jaswt_win32_x86-1.0.jar"/>
 	<classpathentry kind="lib" path="ext/utils/jsx-1.0.jar"/>
 	<classpathentry kind="lib" path="ext/utils/jutilas-1.0.jar"/>
-	<classpathentry kind="lib" path="ext/utils/jini-1.0.jar"/>
-	<classpathentry kind="con" path="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
