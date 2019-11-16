@@ -1,6 +1,6 @@
 phpito/bin/*
 phpito/.settings/*
-phpito/conf/phpini/*
+phpito/conf/*
 *.log
 LICENSE
 README.md
