@@ -1,39 +1,3 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <projects>
-    <server id="1">
-        <path>/</path>
-        <address>127.0.0.1</address>
-        <port>8585</port>
-        <log>true</log>
-        <ini>0</ini>
-        <name>test</name>
-        <pid/>
-    </server>
-    <server id="3">
-        <path>/</path>
-        <address>127.0.0.1</address>
-        <port>3333</port>
-        <log>true</log>
-        <ini>0</ini>
-        <name>DD</name>
-        <pid/>
-    </server>
-    <server id="4">
-        <path>/</path>
-        <address>127.0.0.1</address>
-        <port>8988</port>
-        <log>true</log>
-        <ini>0</ini>
-        <name>ff</name>
-        <pid/>
-    </server>
-    <server id="6">
-        <path>/</path>
-        <address>127.0.0.1</address>
-        <port>7878</port>
-        <log>true</log>
-        <ini>0</ini>
-        <name>gh</name>
-        <pid/>
-    </server>
 </projects>
