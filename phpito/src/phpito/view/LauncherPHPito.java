@@ -38,9 +38,7 @@ public class LauncherPHPito {
 		System.exit(0);
 	}
 	
-	/**
-	 * method that open PHPito window
-	 */
+	/* method that open PHPito window */
 	public void open() {
 		PHPitoManager.getInstance().getJoggerDebug().writeLog("Starting phpito");
 
@@ -49,7 +47,7 @@ public class LauncherPHPito {
 		} catch (Exception e) {
 			String msg = "PHPito Already Running!!!\nForce second instance???";
 			PHPitoManager.getInstance().getJoggerDebug().writeLog("PHPito Already Running!!!");
-			int resp = Jaswt.getInstance().launchMB(new Shell(), SWT.YES | SWT.NO, "Alert!!!", msg);
+			int resp = Jaswt.getInstance().launchMB(new Shell(), SWT.YES | SWT.NO, "CAUTION!!!", msg);
 
 			if (resp == SWT.YES)
 				try {

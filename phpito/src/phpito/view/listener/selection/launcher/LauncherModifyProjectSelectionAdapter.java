@@ -98,7 +98,7 @@ public class LauncherModifyProjectSelectionAdapter implements SelectionListener 
 		/* button to open the text editor for phpini */
 		Button bttnEditor = new Button(shellDialog, SWT.PUSH);
 		bttnEditor.addSelectionListener(new LauncherEditorPhpini(shellDialog, project));
-		bttnEditor.setBounds(240, 230, 80, 30);
+		bttnEditor.setBounds(240, 230, 100, 30);
 		bttnEditor.setText("Open Editor");
 		bttnEditor.setEnabled(project.getPhpini() == 2);
 		

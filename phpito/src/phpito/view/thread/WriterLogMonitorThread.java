@@ -14,10 +14,17 @@ import phpito.core.lock.ReentrantLockServerLog;
 import phpito.data.Project;
 import phpito.view.shell.ShellPHPito;
 
+/**
+ * Class Thread for write in log monitor
+ * @author Andrea Serra
+ *
+ */
 public class WriterLogMonitorThread extends Thread {
 	private ShellPHPito shellPHPito;
 	private Project project;
 	private ReentrantLockServerLog reentrantLockLogServer;
+
+	/* CONSTRUCT */
 	public WriterLogMonitorThread(ShellPHPito shellPHPito, ReentrantLockServerLog reentrantLockLogServer) {
 		super();
 		this.shellPHPito = shellPHPito;
@@ -33,8 +40,7 @@ public class WriterLogMonitorThread extends Thread {
 		while (!shellPHPito.isDisposed()) {
 			try {
 				lastMod = getLocalDateTimeLastModifyLogServer(project);
-				if ((shellPHPito.getIdProjectSelect() != null && id != shellPHPito.getIdProjectSelect())
-								|| lastPrint.isBefore(lastMod)) {
+				if ((shellPHPito.getIdProjectSelect() != null && id != shellPHPito.getIdProjectSelect()) || lastPrint.isBefore(lastMod)) {
 					project = shellPHPito.getProjectSelect();
 					id = shellPHPito.getIdProjectSelect();
 					shellPHPito.getDisplay().asyncExec(new Runnable() {
@@ -58,10 +64,10 @@ public class WriterLogMonitorThread extends Thread {
 			}
 		}
 	}
-	
+
+	/* method that get the date time of server log file last modify */
 	private LocalDateTime getLocalDateTimeLastModifyLogServer(Project project) throws FileLogException {
-		if (project == null)
-			return LocalDateTime.MAX;
+		if (project == null) return LocalDateTime.MAX;
 		File logFile = Jogger.getLogFile("server", new String[] {"server", project.getIdAndName()});
 		long lastMod = logFile.lastModified();
 		Integer year = Integer.valueOf(new SimpleDateFormat("yyyy").format(lastMod));

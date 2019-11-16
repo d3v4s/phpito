@@ -11,14 +11,27 @@ import org.eclipse.swt.widgets.Text;
 import phpito.data.Project;
 import phpito.view.shell.ShellPHPito;
 
-
+/**
+ * Class Shell for PHPito dialog shell
+ * @author Andrea Serra
+ *
+ */
 public class ShellDialogPHPito extends Shell {
 	protected ShellPHPito shellPHPito;
 	private HashMap<String, Text> textMap;
 	private Button logActvChckBttn;
 	private Combo phpiniCombo;
+
+	/* override del metodo check - per evitare il controllo della subclass */
+	/* override to bypass check subclass error */
+	@Override
+	protected void checkSubclass() {
+	}
 	
-	/* costruttore */
+	/* ################################################################################# */
+	/* START CONSTRUCTORS */
+	/* ################################################################################# */
+
 	public ShellDialogPHPito(ShellPHPito shellPHPito, int style) {
 		super(shellPHPito, style | SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL);
 		this.shellPHPito = shellPHPito;
@@ -30,12 +43,14 @@ public class ShellDialogPHPito extends Shell {
 		this.shellPHPito = shellPHPito;
 	}
 
-	@Override
-	/* override del metodo check - per evitare il controllo della subclass */
-	protected void checkSubclass() {
-	}
+	/* ################################################################################# */
+	/* END CONSTRUCTORS */
+	/* ################################################################################# */
 
-	/* get e set */
+	/* ################################################################################# */
+	/* START GET AND SET */
+	/* ################################################################################# */
+
 	public ShellPHPito getShellPHPito() {
 		return shellPHPito;
 	}
@@ -57,28 +72,28 @@ public class ShellDialogPHPito extends Shell {
 	public Combo getPhpiniCombo() {
 		return phpiniCombo;
 	}
-
 	public void setPhpiniCombo(Combo phpiniCombo) {
 		this.phpiniCombo = phpiniCombo;
 	}
 
-	/* metodo che controlla che le aree di testo passate con hashmap siano vuote */
+	/* ################################################################################# */
+	/* END GET AND SET */
+	/* ################################################################################# */
+
+	/* metodo che controlla se le aree di testo passate con hashmap sono vuote */
 	public boolean isTextsEmpty() {
-		for (String key : textMap.keySet())
-			if (!textMap.get(key).getText().isEmpty())
-				return false;
+		for (String key : textMap.keySet()) if (!textMap.get(key).getText().isEmpty()) return false;
 		return true;
 	}
 
 	/* metodo che svuota le aree di testo passate sull'hashmap */
 	public void emptyingText() {
-		for (String key : textMap.keySet())
-			textMap.get(key).setText("");
+		for (String key : textMap.keySet()) textMap.get(key).setText("");
 	}
-	
+
+	/* method that set text area by project */
 	public void setTextByProject(Project project) {
 		HashMap<String, String> mapProject = project.getHashMap();
-		for (String kText : textMap.keySet())
-			textMap.get(kText).setText(mapProject.get(kText));
+		for (String kText : textMap.keySet()) textMap.get(kText).setText(mapProject.get(kText));
 	}
 }

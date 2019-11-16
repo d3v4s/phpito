@@ -9,9 +9,15 @@ import jutilas.core.JutilasSys;
 import phpito.core.PHPitoManager;
 import phpito.view.shell.ShellPHPito;
 
+/**
+ * Class Thread for calculate the CPU load average
+ * @author Andrea Serra
+ *
+ */
 public class UsageCpuThread extends Thread {
 	private ShellPHPito shellPHPito;
 
+	/* CONSTRUCT */
 	public UsageCpuThread(ShellPHPito shellPHPito) {
 		this.shellPHPito = shellPHPito;
 	}

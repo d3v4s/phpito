@@ -9,15 +9,6 @@
         <name>test</name>
         <pid/>
     </server>
-    <server id="2">
-        <path>/</path>
-        <address>127.0.0.1</address>
-        <port>6767</port>
-        <log>true</log>
-        <ini>0</ini>
-        <name>TT</name>
-        <pid/>
-    </server>
     <server id="3">
         <path>/</path>
         <address>127.0.0.1</address>

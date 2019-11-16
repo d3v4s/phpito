@@ -13,6 +13,11 @@ import jaswt.label.ViewColorLabel;
 import phpito.core.PHPitoConf;
 import phpito.view.shell.ShellPHPito;
 
+/**
+ * Class shell for PHPito settings shell
+ * @author Andrea Serra
+ *
+ */
 public class ShellDialogSettings extends ShellDialogPHPito {
 	private HashMap<String, Button> confChckBttnMap;
 	private HashMap<String, Spinner> confSpinnerMap;
@@ -23,8 +28,17 @@ public class ShellDialogSettings extends ShellDialogPHPito {
 	private ViewColorLabel viewColorLabel;
 	private Label hexColorLbl;
 	private Combo styleLogMonCombo;
+
+	/* override del metodo check - per evitare il controllo della subclass */
+	/* override to bypass check subclass error */
+	@Override
+	protected void checkSubclass() {
+	}
 	
-	/* costruttore */
+	/* ################################################################################# */
+	/* START CONSTRUCTORS */
+	/* ################################################################################# */
+
 	public ShellDialogSettings(ShellPHPito shellPHPito, int style) {
 		super(shellPHPito, style);
 	}
@@ -34,12 +48,14 @@ public class ShellDialogSettings extends ShellDialogPHPito {
 		super(shellPHPito);
 	}
 
-	@Override
-	/* override del metodo check - per evitare il controllo della subclass */
-	protected void checkSubclass() {
-	}
+	/* ################################################################################# */
+	/* END CONSTRUCTORS */
+	/* ################################################################################# */
 
-	/* get e set */
+	/* ################################################################################# */
+	/* START GET AND SET */
+	/* ################################################################################# */
+
 	public HashMap<String, Button> getConfChckBttnMap() {
 		return confChckBttnMap;
 	}
@@ -94,6 +110,10 @@ public class ShellDialogSettings extends ShellDialogPHPito {
 	public void setStyleLogMonCombo(Combo styleLogMonCombo) {
 		this.styleLogMonCombo = styleLogMonCombo;
 	}
+
+	/* ################################################################################# */
+	/* END GET AND SET */
+	/* ################################################################################# */
 
 	/* get colors RGB map */
 	public HashMap<String, Integer> getColorsRGBMap() {

@@ -53,6 +53,11 @@ import phpito.view.thread.UsageCpuThread;
 import phpito.view.thread.WriterLogMonitorThread;
 import swing2swt.layout.BorderLayout;
 
+/**
+ * Class Shell for principal PHPito shell
+ * @author Andrea Serra
+ *
+ */
 public class ShellPHPito extends Shell {
 	private ShellPHPito shellPHPito;
 	private Table table;
@@ -70,6 +75,7 @@ public class ShellPHPito extends Shell {
 	private ArrayList<Button> bttnStopList = new ArrayList<Button>();
 	private ArrayList<Button> bttnProjectList = new ArrayList<Button>();
 
+	/* CONSTRUCT */
 	public ShellPHPito(Display display) {
 		super(display);
 		this.shellPHPito = this;
@@ -82,7 +88,7 @@ public class ShellPHPito extends Shell {
 					if (!projectsList.isEmpty()) {
 						PHPitoManager.getInstance().getJoggerDebug().writeLog("Servers are running");
 						String msg = "Caution!!! Running server will be stopped.\nConfirm???";
-						int resp = Jaswt.getInstance().launchMB(shellPHPito, SWT.YES | SWT.NO, "ATTENZIONE!!!", msg);
+						int resp = Jaswt.getInstance().launchMB(shellPHPito, SWT.YES | SWT.NO, "CAUTION!!!", msg);
 						event.doit = resp == SWT.YES;
 						if (event.doit)
 							for (Project project : projectsList)
@@ -95,12 +101,16 @@ public class ShellPHPito extends Shell {
 		});
 	}
 
-	@Override
 	/* override del metodo check - per evitare il controllo della subclass */
+	/* override to bypass error */
+	@Override
 	protected void checkSubclass() {
 	}
 
-	/* get e set */
+	/* ################################################################################# */
+	/* START GET AND SET */
+	/* ################################################################################# */
+
 	public int getFontHeight() {
 		return fontHeight;
 	}
@@ -144,6 +154,10 @@ public class ShellPHPito extends Shell {
 		return lblInfo;
 	}
 
+	/* ################################################################################# */
+	/* END GET AND SET */
+	/* ################################################################################# */
+
 	/* metodo per creare contenuti */
 	public void createContents() throws DOMException {
 		PHPitoManager.getInstance().getJoggerDebug().writeLog("Create content ShellPHPito");
@@ -162,11 +176,12 @@ public class ShellPHPito extends Shell {
 		
 		/* menu' cascata progetti */
 		mntm = new MenuItem(menu, SWT.CASCADE);
-		mntm.setText("Progetto");
+		mntm.setText("Projects");
 		mn = new Menu(mntm);
 		mntm.setMenu(mn);
-		
-		String[] menuProjectList = {"Aggiungi", "Modifica", "Elimina", "Start", "Stop", "Aggiorna"};
+
+		/* list of project menu */
+		String[] menuProjectList = {"Add", "Settings", "Delete", "Start", "Stop", "Update Table"};
 		SelectionListener[] menuProjectSelAdptList = {
 				new LauncherAddProjectSelectionAdapter(this),
 				new LauncherModifyProjectSelectionAdapter(this),
@@ -176,18 +191,28 @@ public class ShellPHPito extends Shell {
 				new FlushTableSelectionAdapter(this)
 		};
 
-		for (int i = 0; i < menuProjectList.length; i++) {
+		/* loop for project menu */
+		for (int i = 0, length = menuProjectList.length; i < length; i++) {
 			mntm = new MenuItem(mn, SWT.NONE);
 			mntm.addSelectionListener(menuProjectSelAdptList[i]);
 			mntm.setText(menuProjectList[i]);
-			if (menuProjectList[i].equals("Modifica"))
-				mntmProjectList.add(mntm);
-			else if (menuProjectList[i].equals("Elimina"))
-				mntmProjectList.add(mntm);
-			else if (menuProjectList[i].equals("Start"))
-				mntmStartList.add(mntm);
-			else if (menuProjectList[i].equals("Stop"))
-				mntmStopList.add(mntm);
+			switch (menuProjectList[i]) {
+				case "Delete":
+				case "Settings":
+					/* case add to project menu list */
+					mntmProjectList.add(mntm);
+					break;
+				case "Start":
+					/* case add to start server list */
+					mntmStartList.add(mntm);
+					break;
+				case "Stop":
+					/* case add to stop server list */
+					mntmStopList.add(mntm);
+					break;
+				default:
+					break;
+			}
 		}
 
 		/* menu' cascata PHPito */
@@ -196,14 +221,16 @@ public class ShellPHPito extends Shell {
 		mn = new Menu(mntm);
 		mntm.setMenu(mn);
 
-		String[] menuPHPitoList = {"Impostazioni", "Apri cartella Log", "About"};
+		/* list of PHPito menu */
+		String[] menuPHPitoList = {"Settings PHPito", "Open log folder", "About"};
 		SelectionListener[] menuPHPitoSelAdptList = {
 				new LauncherSettingSelctionAdapter(this),
 				new LauncherFileExplorerSelectionAdapter(this, Jogger.getLogDirPath("server")),
 				new LauncherAboutSelctionAdapter(this)
 		};
 
-		for (int i = 0; i < menuPHPitoList.length; i++) {
+		/* loop for PHPito menu */
+		for (int i = 0, length = menuPHPitoList.length; i < length; i++) {
 			mntm = new MenuItem(mn, SWT.NONE);
 			mntm.addSelectionListener(menuPHPitoSelAdptList[i]);
 			mntm.setText(menuPHPitoList[i]);
@@ -211,6 +238,7 @@ public class ShellPHPito extends Shell {
 
 		GridData gd;
 		actvtLogMon = PHPitoConf.getInstance().getActvtLogMonConf();
+		/* insert log monito */
 		if (actvtLogMon) {
 			PHPitoManager.getInstance().getJoggerDebug().writeLog("Create Content ShellPHPito - Log Monitor ON");
 			/* contenitore per la zona alta */
@@ -247,22 +275,32 @@ public class ShellPHPito extends Shell {
 		GridData gdLblHeight = new GridData();
 		gdLblHeight.heightHint = 13;
 
+		/* loop for lateral buttons */
 		Button bttn;
-		for (int i = 0; i < menuProjectList.length - 1; i++) {
+		for (int i = 0, length = menuProjectList.length - 1; i < length; i++) {
 			bttn = new Button(rightGridComposite, SWT.PUSH);
 			bttn.addSelectionListener(menuProjectSelAdptList[i]);
 			bttn.setLayoutData(gdBttnWidth);
 			bttn.setText(menuProjectList[i]);
 			bttn.setCursor(new Cursor(getDisplay(), SWT.CURSOR_HAND));
 			new Label(rightGridComposite, SWT.NONE).setLayoutData(gdLblHeight);
-			if (menuProjectList[i].equals("Modifica"))
-				bttnProjectList.add(bttn);
-			else if (menuProjectList[i].equals("Elimina"))
-				bttnProjectList.add(bttn);
-			else if (menuProjectList[i].equals("Start"))
-				bttnStartList.add(bttn);
-			else if (menuProjectList[i].equals("Stop"))
-				bttnStopList.add(bttn);
+			switch (menuProjectList[i]) {
+				case "Delete":
+				case "Settings":
+					/* case add to project button list */
+					bttnProjectList.add(bttn);
+					break;
+				case "Start":
+					/* case add to start button list */
+					bttnStartList.add(bttn);
+					break;
+				case "Stop":
+					/* case add to stop button list */
+					bttnStopList.add(bttn);
+					break;
+				default:
+					break;
+			}
 		}
 
 		rightScrolledComposite.setContent(rightGridComposite);
@@ -289,27 +327,38 @@ public class ShellPHPito extends Shell {
 		Menu ppmnTbl = new Menu(table);
 		table.setMenu(ppmnTbl);
 
-		for (int i = 0; i < menuProjectList.length; i++) {
+		/* loop for popup menu in table */
+		for (int i = 0, length =  menuProjectList.length; i < length; i++) {
 			mntm = new MenuItem(ppmnTbl, SWT.NONE);
 			mntm.addSelectionListener(menuProjectSelAdptList[i]);
 			mntm.setText(menuProjectList[i]);
-			if (menuProjectList[i].equals("Modifica"))
-				mntmProjectList.add(mntm);
-			else if (menuProjectList[i].equals("Elimina"))
-				mntmProjectList.add(mntm);
-			else if (menuProjectList[i].equals("Start"))
-				mntmStartList.add(mntm);
-			else if (menuProjectList[i].equals("Stop"))
-				mntmStopList.add(mntm);
+			switch (menuProjectList[i]) {
+				case "Delete":
+				case "Settings":
+					/* case add to project menu list */
+					mntmProjectList.add(mntm);
+					break;
+				case "Start":
+					/* case add to start server list */
+					mntmStartList.add(mntm);
+					break;
+				case "Stop":
+					/* case add to stop server list */
+					mntmStopList.add(mntm);
+					break;
+				default:
+					break;
+			}
 		}
 
 		/* nomi delle colonne per la tabella*/
-		String[] titles = { "id", "Nome", "Indirizzo", "Path", "Stato"};
+		String[] titles = { "id", "Name", "Address", "Path", "Satus"};
 		int[] width = {40, 100, 130, 260, 100};
 		int[] style = {SWT.CENTER, SWT.LEFT, SWT.LEFT, SWT.LEFT, SWT.CENTER};
 
+		/* loop for headers table */
 		table.setHeaderVisible(true);
-		for (int i = 0; i < titles.length; i++) {
+		for (int i = 0, length = titles.length; i < length; i++) {
 			TableViewerColumn tblclmn = new TableViewerColumn(tableViewer, style[i]);
 			tblclmn.getColumn().setText(titles[i]);
 			tblclmn.getColumn().setWidth(width[i]);
@@ -317,14 +366,15 @@ public class ShellPHPito extends Shell {
 			tblclmn.getColumn().setMoveable(true);
 		}
 
+		/* draw sys info */
 		actvtSysInfo = PHPitoConf.getInstance().getActvtSysInfoConf();
-
 		if (actvtSysInfo) {
 			PHPitoManager.getInstance().getJoggerDebug().writeLog("Create Content ShellPHPito - Sys Info ON");
 			Composite compositeBottom = new Composite(shellPHPito, SWT.NONE);
 			compositeBottom.setLayoutData(BorderLayout.SOUTH);
 
 			int xLabel = 25;
+			/* draw CPU monitor */
 			if (PHPitoConf.getInstance().getActvtCPUMon()) {
 				PHPitoManager.getInstance().getJoggerDebug().writeLog("Create Content ShellPHPito - CPU Monitor ON");
 				cpuMonitorCanvas = new CPUMonitorCanvas(compositeBottom, SWT.NONE, new ArrayBlockingQueue<Double>(80));
@@ -333,6 +383,7 @@ public class ShellPHPito extends Shell {
 				xLabel = 110;
 			}
 
+			/* draw other info */
 			if (PHPitoConf.getInstance().getOthInfo()) {
 				PHPitoManager.getInstance().getJoggerDebug().writeLog("Create Content ShellPHPito - Other Info ON");
 				lblInfo = new CLabel(compositeBottom, SWT.NONE);
@@ -348,7 +399,7 @@ public class ShellPHPito extends Shell {
 		}
 	}
 
-	/* metodo che riscrive tabella da hashmap di progetti */
+	/* metodo che scrive tabella da hashmap di progetti */
 	private void printProjectsOnTable(HashMap<String, Project> mapProjects) {
 		PHPitoManager.getInstance().getJoggerDebug().writeLog("ShellPHPito - Print Projects on Table");
 		TableItem ti;
@@ -375,13 +426,13 @@ public class ShellPHPito extends Shell {
 		int indexTable = table.getSelectionIndex();
 		HashMap<String, Project> mapProjects = PHPitoManager.getInstance().getReentrantLockXMLServer().getProjectsMap();
 		printProjectsOnTable(mapProjects);
-		if (indexTable >= table.getItems().length || indexTable < 0)
-			indexTable = 0;
+		if (indexTable >= table.getItems().length || indexTable < 0) indexTable = 0;
 		table.setSelection(indexTable);
 		autoSetIdProjectSelect();
 		autoEnableButtonProject();
 	}
 
+	/* override open shell method */
 	@Override
 	public void open() {
 		PHPitoManager.getInstance().getJoggerDebug().writeLog("Open ShellPHPito");
@@ -392,10 +443,8 @@ public class ShellPHPito extends Shell {
 			Jaswt.getInstance().launchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
 		}
 		flushTable();
-		if (actvtLogMon)
-			new WriterLogMonitorThread(this, PHPitoManager.getInstance().getReentrantLockLogServer()).start();
-		if (actvtSysInfo)
-			new UsageCpuThread(this).start();
+		if (actvtLogMon) new WriterLogMonitorThread(this, PHPitoManager.getInstance().getReentrantLockLogServer()).start();
+		if (actvtSysInfo) new UsageCpuThread(this).start();
 	}
 
 	/* metodo che abilita o disabilita i pulsanti legati a progetto */
@@ -404,35 +453,25 @@ public class ShellPHPito extends Shell {
 		Project project = shellPHPito.getProjectSelect();
 		Boolean isRunnig = (project != null) ? project.getServer().isRunning() : null;
 		if (isRunnig != null) {
-			for (Button bttn : shellPHPito.getBttnProjectList())
-				bttn.setEnabled(true);
-			for (MenuItem mntm : shellPHPito.getMntmProjectList())
-				mntm.setEnabled(true);
-			for (Button bttn : shellPHPito.getBttnStartList())
-				bttn.setEnabled(!isRunnig);
-			for (MenuItem mntm : shellPHPito.getMntmStartList())
-				mntm.setEnabled(!isRunnig);
-			for (Button bttn : shellPHPito.getBttnStopList())
-				bttn.setEnabled(isRunnig);
-			for (MenuItem mntm : shellPHPito.getMntmStopList())
-				mntm.setEnabled(isRunnig);
+			/* disable and enable button if server is running */ 
+			for (Button bttn : shellPHPito.getBttnProjectList()) bttn.setEnabled(true);
+			for (MenuItem mntm : shellPHPito.getMntmProjectList()) mntm.setEnabled(true);
+			for (Button bttn : shellPHPito.getBttnStartList()) bttn.setEnabled(!isRunnig);
+			for (MenuItem mntm : shellPHPito.getMntmStartList()) mntm.setEnabled(!isRunnig);
+			for (Button bttn : shellPHPito.getBttnStopList()) bttn.setEnabled(isRunnig);
+			for (MenuItem mntm : shellPHPito.getMntmStopList()) mntm.setEnabled(isRunnig);
 		} else {
-			for (Button bttn : shellPHPito.getBttnProjectList())
-				bttn.setEnabled(false);
-			for (MenuItem mntm : shellPHPito.getMntmProjectList())
-				mntm.setEnabled(false);
-			for (Button bttn : shellPHPito.getBttnStartList())
-				bttn.setEnabled(false);
-			for (MenuItem mntm : shellPHPito.getMntmStartList())
-				mntm.setEnabled(false);
-			for (Button bttn : shellPHPito.getBttnStopList())
-				bttn.setEnabled(false);
-			for (MenuItem mntm : shellPHPito.getMntmStopList())
-				mntm.setEnabled(false);
+			/* disable and enable button if server is stopped */
+			for (Button bttn : shellPHPito.getBttnProjectList()) bttn.setEnabled(false);
+			for (MenuItem mntm : shellPHPito.getMntmProjectList()) mntm.setEnabled(false);
+			for (Button bttn : shellPHPito.getBttnStartList()) bttn.setEnabled(false);
+			for (MenuItem mntm : shellPHPito.getMntmStartList()) mntm.setEnabled(false);
+			for (Button bttn : shellPHPito.getBttnStopList()) bttn.setEnabled(false);
+			for (MenuItem mntm : shellPHPito.getMntmStopList()) mntm.setEnabled(false);
 		}
 	}
 
-	/* metodo che setta la variabile id con id progetto selezionato */
+	/* metodo che setta la variabile id con l'id progetto selezionato */
 	public void autoSetIdProjectSelect() {
 		PHPitoManager.getInstance().getJoggerDebug().writeLog("ShellPHPito - Auto Set ID");
 		Long id = null;
