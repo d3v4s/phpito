@@ -14,6 +14,7 @@ import phpito.view.shell.ShellPHPito;
 public class TableSelectionAdapter extends SelectionAdapter {
 	private ShellPHPito shellPHPito;
 
+	/* CONSTRUCT */
 	public TableSelectionAdapter(ShellPHPito shellPHPito) {
 		super();
 		this.shellPHPito = shellPHPito;
