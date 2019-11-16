@@ -22,8 +22,8 @@
 	<classpathentry kind="lib" path="ext/swt/gen/org.eclipse.ui.forms_3.7.400.v20181123-1505.jar"/>
 	<classpathentry kind="lib" path="ext/swt/gen/org.eclipse.ui.workbench_3.112.100.v20181127-1518.jar"/>
 	<classpathentry kind="lib" path="ext/swt/gen/swing2swt.jar"/>
-	<classpathentry kind="lib" path="ext/utils/jaswt/jaswt_win32_x86-1.0.jar"/>
 	<classpathentry kind="lib" path="ext/utils/jsx-1.0.jar"/>
 	<classpathentry kind="lib" path="ext/utils/jutilas-1.0.jar"/>
+	<classpathentry kind="lib" path="ext/jaswt/jaswt_linux_x64-1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
