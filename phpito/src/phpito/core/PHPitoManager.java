@@ -47,7 +47,7 @@ public class PHPitoManager {
 	public static final String INFO = "PHP Server Manager";
 	public static final String VERSION = "1.0";
 	public static final String AUTHOR = "Andrea Serra";
-	public static final String LINK_GITHUB = "https://github.com/z4X0r/phpito";
+	public static final String LINK_GITHUB = "https://github.com/d3v4s/phpito";
 	private JoggerDebug joggerDebug;
 	private JoggerError joggerError;
 
@@ -115,14 +115,12 @@ public class PHPitoManager {
 		String phpini = project.getPhpiniPath();
 		String script_start = phpini.isEmpty() ? SCRIPT_START_SERVER : SCRIPT_START_SERVER_INI;
 		String[] cmndStart;
-//		System.out.println("PHPitoManager.startServer() phpini = " + phpini);
 
 		/* create comand for windows or linux */
 		if (JutilasSys.getInstance().isWindows()) cmndStart = new String[] {RUN, "/c" ,script_start, project.getServer().getAddressAndPort(), project.getServer().getPath(), phpini};
 		else cmndStart = new String[] {RUN + script_start, project.getServer().getAddressAndPort(), project.getServer().getPath(), phpini};
 
 		/* create a process */
-//		System.out.println("PHPitoManager.startServer() CMD = " + cmndStart[0] + " " + cmndStart[1] +" " + cmndStart[2] + " " + cmndStart[3]);
 		String regexError = ".*Failed to listen on " + project.getServer().getAddressAndPort() + ".*";
 		String regexReasError = ".*reason: ([\\w\\s]{1,}).*";
 		joggerDebug.writeLog("PHPito Starting Server - Execute command");
@@ -174,7 +172,7 @@ public class PHPitoManager {
 	}
 
 	/* thread per leggere l'output log del server */
-	/* Inner class for read the server output */
+	/* Inner class thread for read the server output */
 	private class ReadServerOutputThread extends Thread {
 		Project project;
 		BufferedReader bufferedReader;
