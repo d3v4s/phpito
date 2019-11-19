@@ -74,6 +74,7 @@ public class ShellPHPito extends Shell {
 	private ArrayList<Button> bttnStartList = new ArrayList<Button>();
 	private ArrayList<Button> bttnStopList = new ArrayList<Button>();
 	private ArrayList<Button> bttnProjectList = new ArrayList<Button>();
+	private WriterLogMonitorThread writerLogMonitorThread;
 
 	/* CONSTRUCT */
 	public ShellPHPito(Display display) {
@@ -153,11 +154,22 @@ public class ShellPHPito extends Shell {
 	public CLabel getLblCPU() {
 		return lblInfo;
 	}
-
+	public WriterLogMonitorThread getWriterLogMonitorThread() {
+		return writerLogMonitorThread;
+	}
+	public void setWriterLogMonitorThread(WriterLogMonitorThread writerLogMonitorThread) {
+		this.writerLogMonitorThread = writerLogMonitorThread;
+	}
+	
 	/* ################################################################################# */
 	/* END GET AND SET */
 	/* ################################################################################# */
-
+	
+	/* method that set id project selected to null */
+	public void setIdProjectSelectToNull() {
+		idProjectSelect = null;
+	}
+	
 	/* metodo per creare contenuti */
 	public void createContents() throws DOMException {
 		PHPitoManager.getInstance().getJoggerDebug().writeLog("Create content ShellPHPito");
@@ -443,7 +455,7 @@ public class ShellPHPito extends Shell {
 			Jaswt.getInstance().launchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
 		}
 		flushTable();
-		if (actvtLogMon) new WriterLogMonitorThread(this, PHPitoManager.getInstance().getReentrantLockLogServer()).start();
+		if (actvtLogMon) (writerLogMonitorThread = new WriterLogMonitorThread(this, PHPitoManager.getInstance().getReentrantLockLogServer())).start();
 		if (actvtSysInfo) new UsageCpuThread(this).start();
 	}
 

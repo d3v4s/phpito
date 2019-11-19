@@ -217,7 +217,7 @@ public class PHPitoManager {
 	}
 
 	/* method to delete a php.ini file */
-	public void deletePhpini(Project project) throws ProjectException {
+	public void deletePhpini(Project project) {
 		Jutilas.getInstance().recursiveDelete(project.getCustomPhpiniPath());
 	}
 
