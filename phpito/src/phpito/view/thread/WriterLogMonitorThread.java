@@ -23,6 +23,7 @@ public class WriterLogMonitorThread extends Thread {
 	private ShellPHPito shellPHPito;
 	private Project project;
 	private ReentrantLockServerLog reentrantLockLogServer;
+	private boolean isDeleting = false;
 
 	/* CONSTRUCT */
 	public WriterLogMonitorThread(ShellPHPito shellPHPito, ReentrantLockServerLog reentrantLockLogServer) {
@@ -30,6 +31,21 @@ public class WriterLogMonitorThread extends Thread {
 		this.shellPHPito = shellPHPito;
 		this.reentrantLockLogServer = reentrantLockLogServer;
 	}
+
+	/* ################################################################################# */
+	/* START GET AND SET */
+	/* ################################################################################# */
+
+//	public boolean isDeleting() {
+//		return isDeleting;
+//	}
+//	public void setDeleting(boolean isDeleting) {
+//		this.isDeleting = isDeleting;
+//	}
+
+	/* ################################################################################# */
+	/* END GET AND SET */
+	/* ################################################################################# */
 
 	@Override
 	public void run() {
@@ -40,7 +56,7 @@ public class WriterLogMonitorThread extends Thread {
 		while (!shellPHPito.isDisposed()) {
 			try {
 				lastMod = getLocalDateTimeLastModifyLogServer(project);
-				if ((shellPHPito.getIdProjectSelect() != null && id != shellPHPito.getIdProjectSelect()) || lastPrint.isBefore(lastMod)) {
+				if ((shellPHPito.getIdProjectSelect() != null && (id != shellPHPito.getIdProjectSelect()) || lastPrint.isBefore(lastMod))) {
 					project = shellPHPito.getProjectSelect();
 					id = shellPHPito.getIdProjectSelect();
 					shellPHPito.getDisplay().asyncExec(new Runnable() {
@@ -52,6 +68,8 @@ public class WriterLogMonitorThread extends Thread {
 						}
 					});
 					lastPrint = LocalDateTime.now();
+//				if (!isDeleting) {
+//					}
 				}
 				Thread.sleep(500);
 			} catch (Exception e) {
@@ -68,7 +86,8 @@ public class WriterLogMonitorThread extends Thread {
 	/* method that get the date time of server log file last modify */
 	private LocalDateTime getLocalDateTimeLastModifyLogServer(Project project) throws FileLogException {
 		if (project == null) return LocalDateTime.MAX;
-		File logFile = Jogger.getLogFile("server", new String[] {"server", project.getIdAndName()});
+		File logFile = Jogger.getLogFileIfExists("server", new String[] {"server", project.getIdAndName()});
+		if (logFile == null) return LocalDateTime.MIN;
 		long lastMod = logFile.lastModified();
 		Integer year = Integer.valueOf(new SimpleDateFormat("yyyy").format(lastMod));
 		Integer month = Integer.valueOf(new SimpleDateFormat("MM").format(lastMod));
