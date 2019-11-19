@@ -23,7 +23,6 @@ public class WriterLogMonitorThread extends Thread {
 	private ShellPHPito shellPHPito;
 	private Project project;
 	private ReentrantLockServerLog reentrantLockLogServer;
-	private boolean isDeleting = false;
 
 	/* CONSTRUCT */
 	public WriterLogMonitorThread(ShellPHPito shellPHPito, ReentrantLockServerLog reentrantLockLogServer) {
