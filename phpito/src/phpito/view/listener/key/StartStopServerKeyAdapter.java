@@ -53,7 +53,7 @@ public class StartStopServerKeyAdapter extends KeyAdapter {
 			case "D":
 			case "d":
 				/* case delete project */
-				new DeleteProjectSelectionAdapter(shellPHPito).deleteProject();
+				new DeleteProjectSelectionAdapter(shellPHPito).showDeleteProject();
 				break;
 			default:
 				break;

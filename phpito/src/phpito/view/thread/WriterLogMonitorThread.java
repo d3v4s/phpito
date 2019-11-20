@@ -31,21 +31,6 @@ public class WriterLogMonitorThread extends Thread {
 		this.reentrantLockLogServer = reentrantLockLogServer;
 	}
 
-	/* ################################################################################# */
-	/* START GET AND SET */
-	/* ################################################################################# */
-
-//	public boolean isDeleting() {
-//		return isDeleting;
-//	}
-//	public void setDeleting(boolean isDeleting) {
-//		this.isDeleting = isDeleting;
-//	}
-
-	/* ################################################################################# */
-	/* END GET AND SET */
-	/* ################################################################################# */
-
 	@Override
 	public void run() {
 		LocalDateTime lastPrint = LocalDateTime.MIN;
@@ -67,8 +52,6 @@ public class WriterLogMonitorThread extends Thread {
 						}
 					});
 					lastPrint = LocalDateTime.now();
-//				if (!isDeleting) {
-//					}
 				}
 				Thread.sleep(500);
 			} catch (Exception e) {

@@ -49,7 +49,7 @@ public class LauncherAddProjectSelectionAdapter implements SelectionListener {
 		shellDialogPHPito.setSize(370, 350);
 		shellDialogPHPito.setText("New Project");
 		Jaswt.getInstance().centerWindow(shellDialogPHPito);
-		shellDialogPHPito.setTextMap(new 	HashMap<String, Text>());
+		shellDialogPHPito.setTextMap(new HashMap<String, Text>());
 
 		/* ciclo per label */
 		String[] txtLbl = {"Name:", "Path:", "Address:", "Port:" , "php.ini"};
