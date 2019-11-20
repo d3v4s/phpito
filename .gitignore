@@ -1,7 +1,7 @@
 phpito/bin/*
 phpito/.settings/*
 phpito/conf/*
-projects.xml
+phpito/single.instance.app
 *.log
 LICENSE
 README.md
