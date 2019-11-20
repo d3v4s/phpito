@@ -30,9 +30,10 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.w3c.dom.DOMException;
 
+import exception.XMLException;
 import jaswt.canvas.CPUMonitorCanvas;
 import jaswt.core.Jaswt;
-import jaswt.listener.selection.LauncherFileExplorerSelectionAdapter;
+import jaswt.listener.selection.OpenFileFromOSSelectionAdapter;
 import jogger.Jogger;
 import phpito.core.PHPitoConf;
 import phpito.core.PHPitoManager;
@@ -44,6 +45,7 @@ import phpito.view.listener.selection.FlushTableSelectionAdapter;
 import phpito.view.listener.selection.TableSelectionAdapter;
 import phpito.view.listener.selection.launcher.LauncherAboutSelctionAdapter;
 import phpito.view.listener.selection.launcher.LauncherAddProjectSelectionAdapter;
+import phpito.view.listener.selection.launcher.LauncherImportExportProjectsSelectionAdapter;
 import phpito.view.listener.selection.launcher.LauncherModifyProjectSelectionAdapter;
 import phpito.view.listener.selection.launcher.LauncherSettingSelctionAdapter;
 import phpito.view.listener.selection.project.DeleteProjectSelectionAdapter;
@@ -95,7 +97,7 @@ public class ShellPHPito extends Shell {
 							for (Project project : projectsList)
 								PHPitoManager.getInstance().stopServer(project);
 					}
-				} catch (DOMException | IOException | ServerException | ProjectException e) {
+				} catch (DOMException | IOException | ServerException | ProjectException | XMLException e) {
 					Jaswt.getInstance().launchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
 				}
 			}
@@ -123,9 +125,6 @@ public class ShellPHPito extends Shell {
 	}
 	public String getIdProjectSelectString() {
 		return String.valueOf(idProjectSelect);
-	}
-	public Project getProjectSelect() {
-		return PHPitoManager.getInstance().getProjectById(getIdProjectSelect());
 	}
 	public Table getTable() {
 		return table;
@@ -164,7 +163,17 @@ public class ShellPHPito extends Shell {
 	/* ################################################################################# */
 	/* END GET AND SET */
 	/* ################################################################################# */
-	
+
+	/* method that get project by select id */
+	public Project getProjectSelect() {
+		try {
+			return PHPitoManager.getInstance().getProjectById(getIdProjectSelect());
+		} catch (ProjectException e) {
+			Jaswt.getInstance().launchMBError(this, e, PHPitoManager.getInstance().getJoggerError());
+		}
+		return null;
+	}
+
 	/* method that set id project selected to null */
 	public void setIdProjectSelectToNull() {
 		idProjectSelect = null;
@@ -178,6 +187,8 @@ public class ShellPHPito extends Shell {
 		this.setText("PHPito");
 		this.setLayout(new BorderLayout(0, 0));
 		Jaswt.getInstance().centerWindow(this);
+
+		/* ################## START MENU BAR ################## */
 
 		/* barra menu' della testata */
 		Menu menu = new Menu(this, SWT.BAR);
@@ -193,14 +204,16 @@ public class ShellPHPito extends Shell {
 		mntm.setMenu(mn);
 
 		/* list of project menu */
-		String[] menuProjectList = {"Add", "Settings", "Delete", "Start", "Stop", "Update Table"};
+		String[] menuProjectList = {"Add", "Settings", "Delete", "Start", "Stop", "Update Table", "Import", "Export"};
 		SelectionListener[] menuProjectSelAdptList = {
 				new LauncherAddProjectSelectionAdapter(this),
 				new LauncherModifyProjectSelectionAdapter(this),
 				new DeleteProjectSelectionAdapter(this),
 				new StartServerSelectionAdapter(this),
 				new StopServerSelectionAdapter(this),
-				new FlushTableSelectionAdapter(this)
+				new FlushTableSelectionAdapter(this),
+				new LauncherImportExportProjectsSelectionAdapter(this, LauncherImportExportProjectsSelectionAdapter.IMPORT),
+				new LauncherImportExportProjectsSelectionAdapter(this, LauncherImportExportProjectsSelectionAdapter.EXPORT)
 		};
 
 		/* loop for project menu */
@@ -237,7 +250,7 @@ public class ShellPHPito extends Shell {
 		String[] menuPHPitoList = {"Settings PHPito", "Open log folder", "About"};
 		SelectionListener[] menuPHPitoSelAdptList = {
 				new LauncherSettingSelctionAdapter(this),
-				new LauncherFileExplorerSelectionAdapter(this, Jogger.getLogDirPath("server")),
+				new OpenFileFromOSSelectionAdapter(this, Jogger.getLogDirPath("server")),
 				new LauncherAboutSelctionAdapter(this)
 		};
 
@@ -247,6 +260,8 @@ public class ShellPHPito extends Shell {
 			mntm.addSelectionListener(menuPHPitoSelAdptList[i]);
 			mntm.setText(menuPHPitoList[i]);
 		}
+
+		/* ################## END MENU BAR ################## */
 
 		GridData gd;
 		actvtLogMon = PHPitoConf.getInstance().getActvtLogMonConf();
@@ -289,7 +304,7 @@ public class ShellPHPito extends Shell {
 
 		/* loop for lateral buttons */
 		Button bttn;
-		for (int i = 0, length = menuProjectList.length - 1; i < length; i++) {
+		for (int i = 0, length = menuProjectList.length - 3; i < length; i++) {
 			bttn = new Button(rightGridComposite, SWT.PUSH);
 			bttn.addSelectionListener(menuProjectSelAdptList[i]);
 			bttn.setLayoutData(gdBttnWidth);
@@ -433,10 +448,10 @@ public class ShellPHPito extends Shell {
 	}
 
 	/* metodo che riscrive la tabella recuperando i dati dall'xml */
-	public void flushTable() {
+	public void flushTable() throws ProjectException {
 		PHPitoManager.getInstance().getJoggerDebug().writeLog("ShellPHPito - Flush Table");
 		int indexTable = table.getSelectionIndex();
-		HashMap<String, Project> mapProjects = PHPitoManager.getInstance().getReentrantLockXMLServer().getProjectsMap();
+		HashMap<String, Project> mapProjects = PHPitoManager.getInstance().getReentrantLockProjectsXML().getProjectsMap();
 		printProjectsOnTable(mapProjects);
 		if (indexTable >= table.getItems().length || indexTable < 0) indexTable = 0;
 		table.setSelection(indexTable);
@@ -451,12 +466,12 @@ public class ShellPHPito extends Shell {
 		super.open();
 		try {
 			PHPitoManager.getInstance().flushRunningServers();
-		} catch (NumberFormatException | IOException | ProjectException e) {
+			flushTable();
+			if (actvtLogMon) (writerLogMonitorThread = new WriterLogMonitorThread(this, PHPitoManager.getInstance().getReentrantLockLogServer())).start();
+			if (actvtSysInfo) new UsageCpuThread(this).start();
+		} catch (NumberFormatException | IOException | ProjectException | XMLException e) {
 			Jaswt.getInstance().launchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
 		}
-		flushTable();
-		if (actvtLogMon) (writerLogMonitorThread = new WriterLogMonitorThread(this, PHPitoManager.getInstance().getReentrantLockLogServer())).start();
-		if (actvtSysInfo) new UsageCpuThread(this).start();
 	}
 
 	/* metodo che abilita o disabilita i pulsanti legati a progetto */

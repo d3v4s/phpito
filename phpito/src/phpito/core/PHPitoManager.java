@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 
 import exception.FileLogException;
 import exception.LockLogException;
+import exception.XMLException;
 import jogger.JoggerDebug;
 import jogger.JoggerError;
 import jutilas.core.Jutilas;
@@ -33,7 +34,7 @@ import phpito.exception.ServerException;
  */
 public class PHPitoManager {
 	private static PHPitoManager phpItoManager;
-	private final ReentrantLockProjectsXML reentrantLockXMLServer = new ReentrantLockProjectsXML();
+	private final ReentrantLockProjectsXML reentrantLockProjectsXML = new ReentrantLockProjectsXML();
 	private final ReentrantLockServerLog reentrantLockLogServer = new ReentrantLockServerLog();
 	private final String DIR_SCRIPT = Paths.get(JutilasSys.getInstance().getRunPath(), "script").toString();
 	private final String EXT_SCRIPT = (JutilasSys.getInstance().isWindows()) ? ".bat" : ".sh";
@@ -68,6 +69,7 @@ public class PHPitoManager {
 	/* START GET AND SET */
 	/* ################################################################################# */
 
+	/* get logger */
 	public JoggerDebug getJoggerDebug() {
 		return joggerDebug;
 	}
@@ -75,8 +77,8 @@ public class PHPitoManager {
 		return joggerError;
 	}
 	/* get reentrant lock */
-	public ReentrantLockProjectsXML getReentrantLockXMLServer() {
-		return reentrantLockXMLServer;
+	public ReentrantLockProjectsXML getReentrantLockProjectsXML() {
+		return reentrantLockProjectsXML;
 	}
 	public ReentrantLockServerLog getReentrantLockLogServer() {
 		return reentrantLockLogServer;
@@ -96,13 +98,13 @@ public class PHPitoManager {
 	}
 
 	/* metodo ritorna progetto da id */
-	public Project getProjectById(Long id) {
+	public Project getProjectById(Long id) throws ProjectException {
 		if (id == null) return null;
-		return reentrantLockXMLServer.getProject(String.valueOf(id));
+		return reentrantLockProjectsXML.getProject(String.valueOf(id));
 	}
 
 	/* metodo per avviare un server */
-	public boolean startServer(Project project) throws IOException, ServerException, NumberFormatException, ProjectException {
+	public boolean startServer(Project project) throws IOException, ServerException, NumberFormatException, ProjectException, XMLException {
 		joggerDebug.writeLog("PHPito Manager - Starting Server");
 		if (project == null) {
 			joggerDebug.writeLog("PHPito Starting Server - Project == null");
@@ -144,7 +146,7 @@ public class PHPitoManager {
 				/* case successfully start */
 				joggerDebug.writeLog("PHPito Starting Server - Read Process Start Server Find PID OK");
 				project.getServer().setProcessId(pid);
-				reentrantLockXMLServer.updateProject(project);
+				reentrantLockProjectsXML.updateProject(project);
 				if (project.isLogActive()) new ReadServerOutputThread(project, br).start();
 				else br.close();
 				return true;
@@ -216,7 +218,17 @@ public class PHPitoManager {
 
 	/* method to delete a php.ini file */
 	public void deletePhpini(Project project) {
+		joggerDebug.writeLog("Delete php.ini File - START");
 		Jutilas.getInstance().recursiveDelete(project.getCustomPhpiniPath());
+		joggerDebug.writeLog("Delete php.ini File - SUCCESSFULLY");
+	}
+
+	/* method to delete all php.ini file */
+	public void deleteAllPhpini() throws ProjectException {
+		joggerDebug.writeLog("Delete All php.ini File - START");
+		ArrayList<Project> projects = reentrantLockProjectsXML.getProjectsArray();
+		for (Project project : projects) deletePhpini(project);
+		joggerDebug.writeLog("Delete All php.ini File - END");
 	}
 
 	/* method to rename a php.ini file */
@@ -226,15 +238,15 @@ public class PHPitoManager {
 	}
 
 	/* metodo che aggiorna i server in esecuzione sull'xml */
-	public void flushRunningServers() throws IOException, NumberFormatException, ProjectException {
+	public void flushRunningServers() throws IOException, NumberFormatException, ProjectException, XMLException {
 		joggerDebug.writeLog("PHPito Write Running Server on XML");
-		HashMap<String, Project> projectMap = reentrantLockXMLServer.getProjectsMap();
+		HashMap<String, Project> projectMap = reentrantLockProjectsXML.getProjectsMap();
 		Project project = null;
 		for (String id : projectMap.keySet()) {
 			project = projectMap.get(id);
 			if (project.getServer().isRunning()) project.getServer().setProcessId(getPIDServer(project.getServer()));
 			else project.getServer().setProcessId(null);
-			reentrantLockXMLServer.updateProject(project);
+			reentrantLockProjectsXML.updateProject(project);
 		}
 		joggerDebug.writeLog("PHPito Write Running Server on XML OK");
 	}
@@ -244,7 +256,7 @@ public class PHPitoManager {
 		joggerDebug.writeLog("PHPito Get Running Server");
 		ArrayList<Project> serverList = new ArrayList<Project>();
 //		flushRunningServers();
-		HashMap<String, Project> projectMap = reentrantLockXMLServer.getProjectsMap();
+		HashMap<String, Project> projectMap = reentrantLockProjectsXML.getProjectsMap();
 		for (String id : projectMap.keySet()) if (projectMap.get(id).getServer().isRunning()) serverList.add(projectMap.get(id));
 		return serverList;
 	}
@@ -328,7 +340,7 @@ public class PHPitoManager {
 	}
 	
 	/* metodo per stoppare server */
-	public boolean stopServer(Project project) throws IOException, ServerException, ProjectException {
+	public boolean stopServer(Project project) throws IOException, ServerException, ProjectException, XMLException {
 		joggerDebug.writeLog("PHPito Stop Server");
 		if (project == null) {
 			joggerDebug.writeLog("PHPito Stop Server - Project == null");

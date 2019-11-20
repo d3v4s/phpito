@@ -1,13 +1,9 @@
 package phpito.view.listener.selection.launcher;
 
-import java.awt.Desktop;
-import java.io.File;
-import java.io.IOException;
-
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 
 import jaswt.core.Jaswt;
+import jaswt.listener.selection.OpenFileFromOSSelectionAdapter;
 import phpito.core.PHPitoManager;
 import phpito.data.Project;
 import phpito.exception.ProjectException;
@@ -18,28 +14,24 @@ import phpito.view.shell.dialog.ShellDialogPHPito;
  * @author Andrea Serra
  *
  */
-public class LauncherEditorPhpini implements SelectionListener {
+public class LauncherEditorPhpiniSelectionAdapter extends OpenFileFromOSSelectionAdapter {
 	private ShellDialogPHPito shellDialogPHPito;
 	private Project project;
 
 	/* CONSTRUCT */
-	public LauncherEditorPhpini(ShellDialogPHPito shellDialogPHPito, Project project) {
+	public LauncherEditorPhpiniSelectionAdapter(ShellDialogPHPito shellDialogPHPito, Project project) {
+		super(shellDialogPHPito);
 		this.shellDialogPHPito = shellDialogPHPito;
 		this.project = project;
-	}
-
-	@Override
-	public void widgetDefaultSelected(SelectionEvent arg0) {
 	}
 
 	/* event click */
 	@Override
 	public void widgetSelected(SelectionEvent se) {
 		try {
-			File file = new File(project.getCreateCustomPhpiniPath());
-			Desktop.getDesktop().open(file);
-//			Jutilas.getInstance().openTextEditor(project.getPhpiniPath());
-		} catch (IOException | ProjectException e) {
+			setPath(project.getCreateCustomPhpiniPath());
+			super.widgetSelected(se);
+		} catch (ProjectException e) {
 			Jaswt.getInstance().launchMBError(shellDialogPHPito, e, PHPitoManager.getInstance().getJoggerError());
 		}
 	}

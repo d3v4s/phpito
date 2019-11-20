@@ -89,18 +89,10 @@ public class LauncherSettingSelctionAdapter implements SelectionListener {
 		/* loop for button cancel and save*/
         String[] namesBttnList = {"Cancel", "Save"};
         SelectionAdapter[] selAdptrBttnList = {
-        		new CloserShellSelectionAdpter(shellDialogSettings),
-        		new SaveConfSelectionAdapter(shellDialogSettings)
+    		new CloserShellSelectionAdpter(shellDialogSettings),
+    		new SaveConfSelectionAdapter(shellDialogSettings)
         };
-//        Button bttn;
         Jaswt.getInstance().printButtonHorizontal(namesBttnList, 130, 20, 100, 30, 20, compositeBottom, selAdptrBttnList);
-//		for (int i = 0, length = namesBttnList.length; i < length; i++) {
-//			bttn = new Button(compositeBottom, SWT.PUSH);
-//			bttn.setBounds(130 + 120 * i, 20, 100, 30);
-//			if (selAdptrBttnList[i] != null) bttn.addSelectionListener(selAdptrBttnList[i]);
-//			if (namesBttnList[i] != null) bttn.setText(namesBttnList[i]);
-//			bttn.setCursor(new Cursor(shellPHPito.getDisplay(), SWT.CURSOR_HAND));
-//		}
 		new Label(compositeBottom, SWT.NONE).setBounds(270, 20, 0, 50);
 
 		shellDialogSettings.open();
@@ -166,7 +158,10 @@ public class LauncherSettingSelctionAdapter implements SelectionListener {
 
 		/* set label view color */
 		try {
-			shellDialogSettings.setViewColorLabel(new ViewColorLabel(compositeRGB, SWT.BORDER,
+			shellDialogSettings.setViewColorLabel(
+				new ViewColorLabel(
+					compositeRGB,
+					SWT.BORDER,
 					shellDialogSettings.getColorBackgrndLogMonMap().get(PHPitoConf.K_COLOR_RED),
 					shellDialogSettings.getColorBackgrndLogMonMap().get(PHPitoConf.K_COLOR_GREEN),
 					shellDialogSettings.getColorBackgrndLogMonMap().get(PHPitoConf.K_COLOR_BLUE)
