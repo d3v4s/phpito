@@ -1,5 +1,6 @@
 package phpito.core.lock;
 
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
@@ -11,6 +12,7 @@ import jutilas.core.Jutilas;
 import jutilas.exception.FileException;
 import phpito.core.PHPitoManager;
 import phpito.data.Project;
+import phpito.exception.ProjectException;
 
 /**
  * Class for write the server log and implementing the ReentrantLock
@@ -103,9 +105,17 @@ public class ReentrantLockServerLog {
 		}
 	}
 
+	/* method to delete all projects logs */
+	public void deleteAllLog() throws ProjectException {
+		PHPitoManager.getInstance().getJoggerDebug().writeLog("Delete All Log - START");
+		ArrayList<Project> projects = PHPitoManager.getInstance().getReentrantLockProjectsXML().getProjectsArray();
+		for (Project project : projects) deleteLog(project);
+		PHPitoManager.getInstance().getJoggerDebug().writeLog("Delete All Log - END");
+	}
+
 	/* method to rename a log directory of project */
 	public void renameProjectLogDir(String name, String newName) {
-		PHPitoManager.getInstance().getJoggerDebug().writeLog("Rename Log Starting");
+		PHPitoManager.getInstance().getJoggerDebug().writeLog("Rename Log - START");
 		try {
 			if (reentrantLock.tryLock(30,TimeUnit.SECONDS)) {
 				PHPitoManager.getInstance().getJoggerDebug().writeLog("Rename Log -- LOCK OK");

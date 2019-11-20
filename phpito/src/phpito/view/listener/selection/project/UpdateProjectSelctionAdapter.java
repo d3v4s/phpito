@@ -6,6 +6,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
+import exception.XMLException;
 import jaswt.core.Jaswt;
 import jutilas.exception.FileException;
 import phpito.core.PHPitoManager;
@@ -69,7 +70,7 @@ public class UpdateProjectSelctionAdapter extends SelectionAdapter {
 			String msg = "Save the changes???\n" + project.toString();
 			int res = Jaswt.getInstance().launchMB(shellDialog, SWT.YES | SWT.NO, "CONTINUE???", msg);
 			if (res == SWT.YES) {
-				PHPitoManager.getInstance().getReentrantLockXMLServer().updateProject(project);
+				PHPitoManager.getInstance().getReentrantLockProjectsXML().updateProject(project);
 				PHPitoManager.getInstance().getReentrantLockLogServer().renameProjectLogDir(oldIdName, project.getIdAndName());
 				PHPitoManager.getInstance().renamePhpini(oldIdName, project.getIdAndName());
 				project.getPhpiniPath();
@@ -79,7 +80,7 @@ public class UpdateProjectSelctionAdapter extends SelectionAdapter {
 				shellDialog.dispose();
 				
 			}
-		} catch (ProjectException | IOException | ServerException | FileException e) {
+		} catch (ProjectException | IOException | ServerException | FileException | XMLException e) {
 			Jaswt.getInstance().launchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
 		}
 	}

@@ -62,10 +62,10 @@ public class LauncherAddProjectSelectionAdapter implements SelectionListener {
 
 		/* add listener ad aree di testo */
 		SelectionAdapter[] selAdptList = new SelectionAdapter[] {
-				new TextFocusSelectionAdapter(shellDialogPHPito.getTextMap().get(Project.K_PATH)),
-				new TextFocusSelectionAdapter(shellDialogPHPito.getTextMap().get(Project.K_ADDRESS)),
-				new TextFocusSelectionAdapter(shellDialogPHPito.getTextMap().get(Project.K_PORT)),
-				new AddProjectSelectionAdapter(shellDialogPHPito)
+			new TextFocusSelectionAdapter(shellDialogPHPito.getTextMap().get(Project.K_PATH)),
+			new TextFocusSelectionAdapter(shellDialogPHPito.getTextMap().get(Project.K_ADDRESS)),
+			new TextFocusSelectionAdapter(shellDialogPHPito.getTextMap().get(Project.K_PORT)),
+			new AddProjectSelectionAdapter(shellDialogPHPito)
 		};
 		for (int i = 0; i < keyList.length; i++) shellDialogPHPito.getTextMap().get(keyList[i]).addSelectionListener(selAdptList[i]);
 		shellDialogPHPito.getTextMap().get(Project.K_ADDRESS).setText("127.0.0.1");
@@ -92,8 +92,8 @@ public class LauncherAddProjectSelectionAdapter implements SelectionListener {
 
 		/* loop for buttons cancel and save */
 		selAdptList = new SelectionAdapter[] {
-				new CancelTextSelectionAdapter(shellDialogPHPito),
-				new AddProjectSelectionAdapter(shellDialogPHPito),
+			new CancelTextSelectionAdapter(shellDialogPHPito),
+			new AddProjectSelectionAdapter(shellDialogPHPito),
 		};
 		String[] namesButton = new String[] {"Cancel", "Save"};
 		Jaswt.getInstance().printButtonHorizontal(namesButton, 130, 280, 100, 30, 20, shellDialogPHPito, selAdptList);

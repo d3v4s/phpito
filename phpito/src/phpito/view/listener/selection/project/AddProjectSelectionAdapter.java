@@ -7,6 +7,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Text;
 
+import exception.XMLException;
 import jaswt.core.Jaswt;
 import phpito.core.PHPitoManager;
 import phpito.data.Project;
@@ -54,13 +55,13 @@ public class AddProjectSelectionAdapter extends SelectionAdapter {
 			String msg = "Save this project???\n" + project.toString();
 			int res = Jaswt.getInstance().launchMB(shellDialog, SWT.YES | SWT.NO, "SAVE???", msg);
 			if (res == SWT.YES) {
-				PHPitoManager.getInstance().getReentrantLockXMLServer().addProject(project);
+				PHPitoManager.getInstance().getReentrantLockProjectsXML().addProject(project);
 				project.getPhpiniPath();
 				shellPHPito.flushTable();
 				shellPHPito.getTable().forceFocus();
 				shellDialog.dispose();
 			}
-		} catch (ProjectException e) {
+		} catch (ProjectException | XMLException e) {
 			Jaswt.getInstance().launchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
 		}
 	}

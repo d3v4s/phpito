@@ -8,7 +8,9 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Label;
 
+import exception.XMLException;
 import jaswt.core.Jaswt;
+import jaswt.listener.selection.CloserShellSelectionAdpter;
 import phpito.core.PHPitoManager;
 import phpito.data.Project;
 import phpito.exception.ProjectException;
@@ -53,11 +55,10 @@ public class DeleteProjectSelectionAdapter extends SelectionAdapter {
 				
 				PHPitoManager.getInstance().stopServer(project);
 			}
-		} catch (IOException | ServerException | ProjectException e) {
+		} catch (IOException | ServerException | ProjectException | XMLException e) {
 			Jaswt.getInstance().launchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
 		}
 
-		// TODO create shell for select element to be delete
 		/* shell answer and delete if yes */
 		shellDialogPHPito = new ShellDialogPHPito(shellPHPito);
 		shellDialogPHPito.setSize(300, 300);
@@ -65,18 +66,6 @@ public class DeleteProjectSelectionAdapter extends SelectionAdapter {
 		Jaswt.getInstance().centerWindow(shellDialogPHPito);
 		createShellContents();
 		shellDialogPHPito.open();
-//		res = Jaswt.getInstance().launchMB(shellPHPito, SWT.YES | SWT.NO, "DELETE???", "Delete this project?\n" + shellPHPito.getProjectSelect().toString());
-//		if (res == SWT.YES) {
-//			PHPitoManager.getInstance().getReentrantLockXMLServer().deleteProject(project.getIdString());
-//			res = Jaswt.getInstance().launchMB(shellPHPito, SWT.YES | SWT.NO, "DELETE???", "Do you want to delete also the server log files and the php.ini?");
-//			if (res == SWT.YES) {
-//				shellPHPito.setIdProjectSelectToNull();
-//				PHPitoManager.getInstance().getReentrantLockLogServer().deleteLog(project);
-//				PHPitoManager.getInstance().deletePhpini(project);
-//			}
-//			shellPHPito.flushTable();
-//			shellPHPito.getTable().forceFocus();
-//		}
 	}
 
 	/* method that create contents on dialog shell */
@@ -104,18 +93,16 @@ public class DeleteProjectSelectionAdapter extends SelectionAdapter {
 		/* button no and yes */
 		String[] namesList = {"No", "Yes"};
 		SelectionAdapter[] selAdptList = {
+				new CloserShellSelectionAdpter(shellDialogPHPito),
 				new SelectionAdapter() {
 					@Override
-					public void widgetSelected(SelectionEvent e) {
-						shellDialogPHPito.dispose();
-					}
-					
-				},
-				new SelectionAdapter() {
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						deleteProject();
-						shellDialogPHPito.dispose();
+					public void widgetSelected(SelectionEvent evnt) {
+						try {
+							deleteProject();
+							shellDialogPHPito.dispose();
+						} catch (XMLException | ProjectException e) {
+							Jaswt.getInstance().launchMBError(shellDialogPHPito, e, PHPitoManager.getInstance().getJoggerError());
+						}
 					}
 					
 				}
@@ -124,8 +111,8 @@ public class DeleteProjectSelectionAdapter extends SelectionAdapter {
 	}
 
 	/* method to delete project */
-	private void deleteProject() {
-		PHPitoManager.getInstance().getReentrantLockXMLServer().deleteProject(project.getIdString());
+	private void deleteProject() throws XMLException, ProjectException {
+		PHPitoManager.getInstance().getReentrantLockProjectsXML().deleteProject(project.getIdString());
 		if (deleteLogCheckBtn.getSelection()) PHPitoManager.getInstance().getReentrantLockLogServer().deleteLog(project);
 		if (deletePhpiniCheckBtn.getSelection()) PHPitoManager.getInstance().deletePhpini(project);
 		shellPHPito.flushTable();

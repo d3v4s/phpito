@@ -62,11 +62,11 @@ public class LauncherModifyProjectSelectionAdapter implements SelectionListener 
 
 		/* set aree di testo e aggiunta listener */
 		SelectionAdapter[] selAdptList = new SelectionAdapter[] {
-				null,
-				new TextFocusSelectionAdapter(shellDialog.getTextMap().get(Project.K_PATH)),
-				new TextFocusSelectionAdapter(shellDialog.getTextMap().get(Project.K_ADDRESS)),
-				new TextFocusSelectionAdapter(shellDialog.getTextMap().get(Project.K_PORT)),
-				new UpdateProjectSelctionAdapter(shellDialog)
+			null,
+			new TextFocusSelectionAdapter(shellDialog.getTextMap().get(Project.K_PATH)),
+			new TextFocusSelectionAdapter(shellDialog.getTextMap().get(Project.K_ADDRESS)),
+			new TextFocusSelectionAdapter(shellDialog.getTextMap().get(Project.K_PORT)),
+			new UpdateProjectSelctionAdapter(shellDialog)
 		};
 		HashMap<String, String> mapProject = project.getHashMap();
 		for (int i = 0, length = keyList.length; i < length; i++) {
@@ -97,7 +97,7 @@ public class LauncherModifyProjectSelectionAdapter implements SelectionListener 
 
 		/* button to open the text editor for phpini */
 		Button bttnEditor = new Button(shellDialog, SWT.PUSH);
-		bttnEditor.addSelectionListener(new LauncherEditorPhpini(shellDialog, project));
+		bttnEditor.addSelectionListener(new LauncherEditorPhpiniSelectionAdapter(shellDialog, project));
 		bttnEditor.setBounds(240, 230, 100, 30);
 		bttnEditor.setText("Open Editor");
 		bttnEditor.setEnabled(project.getPhpini() == 2);
@@ -112,7 +112,7 @@ public class LauncherModifyProjectSelectionAdapter implements SelectionListener 
 		/* loop for button save and cancel */
 		selAdptList = new SelectionAdapter[] {
 			new ResetTextSelectionAdapter(shellDialog),
-			new UpdateProjectSelctionAdapter(shellDialog),
+			new UpdateProjectSelctionAdapter(shellDialog)
 		};
 		String[] namesButton = new String[] {"Cancel", "Save"};
 		Jaswt.getInstance().printButtonHorizontal(namesButton, 130, 310, 100, 30, 20, shellDialog, selAdptList);

@@ -46,10 +46,10 @@ public class LauncherAboutSelctionAdapter implements SelectionListener {
 		lblLogo.setBounds(0, -10, 400, 200);
 		
 		String[] txtLblList = {
-				PHPitoManager.NAME,
-				PHPitoManager.INFO,
-				"Version: " + PHPitoManager.VERSION,
-				"Developed by: " + PHPitoManager.AUTHOR
+			PHPitoManager.NAME,
+			PHPitoManager.INFO,
+			"Version: " + PHPitoManager.VERSION,
+			"Developed by: " + PHPitoManager.AUTHOR
 		};
 		
 		Jaswt.getInstance().printLabelVertical(txtLblList, 10, 190, 380, shellPHPito.getFontHeight(), 5, shellDialogPHPito, SWT.CENTER);
