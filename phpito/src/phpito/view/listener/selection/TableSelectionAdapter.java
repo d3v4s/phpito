@@ -3,7 +3,7 @@ package phpito.view.listener.selection;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
-import phpito.view.listener.selection.launcher.LauncherModifyProjectSelectionAdapter;
+import phpito.view.listener.selection.launcher.LauncherSettingsProjectSelectionAdapter;
 import phpito.view.shell.ShellPHPito;
 
 /**
@@ -24,7 +24,7 @@ public class TableSelectionAdapter extends SelectionAdapter {
 	@Override
 	public void widgetDefaultSelected(SelectionEvent e) {
 		/* view project settings */
-		new LauncherModifyProjectSelectionAdapter(shellPHPito).launchModifyProject();;
+		new LauncherSettingsProjectSelectionAdapter(shellPHPito).launchModifyProject();;
 	}
 
 	/* select event */

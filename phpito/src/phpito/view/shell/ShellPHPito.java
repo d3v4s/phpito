@@ -40,15 +40,15 @@ import phpito.core.PHPitoManager;
 import phpito.data.Project;
 import phpito.exception.ProjectException;
 import phpito.exception.ServerException;
-import phpito.view.listener.key.StartStopServerKeyAdapter;
+import phpito.view.listener.key.ProjectsTableKeyAdapter;
 import phpito.view.listener.selection.FlushTableSelectionAdapter;
 import phpito.view.listener.selection.TableSelectionAdapter;
 import phpito.view.listener.selection.launcher.LauncherAboutSelctionAdapter;
 import phpito.view.listener.selection.launcher.LauncherAddProjectSelectionAdapter;
+import phpito.view.listener.selection.launcher.LauncherDeleteProjectSelectionListener;
 import phpito.view.listener.selection.launcher.LauncherImportExportProjectsSelectionAdapter;
-import phpito.view.listener.selection.launcher.LauncherModifyProjectSelectionAdapter;
-import phpito.view.listener.selection.launcher.LauncherSettingSelctionAdapter;
-import phpito.view.listener.selection.project.DeleteProjectSelectionAdapter;
+import phpito.view.listener.selection.launcher.LauncherSettingsProjectSelectionAdapter;
+import phpito.view.listener.selection.launcher.LauncherSettingsSelctionAdapter;
 import phpito.view.listener.selection.server.StartServerSelectionAdapter;
 import phpito.view.listener.selection.server.StopServerSelectionAdapter;
 import phpito.view.thread.UsageCpuThread;
@@ -93,7 +93,7 @@ public class ShellPHPito extends Shell {
 						String msg = "Caution!!! Running server will be stopped.\nConfirm???";
 						int resp = Jaswt.getInstance().launchMB(shellPHPito, SWT.YES | SWT.NO, "CAUTION!!!", msg);
 						event.doit = resp == SWT.YES;
-						if (event.doit) for (Project project : projectsList) PHPitoManager.getInstance().stopServer(project);
+						if (event.doit) PHPitoManager.getInstance().stopAllRunningServer(); //for (Project project : projectsList) PHPitoManager.getInstance().stopServer(project);
 					}
 				} catch (DOMException | IOException | ServerException | ProjectException | XMLException e) {
 					Jaswt.getInstance().launchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
@@ -205,8 +205,8 @@ public class ShellPHPito extends Shell {
 		String[] menuProjectList = {"Add", "Settings", "Delete", "Start", "Stop", "Update Table", "Import", "Export"};
 		SelectionListener[] menuProjectSelAdptList = {
 				new LauncherAddProjectSelectionAdapter(this),
-				new LauncherModifyProjectSelectionAdapter(this),
-				new DeleteProjectSelectionAdapter(this),
+				new LauncherSettingsProjectSelectionAdapter(this),
+				new LauncherDeleteProjectSelectionListener(this),
 				new StartServerSelectionAdapter(this),
 				new StopServerSelectionAdapter(this),
 				new FlushTableSelectionAdapter(this),
@@ -247,7 +247,7 @@ public class ShellPHPito extends Shell {
 		/* list of PHPito menu */
 		String[] menuPHPitoList = {"Settings PHPito", "Open log folder", "About"};
 		SelectionListener[] menuPHPitoSelAdptList = {
-				new LauncherSettingSelctionAdapter(this),
+				new LauncherSettingsSelctionAdapter(this),
 				new OpenFileFromOSSelectionAdapter(this, Jogger.getLogDirPath("server")),
 				new LauncherAboutSelctionAdapter(this)
 		};
@@ -345,7 +345,7 @@ public class ShellPHPito extends Shell {
 		scrolledComposite.setContent(table);
 		scrolledComposite.setMinSize(table.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		table.addSelectionListener(new TableSelectionAdapter(this));
-		table.addKeyListener(new StartStopServerKeyAdapter(this));
+		table.addKeyListener(new ProjectsTableKeyAdapter(this));
 		table.forceFocus();
 
 		/* poupup menu per tabella */

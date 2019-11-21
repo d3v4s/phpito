@@ -1,5 +1,7 @@
 package phpito.view.listener.selection.launcher;
 
+import java.io.IOException;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -16,6 +18,7 @@ import jutilas.exception.FileException;
 import phpito.core.PHPitoManager;
 import phpito.exception.PHPitoException;
 import phpito.exception.ProjectException;
+import phpito.exception.ServerException;
 import phpito.view.shell.ShellPHPito;
 import phpito.view.shell.dialog.ShellDialogPHPito;
 
@@ -114,13 +117,14 @@ public class LauncherImportExportProjectsSelectionAdapter implements SelectionLi
 					int res = Jaswt.getInstance().launchMB(shellDialogPHPito, SWT.YES | SWT.NO, "CONTINUE???", "The currently saved projects will be deleted, along with their logs and phpini files. Continue???");
 					if (res == SWT.YES) {
 						try {
-							// TODO stop all server delete log and phpini, next import XML
+							PHPitoManager.getInstance().stopAllRunningServer();
 							PHPitoManager.getInstance().getReentrantLockLogServer().deleteAllLog();
 							PHPitoManager.getInstance().deleteAllPhpini();
 							PHPitoManager.getInstance().getReentrantLockProjectsXML().importXML(pathText.getText());
+							PHPitoManager.getInstance().flushRunningServers();
 							shellPHPito.flushTable();
 							shellDialogPHPito.dispose();
-						} catch (FileException | XMLException | ProjectException e) {
+						} catch (FileException | XMLException | ProjectException | IOException | ServerException e) {
 							Jaswt.getInstance().launchMBError(shellDialogPHPito, e, PHPitoManager.getInstance().getJoggerError());
 						}
 					}
