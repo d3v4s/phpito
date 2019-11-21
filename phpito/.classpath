@@ -6,7 +6,6 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER"/>
 	<classpathentry kind="lib" path="ext/utils/jogger-1.0.jar"/>
 	<classpathentry kind="lib" path="ext/swt/swt_linux_gtk_x64.jar"/>
 	<classpathentry kind="lib" path="ext/utils/jun-1.0.jar"/>
