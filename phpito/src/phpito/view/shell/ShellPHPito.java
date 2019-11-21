@@ -93,9 +93,7 @@ public class ShellPHPito extends Shell {
 						String msg = "Caution!!! Running server will be stopped.\nConfirm???";
 						int resp = Jaswt.getInstance().launchMB(shellPHPito, SWT.YES | SWT.NO, "CAUTION!!!", msg);
 						event.doit = resp == SWT.YES;
-						if (event.doit)
-							for (Project project : projectsList)
-								PHPitoManager.getInstance().stopServer(project);
+						if (event.doit) for (Project project : projectsList) PHPitoManager.getInstance().stopServer(project);
 					}
 				} catch (DOMException | IOException | ServerException | ProjectException | XMLException e) {
 					Jaswt.getInstance().launchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
