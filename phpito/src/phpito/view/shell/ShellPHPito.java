@@ -51,7 +51,7 @@ import phpito.view.listener.selection.launcher.LauncherSettingsProjectSelectionA
 import phpito.view.listener.selection.launcher.LauncherSettingsSelctionAdapter;
 import phpito.view.listener.selection.server.StartServerSelectionAdapter;
 import phpito.view.listener.selection.server.StopServerSelectionAdapter;
-import phpito.view.thread.UsageCpuThread;
+import phpito.view.thread.CpuMonitorThread;
 import phpito.view.thread.WriterLogMonitorThread;
 import swing2swt.layout.BorderLayout;
 
@@ -466,7 +466,7 @@ public class ShellPHPito extends Shell {
 			PHPitoManager.getInstance().flushRunningServers();
 			flushTable();
 			if (actvtLogMon) (writerLogMonitorThread = new WriterLogMonitorThread(this, PHPitoManager.getInstance().getReentrantLockLogServer())).start();
-			if (actvtSysInfo) new UsageCpuThread(this).start();
+			if (actvtSysInfo) new CpuMonitorThread(this).start();
 		} catch (NumberFormatException | IOException | ProjectException | XMLException e) {
 			Jaswt.getInstance().launchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
 		}

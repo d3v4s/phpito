@@ -1,0 +1,8 @@
+/bin/
+/bin/
+/.settings/
+/conf/
+/single.instance.app
+*.log
+LICENSE
+README.md

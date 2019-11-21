@@ -1,6 +1,6 @@
-phpito/bin/*
-phpito/.settings/*
-phpito/conf/*
+phpito/bin/
+phpito/.settings/
+phpito/conf/
 phpito/single.instance.app
 *.log
 LICENSE

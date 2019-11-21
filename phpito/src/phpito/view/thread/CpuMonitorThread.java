@@ -14,11 +14,11 @@ import phpito.view.shell.ShellPHPito;
  * @author Andrea Serra
  *
  */
-public class UsageCpuThread extends Thread {
+public class CpuMonitorThread extends Thread {
 	private ShellPHPito shellPHPito;
 
 	/* CONSTRUCT */
-	public UsageCpuThread(ShellPHPito shellPHPito) {
+	public CpuMonitorThread(ShellPHPito shellPHPito) {
 		this.shellPHPito = shellPHPito;
 	}
 
