@@ -5,8 +5,8 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 
 import phpito.view.listener.selection.launcher.LauncherAddProjectSelectionAdapter;
-import phpito.view.listener.selection.launcher.LauncherModifyProjectSelectionAdapter;
-import phpito.view.listener.selection.project.DeleteProjectSelectionAdapter;
+import phpito.view.listener.selection.launcher.LauncherDeleteProjectSelectionListener;
+import phpito.view.listener.selection.launcher.LauncherSettingsProjectSelectionAdapter;
 import phpito.view.listener.selection.server.StartServerSelectionAdapter;
 import phpito.view.listener.selection.server.StopServerSelectionAdapter;
 import phpito.view.shell.ShellPHPito;
@@ -16,11 +16,11 @@ import phpito.view.shell.ShellPHPito;
  * @author Andrea Serra
  *
  */
-public class StartStopServerKeyAdapter extends KeyAdapter {
+public class ProjectsTableKeyAdapter extends KeyAdapter {
 	private ShellPHPito shellPHPito;
 
 	/* CONSTRUCT */
-	public StartStopServerKeyAdapter(ShellPHPito shellPHPito) {
+	public ProjectsTableKeyAdapter(ShellPHPito shellPHPito) {
 		this.shellPHPito = shellPHPito;
 	}
 
@@ -43,7 +43,7 @@ public class StartStopServerKeyAdapter extends KeyAdapter {
 			case "C":
 			case "c":
 				/* case modify project */
-				new LauncherModifyProjectSelectionAdapter(shellPHPito).launchModifyProject();
+				new LauncherSettingsProjectSelectionAdapter(shellPHPito).launchModifyProject();
 				break;
 			case "A":
 			case "a":
@@ -53,7 +53,7 @@ public class StartStopServerKeyAdapter extends KeyAdapter {
 			case "D":
 			case "d":
 				/* case delete project */
-				new DeleteProjectSelectionAdapter(shellPHPito).showDeleteProject();
+				new LauncherDeleteProjectSelectionListener(shellPHPito).showDeleteProject();
 				break;
 			default:
 				break;

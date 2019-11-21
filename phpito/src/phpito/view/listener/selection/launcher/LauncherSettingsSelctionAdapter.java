@@ -41,18 +41,17 @@ import swing2swt.layout.BorderLayout;
  * @author Andrea Serra
  *
  */
-public class LauncherSettingSelctionAdapter implements SelectionListener {
+public class LauncherSettingsSelctionAdapter implements SelectionListener {
 	private ShellDialogSettings shellDialogSettings;
 	private ShellPHPito shellPHPito;
 
 	/* CONSTRUCT */
-	public LauncherSettingSelctionAdapter(ShellPHPito shellPHPito) {
+	public LauncherSettingsSelctionAdapter(ShellPHPito shellPHPito) {
 		this.shellPHPito = shellPHPito;
 	}
 
 	@Override
 	public void widgetDefaultSelected(SelectionEvent arg0) {
-		
 	}
 
 	/* event click */

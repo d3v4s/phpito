@@ -23,15 +23,11 @@ public class LauncherPHPito {
 
 	/* MAIN */
 	public static void main(String[] args) {
-		PHPitoManager.getInstance().getJoggerDebug().setDebug(false);
-		for (String arg : args)
-			if (arg.equals("debug"))
-				PHPitoManager.getInstance().getJoggerDebug().setDebug(true);
+		for (String arg : args) if (arg.equals("debug")) PHPitoManager.getInstance().getJoggerDebug().setDebug(true);
 
 		PHPitoManager.getInstance().getJoggerDebug().writeLog("DEBUG MODE ON");
 		
 		LauncherPHPito launcherPHPito = new LauncherPHPito();
-
 		launcherPHPito.open();
 		
 		PHPitoManager.getInstance().getJoggerDebug().writeLog("PHPito CLOSE");
@@ -40,10 +36,11 @@ public class LauncherPHPito {
 	
 	/* method that open PHPito window */
 	public void open() {
-		PHPitoManager.getInstance().getJoggerDebug().writeLog("Starting phpito");
+		PHPitoManager.getInstance().getJoggerDebug().writeLog("STARTING PHPITO");
 
 		try {
 			Jun.getInstance().tryLock();
+			PHPitoManager.getInstance().getJoggerDebug().writeLog("PHPITO LOCK");
 		} catch (Exception e) {
 			String msg = "PHPito Already Running!!!\nForce second instance???";
 			PHPitoManager.getInstance().getJoggerDebug().writeLog("PHPito Already Running!!!");
@@ -52,7 +49,7 @@ public class LauncherPHPito {
 			if (resp == SWT.YES)
 				try {
 					Jun.getInstance().forceLock();
-					PHPitoManager.getInstance().getJoggerDebug().writeLog("PHPito Force Second Instance!!!");
+					PHPitoManager.getInstance().getJoggerDebug().writeLog("PHPito - FORCE SECOND INSTANCE!!!");
 				} catch (IOException | FileLockException e1) {
 					Jaswt.getInstance().launchMBError(new Shell(), e1, PHPitoManager.getInstance().getJoggerError());
 				}
@@ -63,7 +60,7 @@ public class LauncherPHPito {
 		shellPHPito.createContents();
 		shellPHPito.open();
 		shellPHPito.layout();
-		PHPitoManager.getInstance().getJoggerDebug().writeLog("PHPito Display Start Read and Dispatch");
+		PHPitoManager.getInstance().getJoggerDebug().writeLog("PHPito Display - START READ DISPATCH");
 		while (!shellPHPito.isDisposed()) {
 			try {
 				if (!display.readAndDispatch()) display.sleep();
@@ -72,7 +69,7 @@ public class LauncherPHPito {
 			}
 		}
 
-		PHPitoManager.getInstance().getJoggerDebug().writeLog("PHPito Unlock");
+		PHPitoManager.getInstance().getJoggerDebug().writeLog("PHPITO UNLOCK");
 		Jun.getInstance().unlock();
 	}
 }

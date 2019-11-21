@@ -55,6 +55,7 @@ public class PHPitoManager {
 	/* CONSTRUCT */
 	private PHPitoManager() {
 		joggerDebug = new JoggerDebug(NAME);
+		joggerDebug.setDebug(false);
 		joggerDebug.setLock(true);
 		joggerError = new JoggerError(NAME);
 		joggerError.setLock(true);
@@ -101,6 +102,11 @@ public class PHPitoManager {
 	public Project getProjectById(Long id) throws ProjectException {
 		if (id == null) return null;
 		return reentrantLockProjectsXML.getProject(String.valueOf(id));
+	}
+
+	public void stopAllRunningServer() throws IOException, ServerException, ProjectException, XMLException {
+		ArrayList<Project> projects = getRunningProjects();
+		for (Project project : projects) stopServer(project);
 	}
 
 	/* metodo per avviare un server */

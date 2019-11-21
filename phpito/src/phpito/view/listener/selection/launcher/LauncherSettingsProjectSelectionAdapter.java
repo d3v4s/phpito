@@ -24,11 +24,11 @@ import phpito.view.shell.dialog.ShellDialogPHPito;
  * @author Andrea Serra
  *
  */
-public class LauncherModifyProjectSelectionAdapter implements SelectionListener {
+public class LauncherSettingsProjectSelectionAdapter implements SelectionListener {
 	ShellPHPito shellPHPito;
 
 	/* CONSTRUCT */
-	public LauncherModifyProjectSelectionAdapter(ShellPHPito shellPHPito) {
+	public LauncherSettingsProjectSelectionAdapter(ShellPHPito shellPHPito) {
 		this.shellPHPito = shellPHPito;
 	}
 
