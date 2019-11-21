@@ -48,7 +48,7 @@ public class PHPitoManager {
 	public static final String INFO = "PHP Server Manager";
 	public static final String VERSION = "1.0";
 	public static final String AUTHOR = "Andrea Serra";
-	public static final String LINK_GITHUB = "https://github.com/d3v4s/phpito";
+	public static final String LINK_GITHUB = "https://github.com/d3v4s";
 	private JoggerDebug joggerDebug;
 	private JoggerError joggerError;
 
@@ -220,7 +220,7 @@ public class PHPitoManager {
 	public void deletePhpini(Project project) {
 		joggerDebug.writeLog("Delete php.ini File - START");
 		Jutilas.getInstance().recursiveDelete(project.getCustomPhpiniPath());
-		joggerDebug.writeLog("Delete php.ini File - SUCCESSFULLY");
+		joggerDebug.writeLog("Delete php.ini File - END");
 	}
 
 	/* method to delete all php.ini file */
@@ -233,13 +233,15 @@ public class PHPitoManager {
 
 	/* method to rename a php.ini file */
 	public void renamePhpini(String name, String newName) throws FileException {
+		joggerDebug.writeLog("Rename php.ini File - START");
 		File file = new File(Project.getCustomPhpiniPath(name));
 		if (file.exists()) Jutilas.getInstance().renameFile(file.getAbsolutePath(), Project.getCustomPhpinName(newName));
+		joggerDebug.writeLog("Rename php.ini File - END");
 	}
 
 	/* metodo che aggiorna i server in esecuzione sull'xml */
 	public void flushRunningServers() throws IOException, NumberFormatException, ProjectException, XMLException {
-		joggerDebug.writeLog("PHPito Write Running Server on XML");
+		joggerDebug.writeLog("PHPito Write Running Server on XML - START");
 		HashMap<String, Project> projectMap = reentrantLockProjectsXML.getProjectsMap();
 		Project project = null;
 		for (String id : projectMap.keySet()) {
@@ -248,16 +250,17 @@ public class PHPitoManager {
 			else project.getServer().setProcessId(null);
 			reentrantLockProjectsXML.updateProject(project);
 		}
-		joggerDebug.writeLog("PHPito Write Running Server on XML OK");
+		joggerDebug.writeLog("PHPito Write Running Server on XML - END");
 	}
 
 	/* metodo che ritorna i server in esecuzione */
 	public ArrayList<Project> getRunningProjects() throws IOException, ProjectException {
-		joggerDebug.writeLog("PHPito Get Running Server");
+		joggerDebug.writeLog("PHPito Get Running Server - START");
 		ArrayList<Project> serverList = new ArrayList<Project>();
 //		flushRunningServers();
 		HashMap<String, Project> projectMap = reentrantLockProjectsXML.getProjectsMap();
 		for (String id : projectMap.keySet()) if (projectMap.get(id).getServer().isRunning()) serverList.add(projectMap.get(id));
+		joggerDebug.writeLog("PHPito Get Running Server - END");
 		return serverList;
 	}
 

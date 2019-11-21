@@ -1,15 +1,20 @@
 package phpito.view.listener.selection.launcher;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 
 import jaswt.core.Jaswt;
+import jutilas.core.Jutilas;
 import phpito.core.PHPitoManager;
 import phpito.view.shell.ShellPHPito;
 import phpito.view.shell.dialog.ShellDialogPHPito;
@@ -54,22 +59,21 @@ public class LauncherAboutSelctionAdapter implements SelectionListener {
 		
 		Jaswt.getInstance().printLabelVertical(txtLblList, 10, 190, 380, shellPHPito.getFontHeight(), 5, shellDialogPHPito, SWT.CENTER);
 		
-//		Link link = new Link(shellDialog, SWT.CENTER);
-//		link.getFont().getFontData()[0].setHeight(shellPHPito.getFontHeight());
-//		link.setBounds(160, 290, 80, shellPHPito.getFontHeight() + 6);
-//		link.setText("<a href=\"" + PHPitoManager.LINK_GITHUB + "\">Link GitHub</a>");
-//		link.addSelectionListener(new SelectionAdapter(){
-//			@Override
-//			public void widgetSelected(SelectionEvent se) {
-//				try {
-//					if (!UtilsAS.getInstance().openBorwser(se.text))
-//							Jaswt.getInstance().launchMB(shellPHPito, SWT.OK, "FAIL!!!", "Unable to open browser!!!");
-//				} catch (IOException | URISyntaxException e) {
-//					Jaswt.getInstance().launchMBError(shellPHPito, e, PHPitoManager.NAME);
-//				}
-//			}
-//		});
-		
+		Link link = new Link(shellDialogPHPito, SWT.CENTER);
+		link.getFont().getFontData()[0].setHeight(shellPHPito.getFontHeight());
+		link.setBounds(160, 290, 80, shellPHPito.getFontHeight() + 6);
+		link.setText("<a href=\"" + PHPitoManager.LINK_GITHUB + "\">Link GitHub</a>");
+		link.addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent se) {
+				try {
+					if (!Jutilas.getInstance().openBrowser(se.text))
+							Jaswt.getInstance().launchMB(shellPHPito, SWT.OK, "FAIL!!!", "Unable to open browser!!!");
+				} catch (IOException | URISyntaxException e) {
+					Jaswt.getInstance().launchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
+				}
+			}
+		});
 		shellDialogPHPito.open();
 	}
 
