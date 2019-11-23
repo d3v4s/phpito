@@ -27,9 +27,9 @@ public class Project {
 	public static final String K_PORT = "port";
 	public static final String K_LOG = "log";
 	public static final String K_INI = "ini";
-	public static final Integer INI_DEV = 0;
-	public static final Integer INI_DEF = 1;
-	public static final Integer INI_CUST = 2;
+	public static final int INI_DEV = 0;
+	public static final int INI_DEF = 1;
+	public static final int INI_CUST = 2;
 
 	/* ############################################################################# */
 	/* START GET SET */
@@ -220,11 +220,13 @@ public class Project {
 	/* override toString for get info of project */
 	@Override
 	public String toString() {
-		// TODO review - add stringbuffer and phpini etc..
-		return (id != null ? "Id: " + getIdString() + "\n" : "").concat(
-					"Nome: " + name + "\n"
-					+ "Path: " + server.getPath() + "\n"
-					+ "Indirizzo: " + server.getAddressAndPort());
+		StringBuffer buffer = new StringBuffer(id != null ? "Id: " + getIdString() + "\n" : "");
+		buffer.append("Nome: " + name + "\n");
+		buffer.append("Path: " + server.getPath() + "\n");
+		buffer.append("Indirizzo: " + server.getAddressAndPort() + "\n");
+		buffer.append("Log active: " + isLogActiveString() + "\n");
+		buffer.append("php.ini: " + getPhpiniType());
+		return buffer.toString();
 	}
 
 	/* override equals for compare two projects */
@@ -238,4 +240,22 @@ public class Project {
 	/* ############################################################################# */
 	/* END OVERRIDE */
 	/* ############################################################################# */
+
+	private String getPhpiniType() {
+		String type = "";
+		switch (phpini) {
+			case INI_DEV:
+				type = "developer";
+				break;
+			case INI_CUST:
+				type = "custom";
+				break;
+			case INI_DEF:
+				type = "default";
+				break;
+			default:
+				break;
+		}
+		return type;
+	}
 }

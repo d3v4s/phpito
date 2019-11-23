@@ -26,7 +26,6 @@ import phpito.view.shell.dialog.ShellDialogPHPito;
  */
 public class LauncherDeleteProjectSelectionListener implements SelectionListener {
 	private ShellPHPito shellPHPito;
-	private ShellDialogPHPito shellDialogPHPito;
 	private Project project;
 	
 
@@ -44,12 +43,6 @@ public class LauncherDeleteProjectSelectionListener implements SelectionListener
 	}
 	public void setShellPHPito(ShellPHPito shellPHPito) {
 		this.shellPHPito = shellPHPito;
-	}
-	public ShellDialogPHPito getShellDialogPHPito() {
-		return shellDialogPHPito;
-	}
-	public void setShellDialogPHPito(ShellDialogPHPito shellDialogPHPito) {
-		this.shellDialogPHPito = shellDialogPHPito;
 	}
 
 	/* ################################################################################# */
@@ -117,37 +110,37 @@ public class LauncherDeleteProjectSelectionListener implements SelectionListener
 
 		@Override
 		protected void createContents() {
-			shellDialogPHPito.setSize(300, 300);
-			shellDialogPHPito.setText("DELETE???");
-			Jaswt.getInstance().centerWindow(shellDialogPHPito);
+			this.setSize(300, 330);
+			this.setText("DELETE???");
+			Jaswt.getInstance().centerWindow(this);
 
 			/* info project label */
-			Label label = new Label(shellDialogPHPito, SWT.CENTER);
+			Label label = new Label(this, SWT.CENTER);
 			label.setBounds(10, 20, 280, 25);
 			label.setText("Delete this project?");
-			label = new Label(shellDialogPHPito, SWT.NONE);
-			label.setBounds(60, 45, 180, 90);
+			label = new Label(this, SWT.NONE);
+			label.setBounds(60, 45, 180, 120);
 			label.setText(shellPHPito.getProjectSelect().toString());
 
 			/* check buttons for delete log */
-			deleteLogCheckBtn = new Button(shellDialogPHPito, SWT.CHECK);
-			deleteLogCheckBtn.setBounds(10, 140, 280, 25);
+			deleteLogCheckBtn = new Button(this, SWT.CHECK);
+			deleteLogCheckBtn.setBounds(10, 170, 280, 25);
 			deleteLogCheckBtn.setText("Delete log files");
 			deleteLogCheckBtn.setSelection(true);
 
 			/* check buttons for delete phpini */
-			deletePhpiniCheckBtn = new Button(shellDialogPHPito, SWT.CHECK);
-			deletePhpiniCheckBtn.setBounds(10, 170, 280, 25);
+			deletePhpiniCheckBtn = new Button(this, SWT.CHECK);
+			deletePhpiniCheckBtn.setBounds(10, 200, 280, 25);
 			deletePhpiniCheckBtn.setText("Delete php.ini file");
 			deletePhpiniCheckBtn.setSelection(true);
 
 			/* button no and yes */
 			String[] namesList = {"No", "Yes"};
 			SelectionAdapter[] selAdptList = {
-					new CloserShellSelectionAdpter(shellDialogPHPito),
+					new CloserShellSelectionAdpter(this),
 					new DeleteProjectSelectionAdapter(this)
 			};
-			Jaswt.getInstance().printButtonHorizontal(namesList, 15, 220, 130, 30, 10, shellDialogPHPito, selAdptList);
+			Jaswt.getInstance().printButtonHorizontal(namesList, 15, 250, 130, 30, 10, this, selAdptList);
 		}
 	}
 

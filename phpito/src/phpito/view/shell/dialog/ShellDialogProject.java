@@ -14,6 +14,7 @@ import jaswt.core.Jaswt;
 import jaswt.listener.selection.LauncherSelectPathSelectionAdapter;
 import phpito.data.Project;
 import phpito.view.listener.selection.launcher.LauncherEditorPhpiniSelectionAdapter;
+import phpito.view.listener.selection.project.AddProjectSelectionAdapter;
 import phpito.view.listener.selection.project.UpdateProjectSelctionAdapter;
 import phpito.view.listener.selection.text.ResetTextSelectionAdapter;
 import phpito.view.listener.selection.text.TextFocusSelectionAdapter;
@@ -45,15 +46,16 @@ public class ShellDialogProject extends ShellDialogPHPito {
 	/* override for create contents */
 	@Override
 	protected void createContents() {
-		String title = "";
+		String title = null;
 		Project project = null;
 		SelectionAdapter actionSlctnAdptr = null;
-		SelectionAdapter phpiniSlctnAdptr = new SelectionAdapter() {};
+		SelectionAdapter phpiniSlctnAdptr = null;
 		switch (type) {
 			case NEW:
 				title = "New Project";
 				project = Project.getDefaultProject();
-				actionSlctnAdptr = new UpdateProjectSelctionAdapter(this);
+				actionSlctnAdptr = new AddProjectSelectionAdapter(this);
+				phpiniSlctnAdptr = new SelectionAdapter() {};
 				break;
 			case UPDATE:
 				title = "Edit Project";
