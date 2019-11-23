@@ -58,7 +58,7 @@ public class WriterLogMonitorThread extends Thread {
 				e.printStackTrace();
 				try {
 					PHPitoManager.getInstance().getJoggerError().writeLog(e);
-				} catch (FileLogException | LockLogException e1) {
+				} catch (LockLogException e1) {
 					e1.printStackTrace();
 				}
 			}

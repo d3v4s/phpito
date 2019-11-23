@@ -57,9 +57,8 @@ public class LauncherPHPito {
 		}
 		display = Display.getDefault();
 		shellPHPito = new ShellPHPito(display);
-		shellPHPito.createContents();
 		shellPHPito.open();
-		shellPHPito.layout();
+//		shellPHPito.layout();
 		PHPitoManager.getInstance().getJoggerDebug().writeLog("PHPito Display - START READ DISPATCH");
 		while (!shellPHPito.isDisposed()) {
 			try {

@@ -32,10 +32,9 @@ public class ReentrantLockServerLog {
 					try {
 						Jogger.writeLog(write, "server", new String[] {"server", project.getIdAndName()});
 					} catch (FileLogException | LockLogException e) {
-						e.printStackTrace();
 						try {
 							PHPitoManager.getInstance().getJoggerError().writeLog(e);
-						} catch (FileLogException | LockLogException e1) {
+						} catch (LockLogException e1) {
 							e1.printStackTrace();
 						}
 					} finally {
@@ -66,10 +65,9 @@ public class ReentrantLockServerLog {
 							rows = "404 Log not found";
 						}
 					} catch (FileLogException | FileException e) {
-						e.printStackTrace();
 						try {
 							PHPitoManager.getInstance().getJoggerError().writeLog(e);
-						} catch (FileLogException | LockLogException e1) {
+						} catch (LockLogException e1) {
 							e1.printStackTrace();
 						}
 					} finally {
@@ -124,7 +122,7 @@ public class ReentrantLockServerLog {
 				} catch (FileException e) {
 					try {
 						PHPitoManager.getInstance().getJoggerError().writeLog(e);
-					} catch (FileLogException | LockLogException e1) {
+					} catch (LockLogException e1) {
 						e1.printStackTrace();
 					}
 				} finally {

@@ -2,7 +2,6 @@ package phpito.view.thread;
 
 import java.io.IOException;
 
-import exception.FileLogException;
 import exception.LockLogException;
 import jaswt.core.Jaswt;
 import jutilas.core.JutilasSys;
@@ -49,7 +48,7 @@ public class CpuMonitorThread extends Thread {
 				e.printStackTrace();
 				try {
 					PHPitoManager.getInstance().getJoggerError().writeLog(e);
-				} catch (FileLogException | LockLogException e1) {
+				} catch (LockLogException e1) {
 					e1.printStackTrace();
 				}
 			}

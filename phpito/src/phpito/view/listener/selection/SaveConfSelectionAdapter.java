@@ -7,8 +7,6 @@ import java.util.HashMap;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Spinner;
 
 import jaswt.core.Jaswt;
 import jutilas.core.Jutilas;
@@ -37,15 +35,7 @@ public class SaveConfSelectionAdapter extends SelectionAdapter {
 	/* click event */
 	@Override
 	public void widgetSelected(SelectionEvent se) {
-		HashMap<String, String> confMap = new HashMap<String, String>();
-		HashMap<String, Button> chckBttnMap = shellDialogSettings.getConfChckBttnMap();
-		HashMap<String, Spinner> spinnerMap = shellDialogSettings.getConfSpinnerMap();
-		HashMap<String, String> colorsLogMonMap = shellDialogSettings.getConfColorLogMonMap(); 
-		/* get configuartion by shell elements */
-		for (String key : chckBttnMap.keySet()) confMap.put(key, String.valueOf(chckBttnMap.get(key).getSelection()));
-		for (String key : spinnerMap.keySet()) confMap.put(key, String.valueOf(spinnerMap.get(key).getSelection()));
-		for (String key : colorsLogMonMap.keySet()) confMap.put(key, colorsLogMonMap.get(key));
-		confMap.put(PHPitoConf.K_CONF_STYLE_LOG_MON, String.valueOf(shellDialogSettings.getStyleLogMonCombo().getSelectionIndex()));
+		HashMap<String, String> confMap = shellDialogSettings.getConfigMapByShell();
 
 		/* save configuration */
 		try {

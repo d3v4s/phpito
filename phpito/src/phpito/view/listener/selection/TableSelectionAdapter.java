@@ -24,7 +24,7 @@ public class TableSelectionAdapter extends SelectionAdapter {
 	@Override
 	public void widgetDefaultSelected(SelectionEvent e) {
 		/* view project settings */
-		new LauncherSettingsProjectSelectionAdapter(shellPHPito).launchModifyProject();;
+		new LauncherSettingsProjectSelectionAdapter(shellPHPito).launchUpdateProject();;
 	}
 
 	/* select event */

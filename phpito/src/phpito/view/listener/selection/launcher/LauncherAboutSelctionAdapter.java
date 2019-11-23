@@ -32,52 +32,76 @@ public class LauncherAboutSelctionAdapter implements SelectionListener {
 		this.shellPHPito = shellPHPito;
 	}
 
+	@Override
+	public void widgetDefaultSelected(SelectionEvent evnt) {
+	}
+
 	/* event click */
 	@Override
-	public void widgetSelected(SelectionEvent e) {
+	public void widgetSelected(SelectionEvent evnt) {
 		launchSettingPHPito();
 	}
 
 	/* metodo per lanciare finestra che aggiunge il progetto */
 	public void launchSettingPHPito() {
-		ShellDialogPHPito shellDialogPHPito = new ShellDialogPHPito(shellPHPito);
-		shellDialogPHPito.setSize(400, 360);
-		shellDialogPHPito.setText("About PHPito");
-		Jaswt.getInstance().centerWindow(shellDialogPHPito);
+		ShellDialogAbout shellDialogAbout = new ShellDialogAbout(shellPHPito);
+		shellDialogAbout.open();
+	}
 
-		String path = Paths.get("img", "logo-phpito.png").toString();
-		Label lblLogo = new Label(shellDialogPHPito, SWT.WRAP);
-		lblLogo.setImage(new Image(shellPHPito.getDisplay(), new ImageData(path)));
-		lblLogo.setBounds(0, -10, 400, 200);
-		
-		String[] txtLblList = {
-			PHPitoManager.NAME,
-			PHPitoManager.INFO,
-			"Version: " + PHPitoManager.VERSION,
-			"Developed by: " + PHPitoManager.AUTHOR
-		};
-		
-		Jaswt.getInstance().printLabelVertical(txtLblList, 10, 190, 380, shellPHPito.getFontHeight(), 5, shellDialogPHPito, SWT.CENTER);
-		
-		Link link = new Link(shellDialogPHPito, SWT.CENTER);
-		link.getFont().getFontData()[0].setHeight(shellPHPito.getFontHeight());
-		link.setBounds(160, 290, 80, shellPHPito.getFontHeight() + 6);
-		link.setText("<a href=\"" + PHPitoManager.LINK_GITHUB + "\">Link GitHub</a>");
-		link.addSelectionListener(new SelectionAdapter(){
-			@Override
-			public void widgetSelected(SelectionEvent se) {
-				try {
-					if (!Jutilas.getInstance().openBrowser(se.text))
-							Jaswt.getInstance().launchMB(shellPHPito, SWT.OK, "FAIL!!!", "Unable to open browser!!!");
-				} catch (IOException | URISyntaxException e) {
-					Jaswt.getInstance().launchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
+	/* ################################################################################# */
+	/* START INNER CLASS */
+	/* ################################################################################# */
+
+	/**
+	 * Private inner class for create import export shell dialog
+	 * @author Andrea Serra
+	 *
+	 */
+	private class ShellDialogAbout extends ShellDialogPHPito {
+
+		public ShellDialogAbout(ShellPHPito shellPHPito) {
+			super(shellPHPito);
+		}
+
+		@Override
+		protected void createContents() {
+			this.setSize(400, 360);
+			this.setText("About PHPito");
+			Jaswt.getInstance().centerWindow(this);
+
+			String path = Paths.get("img", "logo-phpito.png").toString();
+			Label lblLogo = new Label(this, SWT.WRAP);
+			lblLogo.setImage(new Image(shellPHPito.getDisplay(), new ImageData(path)));
+			lblLogo.setBounds(0, -10, 400, 200);
+			
+			String[] txtLblList = {
+				PHPitoManager.NAME,
+				PHPitoManager.INFO,
+				"Version: " + PHPitoManager.VERSION,
+				"Developed by: " + PHPitoManager.AUTHOR
+			};
+			
+			Jaswt.getInstance().printLabelVertical(txtLblList, 10, 190, 380, shellPHPito.getFontHeight(), 5, this, SWT.CENTER);
+			
+			Link link = new Link(this, SWT.CENTER);
+			link.getFont().getFontData()[0].setHeight(shellPHPito.getFontHeight());
+			link.setBounds(160, 290, 80, shellPHPito.getFontHeight() + 6);
+			link.setText("<a href=\"" + PHPitoManager.LINK_GITHUB + "\">Link GitHub</a>");
+			link.addSelectionListener(new SelectionAdapter(){
+				@Override
+				public void widgetSelected(SelectionEvent evnt) {
+					try {
+						if (!Jutilas.getInstance().openBrowser(evnt.text))
+								Jaswt.getInstance().launchMB(shellPHPito, SWT.OK, "FAIL!!!", "Unable to open browser!!!");
+					} catch (IOException | URISyntaxException e) {
+						Jaswt.getInstance().launchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
+					}
 				}
-			}
-		});
-		shellDialogPHPito.open();
+			});
+		}
 	}
 
-	@Override
-	public void widgetDefaultSelected(SelectionEvent arg0) {
-	}
+	/* ################################################################################# */
+	/* END INNER CLASS */
+	/* ################################################################################# */
 }

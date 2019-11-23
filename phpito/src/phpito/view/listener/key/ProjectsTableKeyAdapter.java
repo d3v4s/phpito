@@ -43,7 +43,7 @@ public class ProjectsTableKeyAdapter extends KeyAdapter {
 			case "C":
 			case "c":
 				/* case modify project */
-				new LauncherSettingsProjectSelectionAdapter(shellPHPito).launchModifyProject();
+				new LauncherSettingsProjectSelectionAdapter(shellPHPito).launchUpdateProject();
 				break;
 			case "A":
 			case "a":
@@ -53,7 +53,7 @@ public class ProjectsTableKeyAdapter extends KeyAdapter {
 			case "D":
 			case "d":
 				/* case delete project */
-				new LauncherDeleteProjectSelectionListener(shellPHPito).showDeleteProject();
+				new LauncherDeleteProjectSelectionListener(shellPHPito).launchDeleteProject();
 				break;
 			default:
 				break;

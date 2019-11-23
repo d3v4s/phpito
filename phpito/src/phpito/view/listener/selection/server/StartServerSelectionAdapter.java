@@ -6,7 +6,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
-import exception.XMLException;
 import jaswt.core.Jaswt;
 import phpito.core.PHPitoManager;
 import phpito.data.Project;
@@ -37,17 +36,12 @@ public class StartServerSelectionAdapter extends SelectionAdapter {
 	/* method to start a server */
 	public void startServer() {
 		try {
-			Project p = PHPitoManager.getInstance().getProjectById(shellPHPito.getIdProjectSelect());
+			Project p = shellPHPito.getProjectSelect();
 			if (!PHPitoManager.getInstance().startServer(p)) Jaswt.getInstance().launchMB(shellPHPito, SWT.OK, "FAIL!!!", "Server startup failed.");
-		} catch (ServerException | IOException | ProjectException | XMLException e) {
+		} catch (ServerException | IOException | ProjectException e) {
 			Jaswt.getInstance().launchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
 		} finally {
-			try {
-				shellPHPito.flushTable();
-				shellPHPito.getTable().forceFocus();
-			} catch (ProjectException e) {
-				Jaswt.getInstance().launchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
-			}
+			shellPHPito.flushTableAndFocus();
 		}
 	}
 }
