@@ -8,7 +8,7 @@ import org.eclipse.swt.widgets.Text;
 
 import phpito.data.Project;
 import phpito.exception.ProjectException;
-import phpito.view.shell.dialog.ShellDialogPHPito;
+import phpito.view.shell.dialog.ShellDialogProject;
 
 /**
  * Class SelectionAdapter for reset text in text area and if already reset close the shell
@@ -16,31 +16,32 @@ import phpito.view.shell.dialog.ShellDialogPHPito;
  *
  */
 public class ResetTextSelectionAdapter extends SelectionAdapter {
-	private ShellDialogPHPito shellDialog;
+	private ShellDialogProject shellDialogProject;
+	private Project project;
 
 	/* CONSTRUCT */
-	public ResetTextSelectionAdapter(ShellDialogPHPito shellDialog) {
+	public ResetTextSelectionAdapter(ShellDialogProject shellDialogProject, Project project) {
 		super();
-		this.shellDialog = shellDialog;
+		this.shellDialogProject = shellDialogProject;
+		this.project = project;
 	}
 
 	/* click event */
 	@Override
 	public void widgetSelected(SelectionEvent se) {
-		Project project = shellDialog.getShellPHPito().getProjectSelect();
 		try {
 			Project newProject = project.clone();
-			HashMap<String, Text> textMap = shellDialog.getTextMap();
+			HashMap<String, Text> textMap = shellDialogProject.getTextMap();
 			newProject.setName(textMap.get(Project.K_NAME).getText());
 			newProject.getServer().setAddress(textMap.get(Project.K_ADDRESS).getText());
 			newProject.getServer().setPath(textMap.get(Project.K_PATH).getText());
 			newProject.getServer().setPortString(textMap.get(Project.K_PORT).getText());
 			/* if is equals close shell */
-			if (project.equals(newProject)) shellDialog.dispose();
+			if (project.equals(newProject)) shellDialogProject.dispose();
 			/* else reset to original */
-			else shellDialog.setTextByProject(project);
+			else shellDialogProject.setTextByProject(project);
 		} catch (ProjectException e) {
-			shellDialog.setTextByProject(project);
+			shellDialogProject.setTextByProject(project);
 		}
 	}
 }

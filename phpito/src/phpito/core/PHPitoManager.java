@@ -11,9 +11,7 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import exception.FileLogException;
 import exception.LockLogException;
-import exception.XMLException;
 import jogger.JoggerDebug;
 import jogger.JoggerError;
 import jutilas.core.Jutilas;
@@ -66,9 +64,9 @@ public class PHPitoManager {
 		return phpItoManager = phpItoManager == null ? new PHPitoManager() : phpItoManager;
 	}
 
-	/* ################################################################################# */
+	/* ############################################################################# */
 	/* START GET AND SET */
-	/* ################################################################################# */
+	/* ############################################################################# */
 
 	/* get logger */
 	public JoggerDebug getJoggerDebug() {
@@ -85,9 +83,33 @@ public class PHPitoManager {
 		return reentrantLockLogServer;
 	}
 
-	/* ################################################################################# */
+	/* ############################################################################# */
 	/* END GET AND SET */
-	/* ################################################################################# */
+	/* ############################################################################# */
+
+	/* ############################################################################# */
+	/* START PUBLIC METHODS */
+	/* ############################################################################# */
+
+	/* method that add a new project */
+	public void addNewProject(Project project) throws ProjectException {
+		getReentrantLockProjectsXML().addProject(project);
+		project.getPhpiniPath();
+	}
+
+	/* method that delete a project */
+	public void deleteProject(Project project, boolean deleteLog, boolean deletePhpini) {
+		getReentrantLockProjectsXML().deleteProject(project.getIdString());
+		if (deleteLog) getReentrantLockLogServer().deleteLog(project);
+		if (deletePhpini) deletePhpini(project);
+	}
+
+	public void updateProject(Project project, String oldIdName) throws ProjectException, FileException {
+		getReentrantLockProjectsXML().updateProject(project);
+		getReentrantLockLogServer().renameProjectLogDir(oldIdName, project.getIdAndName());
+		renamePhpini(oldIdName, project.getIdAndName());
+		project.getPhpiniPath();
+	}
 
 	/* metodo che ritorna stringa con info sistema */
 	public String getSystemInfo(Double sysAdvrg) throws IOException {
@@ -104,17 +126,22 @@ public class PHPitoManager {
 		return reentrantLockProjectsXML.getProject(String.valueOf(id));
 	}
 
-	public void stopAllRunningServer() throws IOException, ServerException, ProjectException, XMLException {
+	/* method that stop all running servers */
+	public void stopAllRunningServer() throws ServerException, ProjectException, NumberFormatException, IOException {
 		ArrayList<Project> projects = getRunningProjects();
 		for (Project project : projects) stopServer(project);
 	}
 
 	/* metodo per avviare un server */
-	public boolean startServer(Project project) throws IOException, ServerException, NumberFormatException, ProjectException, XMLException {
+	public boolean startServer(Project project) throws IOException, ServerException, NumberFormatException, ProjectException {
 		joggerDebug.writeLog("PHPito Manager - Starting Server");
 		if (project == null) {
 			joggerDebug.writeLog("PHPito Starting Server - Project == null");
 			throw new ProjectException("Error!!! No server selected");
+		}
+		if (project.getServer().isRunning()) {
+			joggerDebug.writeLog("PHPito Starting Server - SERVER ALREADY RUNNING");
+			throw new ServerException("Error!!! Server already running");
 		}
 		if (!JutilasNet.getInstance().isAvaiblePort(project.getServer().getPort())) {
 			joggerDebug.writeLog("PHPito Starting Server - Port already in use");
@@ -141,6 +168,56 @@ public class PHPitoManager {
 		InputStreamReader isrStart = new InputStreamReader(prcssStart.getInputStream());
 		BufferedReader br = new BufferedReader(isrStart);
 
+		/* ############################################################################# */
+		/* START LOCAL CLASS */
+		/* ############################################################################# */
+
+		/* loca class thread for read the server output */
+		class ReadServerOutputThread extends Thread {
+			Project project;
+			BufferedReader bufferedReader;
+			
+			/* CONSTRUCT */
+			private ReadServerOutputThread(Project project, BufferedReader bufferReader) {
+				this.project = project;
+				this.bufferedReader = bufferReader;
+			}
+			
+			@Override
+			public void run() {
+				joggerDebug.writeLog("PHPito Start Thread Read Output Server");
+				try {
+					String outServer = null;
+					while ((outServer = bufferedReader.readLine()) != null) {
+						joggerDebug.writeLog("PHPito Thread Read Output Server - Write Log");
+						reentrantLockLogServer.writeLog(outServer, project);
+					}
+				} catch (IOException e) {
+					joggerDebug.writeLog("PHPito Thread Read Output Server - IOException: " + e.getMessage());
+					try {
+						joggerError.writeLog(e);
+					} catch (LockLogException e1) {
+						e1.printStackTrace();
+					}
+				} finally {
+					joggerDebug.writeLog("PHPito Thread Read Output Server - Exit close BufferdReader");
+					try {
+						bufferedReader.close();
+					} catch (IOException e) {
+						try {
+							joggerError.writeLog(e);
+						} catch (LockLogException e1) {
+							e1.printStackTrace();
+						}
+					}
+				}
+			}
+		}
+
+		/* ############################################################################# */
+		/* END LOCAL CLASS */
+		/* ############################################################################# */
+		
 		/* start server and reading output */
 		String stdoStart = null;
 		Long pid = null;
@@ -179,177 +256,9 @@ public class PHPitoManager {
 		return false;
 	}
 
-	/* thread per leggere l'output log del server */
-	/* Inner class thread for read the server output */
-	private class ReadServerOutputThread extends Thread {
-		Project project;
-		BufferedReader bufferedReader;
-
-		/* CONSTRUCT */
-		private ReadServerOutputThread(Project project, BufferedReader bufferReader) {
-			this.project = project;
-			this.bufferedReader = bufferReader;
-		}
-
-		@Override
-		public void run() {
-			joggerDebug.writeLog("PHPito Start Thread Read Output Server");
-			try {
-				String outServer = null;
-				while ((outServer = bufferedReader.readLine()) != null) {
-					joggerDebug.writeLog("PHPito Thread Read Output Server - Write Log");
-					reentrantLockLogServer.writeLog(outServer, project);
-				}
-			} catch (IOException e) {
-				joggerDebug.writeLog("PHPito Thread Read Output Server - IOException: " + e.getMessage());
-				try {
-					joggerError.writeLog(e);
-				} catch (FileLogException | LockLogException e1) {
-					e1.printStackTrace();
-				}
-			} finally {
-				joggerDebug.writeLog("PHPito Thread Read Output Server - Exit close BufferdReader");
-				try {
-					bufferedReader.close();
-				} catch (IOException e) {
-					try {
-						joggerError.writeLog(e);
-					} catch (FileLogException | LockLogException e1) {
-						e1.printStackTrace();
-					}
-				}
-			}
-		}
-	}
-
-	/* method to delete a php.ini file */
-	public void deletePhpini(Project project) {
-		joggerDebug.writeLog("Delete php.ini File - START");
-		Jutilas.getInstance().recursiveDelete(project.getCustomPhpiniPath());
-		joggerDebug.writeLog("Delete php.ini File - END");
-	}
-
-	/* method to delete all php.ini file */
-	public void deleteAllPhpini() throws ProjectException {
-		joggerDebug.writeLog("Delete All php.ini File - START");
-		ArrayList<Project> projects = reentrantLockProjectsXML.getProjectsArray();
-		for (Project project : projects) deletePhpini(project);
-		joggerDebug.writeLog("Delete All php.ini File - END");
-	}
-
-	/* method to rename a php.ini file */
-	public void renamePhpini(String name, String newName) throws FileException {
-		joggerDebug.writeLog("Rename php.ini File - START");
-		File file = new File(Project.getCustomPhpiniPath(name));
-		if (file.exists()) Jutilas.getInstance().renameFile(file.getAbsolutePath(), Project.getCustomPhpinName(newName));
-		joggerDebug.writeLog("Rename php.ini File - END");
-	}
-
-	/* metodo che aggiorna i server in esecuzione sull'xml */
-	public void flushRunningServers() throws IOException, NumberFormatException, ProjectException, XMLException {
-		joggerDebug.writeLog("PHPito Write Running Server on XML - START");
-		HashMap<String, Project> projectMap = reentrantLockProjectsXML.getProjectsMap();
-		Project project = null;
-		for (String id : projectMap.keySet()) {
-			project = projectMap.get(id);
-			if (project.getServer().isRunning()) project.getServer().setProcessId(getPIDServer(project.getServer()));
-			else project.getServer().setProcessId(null);
-			reentrantLockProjectsXML.updateProject(project);
-		}
-		joggerDebug.writeLog("PHPito Write Running Server on XML - END");
-	}
-
-	/* metodo che ritorna i server in esecuzione */
-	public ArrayList<Project> getRunningProjects() throws IOException, ProjectException {
-		joggerDebug.writeLog("PHPito Get Running Server - START");
-		ArrayList<Project> serverList = new ArrayList<Project>();
-//		flushRunningServers();
-		HashMap<String, Project> projectMap = reentrantLockProjectsXML.getProjectsMap();
-		for (String id : projectMap.keySet()) if (projectMap.get(id).getServer().isRunning()) serverList.add(projectMap.get(id));
-		joggerDebug.writeLog("PHPito Get Running Server - END");
-		return serverList;
-	}
-
-	/* metodo che ritorna il PID del server */
-	private Long getPIDServer(Server server) throws NumberFormatException, IOException, ProjectException {
-		joggerDebug.writeLog("PHPito Get PID Server");
-		if (server == null) {
-			joggerDebug.writeLog("PHPito Get PID Server - Server == null");
-			throw new ProjectException("Error!!! No server selected");
-		}
-		String regexPID;
-		String[] cmnd;
-		if (JutilasSys.getInstance().isWindows()) {
-			cmnd = new String[] {RUN, "/c", SCRIPT_PID_SERVER, server.getAddressAndPortRegex()};
-			regexPID  = ".*TCP.*" + server.getAddressAndPortRegex() + ".*LISTENING[\\D]*([\\d]{1,})[\\D]*";
-		} else {
-			cmnd = new String[] {RUN + SCRIPT_PID_SERVER, server.getAddress(), server.getPortString()};
-			regexPID = ".*LISTEN.*" + server.getAddressAndPortRegex() + ".*users.*php.*pid=([\\d]{1,})[,].*";
-		}
-		joggerDebug.writeLog("PHPito Get PID Server - Execute Comand");
-		ProcessBuilder pb = new ProcessBuilder(cmnd);
-		pb.directory(new File(DIR_SCRIPT));
-		pb.redirectErrorStream(true);
-		Process prcss = pb.start();
-		InputStreamReader isr = new InputStreamReader(prcss.getInputStream());
-		BufferedReader br = new BufferedReader(isr);
-		String stdo = null;
-		Matcher match;
-		while ((stdo = br.readLine()) != null) {
-			joggerDebug.writeLog("PHPito Get PID Server - OUT:" + stdo);
-			match = Pattern.compile(regexPID).matcher(stdo);
-			if (match.find()) {
-				joggerDebug.writeLog("PHPito Get PID Server - PID Find OK");
-				br.close();
-				return Long.valueOf(match.group(1));
-			}
-		}
-		joggerDebug.writeLog("PHPito Get PID Server - PID Find FAIL");
-		br.close();
-		return null;
-	}
-
-	/* metodo che controlla se il server e' in esecuzione */
-	private boolean isServerRunning(Server server) throws IOException {
-		joggerDebug.writeLog("PHPito is Server Running");
-		if (server.getProcessID() == null) {
-			joggerDebug.writeLog("PHPito is Server Running - No PID Find for Server -- Return FALSE");
-			return false;
-		}
-		String[] cmnd;
-		String regex;
-		if (JutilasSys.getInstance().isWindows()) {
-			cmnd = new String[] {RUN, "/c", SCRIPT_CHECK_SERVER, server.getAddressAndPortRegex(), server.getPIDString()};
-			regex = ".*TCP.*" + server.getAddressAndPortRegex() + ".*LISTENING[\\D]*" + server.getPIDString() + "[\\D]*.*";
-		} else {
-			cmnd = new String[] {RUN + SCRIPT_CHECK_SERVER, server.getAddress(), server.getPortString(), server.getPIDString()};
-			// regex = ".*tcp.*" + server.getAddressAndPortRegex() + ".*LISTEN[\\D]*" + server.getPIDString() + "/php.*";
-			regex = ".*LISTEN.*" + server.getAddressAndPortRegex() + ".*users.*php.*pid=" + server.getPIDString() + "[,].*";
-		}
-		joggerDebug.writeLog("PHPito is Server Running - Execute Command");
-		ProcessBuilder pb = new ProcessBuilder(cmnd);
-		pb.directory(new File(DIR_SCRIPT));
-		pb.redirectErrorStream(true);
-		Process prcss = pb.start();
-
-		InputStreamReader isr = new  InputStreamReader(prcss.getInputStream());
-		BufferedReader br = new BufferedReader(isr);
-		String stdo = null;
-		while ((stdo = br.readLine()) != null) {
-			joggerDebug.writeLog("PHPito is Server Running - OUT: " + stdo);
-			if (Pattern.matches(regex, stdo)) {
-				joggerDebug.writeLog("PHPito is Server Running -- Return TRUE");
-				br.close();
-				return true;
-			}
-		}
-		joggerDebug.writeLog("PHPito is Server Running -- Return FALSE");
-		br.close();
-		return false;
-	}
 	
 	/* metodo per stoppare server */
-	public boolean stopServer(Project project) throws IOException, ServerException, ProjectException, XMLException {
+	public boolean stopServer(Project project) throws IOException, ServerException, ProjectException, NumberFormatException {
 		joggerDebug.writeLog("PHPito Stop Server");
 		if (project == null) {
 			joggerDebug.writeLog("PHPito Stop Server - Project == null");
@@ -403,4 +312,143 @@ public class PHPitoManager {
 			throw new ServerException("Error!!! Server already Stopped.");
 		}
 	}
+
+
+	/* method to delete a php.ini file */
+	public void deletePhpini(Project project) {
+		joggerDebug.writeLog("Delete php.ini File - START");
+		Jutilas.getInstance().recursiveDelete(project.getCustomPhpiniPath());
+		joggerDebug.writeLog("Delete php.ini File - END");
+	}
+
+	/* method to delete all php.ini file */
+	public void deleteAllPhpini() throws ProjectException {
+		joggerDebug.writeLog("Delete All php.ini File - START");
+		ArrayList<Project> projects = reentrantLockProjectsXML.getProjectsArray();
+		for (Project project : projects) deletePhpini(project);
+		joggerDebug.writeLog("Delete All php.ini File - END");
+	}
+
+	/* method to rename a php.ini file */
+	public void renamePhpini(String name, String newName) throws FileException {
+		joggerDebug.writeLog("Rename php.ini File - START");
+		File file = new File(Project.getCustomPhpiniPath(name));
+		if (file.exists()) Jutilas.getInstance().renameFile(file.getAbsolutePath(), Project.getCustomPhpinName(newName));
+		joggerDebug.writeLog("Rename php.ini File - END");
+	}
+
+	/* metodo che aggiorna i server in esecuzione sull'xml */
+	public void flushRunningServers() throws IOException, NumberFormatException, ProjectException {
+		joggerDebug.writeLog("PHPito Write Running Server on XML - START");
+		HashMap<String, Project> projectMap = reentrantLockProjectsXML.getProjectsMap();
+		Project project = null;
+		for (String id : projectMap.keySet()) {
+			project = projectMap.get(id);
+			if (project.getServer().isRunning()) project.getServer().setProcessId(getPIDServer(project.getServer()));
+			else project.getServer().setProcessId(null);
+			reentrantLockProjectsXML.updateProject(project);
+		}
+		joggerDebug.writeLog("PHPito Write Running Server on XML - END");
+	}
+
+	/* metodo che ritorna i server in esecuzione */
+	public ArrayList<Project> getRunningProjects() throws ProjectException {
+		joggerDebug.writeLog("PHPito Get Running Server - START");
+		ArrayList<Project> serverList = new ArrayList<Project>();
+//		flushRunningServers();
+		HashMap<String, Project> projectMap = reentrantLockProjectsXML.getProjectsMap();
+		for (String id : projectMap.keySet()) if (projectMap.get(id).getServer().isRunning()) serverList.add(projectMap.get(id));
+		joggerDebug.writeLog("PHPito Get Running Server - END");
+		return serverList;
+	}
+
+	/* ############################################################################# */
+	/* END PUBLIC METHODS */
+	/* ############################################################################# */
+
+	/* ############################################################################# */
+	/* START PRIVATE METHODS */
+	/* ############################################################################# */
+
+	/* metodo che ritorna il PID del server */
+	private Long getPIDServer(Server server) throws NumberFormatException, IOException, ProjectException {
+		joggerDebug.writeLog("PHPito Get PID Server - START");
+		if (server == null) {
+			joggerDebug.writeLog("PHPito Get PID Server - Server == null");
+			throw new ProjectException("Error!!! No server selected");
+		}
+		String regexPID;
+		String[] cmnd;
+		if (JutilasSys.getInstance().isWindows()) {
+			cmnd = new String[] {RUN, "/c", SCRIPT_PID_SERVER, server.getAddressAndPortRegex()};
+			regexPID  = ".*TCP.*" + server.getAddressAndPortRegex() + ".*LISTENING[\\D]*([\\d]{1,})[\\D]*";
+		} else {
+			cmnd = new String[] {RUN + SCRIPT_PID_SERVER, server.getAddress(), server.getPortString()};
+			regexPID = ".*LISTEN.*" + server.getAddressAndPortRegex() + ".*users.*php.*pid=([\\d]{1,})[,].*";
+		}
+		joggerDebug.writeLog("PHPito Get PID Server - Execute Comand");
+		ProcessBuilder pb = new ProcessBuilder(cmnd);
+		pb.directory(new File(DIR_SCRIPT));
+		pb.redirectErrorStream(true);
+		Process prcss = pb.start();
+		InputStreamReader isr = new InputStreamReader(prcss.getInputStream());
+		BufferedReader br = new BufferedReader(isr);
+		String stdo = null;
+		Matcher match;
+		while ((stdo = br.readLine()) != null) {
+			joggerDebug.writeLog("PHPito Get PID Server - OUT:" + stdo);
+			match = Pattern.compile(regexPID).matcher(stdo);
+			if (match.find()) {
+				joggerDebug.writeLog("PHPito Get PID Server - PID Find OK");
+				br.close();
+				return Long.valueOf(match.group(1));
+			}
+		}
+		joggerDebug.writeLog("PHPito Get PID Server - PID Find FAIL");
+		br.close();
+		return null;
+	}
+
+	/* metodo che controlla se il server e' in esecuzione */
+	private boolean isServerRunning(Server server) throws IOException {
+		joggerDebug.writeLog("PHPito is Server Running - START");
+		if (server.getProcessID() == null) {
+			joggerDebug.writeLog("PHPito is Server Running - No PID Find for Server -- Return FALSE");
+			return false;
+		}
+		String[] cmnd;
+		String regex;
+		if (JutilasSys.getInstance().isWindows()) {
+			cmnd = new String[] {RUN, "/c", SCRIPT_CHECK_SERVER, server.getAddressAndPortRegex(), server.getPIDString()};
+			regex = ".*TCP.*" + server.getAddressAndPortRegex() + ".*LISTENING[\\D]*" + server.getPIDString() + "[\\D]*.*";
+		} else {
+			cmnd = new String[] {RUN + SCRIPT_CHECK_SERVER, server.getAddress(), server.getPortString(), server.getPIDString()};
+			// regex = ".*tcp.*" + server.getAddressAndPortRegex() + ".*LISTEN[\\D]*" + server.getPIDString() + "/php.*";
+			regex = ".*LISTEN.*" + server.getAddressAndPortRegex() + ".*users.*php.*pid=" + server.getPIDString() + "[,].*";
+		}
+		joggerDebug.writeLog("PHPito is Server Running - Execute Command");
+		ProcessBuilder pb = new ProcessBuilder(cmnd);
+		pb.directory(new File(DIR_SCRIPT));
+		pb.redirectErrorStream(true);
+		Process prcss = pb.start();
+
+		InputStreamReader isr = new  InputStreamReader(prcss.getInputStream());
+		BufferedReader br = new BufferedReader(isr);
+		String stdo = null;
+		while ((stdo = br.readLine()) != null) {
+			joggerDebug.writeLog("PHPito is Server Running - OUT: " + stdo);
+			if (Pattern.matches(regex, stdo)) {
+				joggerDebug.writeLog("PHPito is Server Running -- Return TRUE");
+				br.close();
+				return true;
+			}
+		}
+		joggerDebug.writeLog("PHPito is Server Running -- Return FALSE");
+		br.close();
+		return false;
+	}
+
+	/* ############################################################################# */
+	/* END PRIVATE METHODS */
+	/* ############################################################################# */
 }

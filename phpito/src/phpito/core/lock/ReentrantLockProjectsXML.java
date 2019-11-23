@@ -8,10 +8,8 @@ import java.util.Set;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 
-import exception.FileLogException;
 import exception.JSXLockException;
 import exception.LockLogException;
-import exception.XMLException;
 import jsx.JSX;
 import jutilas.core.Jutilas;
 import jutilas.exception.FileException;
@@ -46,11 +44,11 @@ public class ReentrantLockProjectsXML extends JSX {
 		setAutoFlush(true);
 		try {
 			loadDocument();
-		} catch (XMLException | JSXLockException e) {
-			e.printStackTrace();
+		} catch (JSXLockException e) {
+			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Construct Load Document - LOCK ERROR");
 			try {
 				PHPitoManager.getInstance().getJoggerError().writeLog(e);
-			} catch (FileLogException | LockLogException e1) {
+			} catch (LockLogException e1) {
 				e1.printStackTrace();
 			}
 		}
@@ -70,11 +68,10 @@ public class ReentrantLockProjectsXML extends JSX {
 			for (String id : idSet) mapProjects.put(id, getProjectByNode(mapNode.get(id), id));
 			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Get Project Map - SUCCESFULLY");
 		} catch (JSXLockException e) {
-			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Get Project Map - ERROR");
-			e.printStackTrace();
+			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Get Project Map - LOCK ERROR");
 			try {
 				PHPitoManager.getInstance().getJoggerError().writeLog(e);
-			} catch (FileLogException | LockLogException e1) {
+			} catch (LockLogException e1) {
 				e1.printStackTrace();
 			}
 		}
@@ -91,11 +88,10 @@ public class ReentrantLockProjectsXML extends JSX {
 			for (String id : idSet) projects.add(getProjectByNode(nodes.get(id), id));
 			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Get Projects ArrayList - SUCCESSFULLY");
 		} catch (JSXLockException e) {
-			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Get Projects ArrayList - ERROR");
-			e.printStackTrace();
+			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Get Projects ArrayList - LOCK ERROR");
 			try {
 				PHPitoManager.getInstance().getJoggerError().writeLog(e);
-			} catch (FileLogException | LockLogException e1) {
+			} catch (LockLogException e1) {
 				e1.printStackTrace();
 			}
 		}
@@ -127,11 +123,10 @@ public class ReentrantLockProjectsXML extends JSX {
 			}
 			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Get Project - SUCCESFULLY");
 		} catch (JSXLockException e) {
-			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Get Project - ERROR");
-			e.printStackTrace();
+			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Get Project - LOCK ERROR");
 			try {
 				PHPitoManager.getInstance().getJoggerError().writeLog(e);
-			} catch (FileLogException | LockLogException e1) {
+			} catch (LockLogException e1) {
 				e1.printStackTrace();
 			}
 		}
@@ -148,11 +143,10 @@ public class ReentrantLockProjectsXML extends JSX {
 			id = String.valueOf((idLong < 1L) ? 1 : idLong);
 			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Next ID Project - SUCCESFULLY");
 		} catch (JSXLockException e) {
-			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Next ID Project - ERROR");
-			e.printStackTrace();
+			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Next ID Project - LOCK ERROR");
 			try {
 				PHPitoManager.getInstance().getJoggerError().writeLog(e);
-			} catch (FileLogException | LockLogException e1) {
+			} catch (LockLogException e1) {
 				e1.printStackTrace();
 			}
 		}
@@ -160,7 +154,7 @@ public class ReentrantLockProjectsXML extends JSX {
 	}
 
 	/* metodo che aggiunge progetto */
-	public void addProject(Project project) throws XMLException, ProjectException {
+	public void addProject(Project project) throws ProjectException {
 		PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Add Project - START");
 		try {
 			String id = getNextProjectId();
@@ -176,18 +170,17 @@ public class ReentrantLockProjectsXML extends JSX {
 			project.setIdString(id);
 			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Add Project - SUCCESFULLY");
 		} catch (JSXLockException e) {
-			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Add Project - ERROR");
-			e.printStackTrace();
+			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Add Project - LOCK ERROR");
 			try {
 				PHPitoManager.getInstance().getJoggerError().writeLog(e);
-			} catch (FileLogException | LockLogException e1) {
+			} catch (LockLogException e1) {
 				e1.printStackTrace();
 			}
 		}
 	}
 
 	/* metodo che aggoirna progetto */
-	public void updateProject(Project project) throws XMLException {
+	public void updateProject(Project project) {
 		PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Update Project - START");
 		try {
 			HashMap<String, Node> mapNode = getMapIdElement(XML_SERVER);
@@ -203,28 +196,26 @@ public class ReentrantLockProjectsXML extends JSX {
 			flush(PATH_FILE_XML, true);
 			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Update Project - SUCCESFULLY");
 		} catch (JSXLockException e) {
-			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Update Project - ERROR");
-			e.printStackTrace();
+			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Update Project - LOCK ERROR");
 			try {
 				PHPitoManager.getInstance().getJoggerError().writeLog(e);
-			} catch (FileLogException | LockLogException e1) {
+			} catch (LockLogException e1) {
 				e1.printStackTrace();
 			}
 		}
 	}
 
 	/* metodo che aggoirna progetto */
-	public void deleteProject(String id) throws XMLException {
+	public void deleteProject(String id) {
 		PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Delete Project - START");
 		try {
 			deleteNode(XML_SERVER, id);
 			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Delete Project - SUCCESFULLY");
 		} catch (JSXLockException e) {
-			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Delete Project - ERROR");
-			e.printStackTrace();
+			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Delete Project - LOCK ERROR");
 			try {
 				PHPitoManager.getInstance().getJoggerError().writeLog(e);
-			} catch (FileLogException | LockLogException e1) {
+			} catch (LockLogException e1) {
 				e1.printStackTrace();
 			}
 		}
@@ -245,11 +236,10 @@ public class ReentrantLockProjectsXML extends JSX {
 				tryUnlock();
 			}
 		} catch (JSXLockException e) {
-			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Export Project - TRY LOCK FAILED");
-			e.printStackTrace();
+			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Export Project - LOCK ERROR");
 			try {
 				PHPitoManager.getInstance().getJoggerError().writeLog(e);
-			} catch (FileLogException | LockLogException e1) {
+			} catch (LockLogException e1) {
 				e1.printStackTrace();
 			}
 		}
@@ -259,9 +249,8 @@ public class ReentrantLockProjectsXML extends JSX {
 	 * method that import XML projects by source path
 	 * @param sourcePath source path
 	 * @throws FileException 
-	 * @throws XMLException 
 	 */
-	public void importXML(String sourcePath) throws FileException, XMLException {
+	public void importXML(String sourcePath) throws FileException {
 		PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Import Project - START");
 		try {
 			if (tryLock()) {
@@ -272,11 +261,10 @@ public class ReentrantLockProjectsXML extends JSX {
 				tryUnlock();
 			}
 		} catch (JSXLockException e) {
-			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Import Project - TRY LOCK FAILED");
-			e.printStackTrace();
+			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Import Project - LOCK ERROR");
 			try {
 				PHPitoManager.getInstance().getJoggerError().writeLog(e);
-			} catch (FileLogException | LockLogException e1) {
+			} catch (LockLogException e1) {
 				e1.printStackTrace();
 			}
 		}
@@ -291,19 +279,29 @@ public class ReentrantLockProjectsXML extends JSX {
 	/* ################################################################################# */
 
 	/* method that get a Project by node */
-	private Project getProjectByNode(Node node, String id) throws ProjectException, DOMException, JSXLockException {
-		Project project = new Project();
-		project.setIdString(id);
-		project.setName(getArrayChildNode(node, XML_NAME).get(0).getTextContent());
-		project.setLogActiveString(getArrayChildNode(node, XML_LOG).get(0).getTextContent());
-		project.setPhpiniString(getArrayChildNode(node, XML_INI).get(0).getTextContent());
-		project.setServer(new Server());
-		project.getServer().setAddress(getArrayChildNode(node, XML_ADDRESS).get(0).getTextContent());
-		project.getServer().setPortString(getArrayChildNode(node, XML_PORT).get(0).getTextContent());
-		project.getServer().setPath(getArrayChildNode(node, XML_PATH).get(0).getTextContent());
-		if (!getArrayChildNode(node, XML_PID).isEmpty()) {
-			String pid = getArrayChildNode(node, XML_PID).get(0).getTextContent();
-			project.getServer().setProcessIdString(pid);
+	private Project getProjectByNode(Node node, String id) throws ProjectException, DOMException {
+		Project project = null;
+		try {
+			project = new Project();
+			project.setIdString(id);
+			project.setName(getArrayChildNode(node, XML_NAME).get(0).getTextContent());
+			project.setLogActiveString(getArrayChildNode(node, XML_LOG).get(0).getTextContent());
+			project.setPhpiniString(getArrayChildNode(node, XML_INI).get(0).getTextContent());
+			project.setServer(new Server());
+			project.getServer().setAddress(getArrayChildNode(node, XML_ADDRESS).get(0).getTextContent());
+			project.getServer().setPortString(getArrayChildNode(node, XML_PORT).get(0).getTextContent());
+			project.getServer().setPath(getArrayChildNode(node, XML_PATH).get(0).getTextContent());
+			if (!getArrayChildNode(node, XML_PID).isEmpty()) {
+				String pid = getArrayChildNode(node, XML_PID).get(0).getTextContent();
+				project.getServer().setProcessIdString(pid);
+			}
+		} catch (JSXLockException e) {
+			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Get Project by Node - LOCK ERROR");
+			try {
+				PHPitoManager.getInstance().getJoggerError().writeLog(e);
+			} catch (LockLogException e1) {
+				e1.printStackTrace();
+			}
 		}
 		return project;
 	}

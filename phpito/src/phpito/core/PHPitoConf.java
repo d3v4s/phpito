@@ -58,9 +58,9 @@ public class PHPitoConf {
 		return (phpItoConf = (phpItoConf == null) ? new PHPitoConf() : phpItoConf);
 	}
 
-	/* ################################################################################# */
+	/* ############################################################################# */
 	/* START GET CONFIG */
-	/* ################################################################################# */
+	/* ############################################################################# */
 
 	public boolean getActvtLogMonConf() {
 		try {
@@ -173,23 +173,23 @@ public class PHPitoConf {
 		return confMap;
 	}
 	
-	/* ################################################################################# */
+	/* ############################################################################# */
 	/* END GET CONFIG */
-	/* ################################################################################# */
+	/* ############################################################################# */
 
 	/* method that set a conf map by configuration file */
 	private void setConfMap() throws FileException {
-		PHPitoManager.getInstance().getJoggerDebug().writeLog("Read Configuration From File and Set Configuration Map Attribute");
+		PHPitoManager.getInstance().getJoggerDebug().writeLog("Read Configuration From File and Set Configuration Map Attribute - START");
 		confMap = new HashMap<String, String>();
 		for (String key : K_CONF_LIST) confMap.put(key,Jutilas.getInstance().getConf(FILE_CONF_PATH, key));
-		PHPitoManager.getInstance().getJoggerDebug().writeLog("Read Configuration From File and Set Configuration Map Attribute -- OK");
+		PHPitoManager.getInstance().getJoggerDebug().writeLog("Read Configuration From File and Set Configuration Map Attribute -- SUCCESSFULLY");
 	}
 
 	/* method that set a conf map by configuration file */
 	public void saveConf(HashMap<String, String> confMap) throws FileException {
-		PHPitoManager.getInstance().getJoggerDebug().writeLog("Save New Configuration");
+		PHPitoManager.getInstance().getJoggerDebug().writeLog("Save New Configuration - START");
 		for (String key : confMap.keySet()) Jutilas.getInstance().setConf(FILE_CONF_PATH, key, confMap.get(key), MSG_CONF);
-		PHPitoManager.getInstance().getJoggerDebug().writeLog("Save New Configuration -- OK");
+		PHPitoManager.getInstance().getJoggerDebug().writeLog("Save New Configuration -- SUCCESSFULLY");
 		setConfMap();
 	}
 

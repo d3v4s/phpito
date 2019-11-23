@@ -6,7 +6,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
-import exception.XMLException;
 import jaswt.core.Jaswt;
 import jutilas.exception.FileException;
 import phpito.core.PHPitoManager;
@@ -14,7 +13,7 @@ import phpito.data.Project;
 import phpito.exception.ProjectException;
 import phpito.exception.ServerException;
 import phpito.view.shell.ShellPHPito;
-import phpito.view.shell.dialog.ShellDialogPHPito;
+import phpito.view.shell.dialog.ShellDialogProject;
 
 /**
  * Class SelectionAdapter for update a project
@@ -22,68 +21,77 @@ import phpito.view.shell.dialog.ShellDialogPHPito;
  *
  */
 public class UpdateProjectSelctionAdapter extends SelectionAdapter {
-	private ShellDialogPHPito shellDialog;
+	private ShellDialogProject shellDialogProject;
 	private ShellPHPito shellPHPito;
 
 	/* CONSTRUCT */
-	public UpdateProjectSelctionAdapter(ShellDialogPHPito shellDialog) {
+	public UpdateProjectSelctionAdapter(ShellDialogProject shellDialogProject) {
 		super();
-		this.shellDialog = shellDialog;
-		shellPHPito = shellDialog.getShellPHPito();
+		this.shellDialogProject = shellDialogProject;
+		this.shellPHPito = shellDialogProject.getShellPHPito();
 	}
 
-	/* event select */
+	/* event press enter */
 	@Override
 	public void widgetDefaultSelected(SelectionEvent se) {
-		widgetSelected(se);
+		updateProject();
 	}
 
 	/* event click */
 	@Override
 	public void widgetSelected(SelectionEvent se) {
-		Project project = shellDialog.getShellPHPito().getProjectSelect();
+		updateProject();
+	}
+
+	/* method that update a project */
+	private void updateProject() {
+		Project project = shellDialogProject.getShellPHPito().getProjectSelect();
+		Project oldProject = project.clone();
+		
 		try {
-			boolean restart = false;
+			setUpdate(project);
+			
+			/* compare the projects */
+			if (project.equals(oldProject)) {
+				Jaswt.getInstance().launchMB(shellDialogProject, SWT.OK, "FAIL!!!", "There are no changes.");
+				return;
+			}
+
 			/* check if server is running */
-			if (project.getServer().isRunning()) {
+			boolean restart = false;
+			if (oldProject.getServer().isRunning()) {
 				String msg = "Caution!!! The server is running, to continue it must be stopped.\nThe server will be restarted after the changes are complete. Continue???";
-				int res = Jaswt.getInstance().launchMB(shellDialog, SWT.YES | SWT.NO, "CAUTION!!!", msg);
+				int res = Jaswt.getInstance().launchMB(shellDialogProject, SWT.YES | SWT.NO, "CAUTION!!!", msg);
 				if (res == SWT.NO) return;
 
 				restart = true;
-				if (!PHPitoManager.getInstance().stopServer(project)) {
-					Jaswt.getInstance().launchMB(shellDialog, SWT.OK, "FAIL!!!", "Server shutdown failed.");
+				if (!PHPitoManager.getInstance().stopServer(oldProject)) {
+					Jaswt.getInstance().launchMB(shellDialogProject, SWT.OK, "FAIL!!!", "Server shutdown failed.");
 					return;
 				}
 			}
 
-			/* set update */
-			String oldIdName = project.getIdAndName();
-			project.setName(shellDialog.getTextMap().get(Project.K_NAME).getText());
-			project.setLogActive(shellDialog.getLogActvChckBttn().getSelection());
-			project.setPhpini(shellDialog.getPhpiniCombo().getSelectionIndex());
-			project.getServer().setPath(shellDialog.getTextMap().get(Project.K_PATH).getText());
-			project.getServer().setAddress(shellDialog.getTextMap().get(Project.K_ADDRESS).getText());
-			project.getServer().setPortString(shellDialog.getTextMap().get(Project.K_PORT).getText());
-
 			/* answer and save update */
 			String msg = "Save the changes???\n" + project.toString();
-			int res = Jaswt.getInstance().launchMB(shellDialog, SWT.YES | SWT.NO, "CONTINUE???", msg);
+			int res = Jaswt.getInstance().launchMB(shellDialogProject, SWT.YES | SWT.NO, "CONTINUE???", msg);
 			if (res == SWT.YES) {
-				PHPitoManager.getInstance().getReentrantLockProjectsXML().updateProject(project);
-				PHPitoManager.getInstance().getReentrantLockLogServer().renameProjectLogDir(oldIdName, project.getIdAndName());
-				PHPitoManager.getInstance().renamePhpini(oldIdName, project.getIdAndName());
-				project.getPhpiniPath();
-				if (restart && !PHPitoManager.getInstance().startServer(project)) Jaswt.getInstance().launchMB(shellDialog, SWT.OK, "FAIL!!!", "Server startup failed.");
-				shellPHPito.flushTable();
-				shellPHPito.getTable().forceFocus();
-				shellDialog.dispose();
+				PHPitoManager.getInstance().updateProject(project, oldProject.getIdAndName());
+				if (restart && !PHPitoManager.getInstance().startServer(project)) Jaswt.getInstance().launchMB(shellDialogProject, SWT.OK, "FAIL!!!", "Server startup failed.");
+				shellDialogProject.flushTableAndDispose();
 				
 			}
-		} catch (ProjectException | IOException | ServerException | FileException | XMLException e) {
+		} catch (ProjectException | IOException | ServerException | FileException e) {
 			Jaswt.getInstance().launchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
 		}
 	}
 
-	
+	/* method that set the update on project */
+	private void setUpdate(Project project) throws ProjectException {
+		project.setName(shellDialogProject.getTextMap().get(Project.K_NAME).getText());
+		project.setLogActive(shellDialogProject.getLogActvChckBttn().getSelection());
+		project.setPhpini(shellDialogProject.getPhpiniCombo().getSelectionIndex());
+		project.getServer().setPath(shellDialogProject.getTextMap().get(Project.K_PATH).getText());
+		project.getServer().setAddress(shellDialogProject.getTextMap().get(Project.K_ADDRESS).getText());
+		project.getServer().setPortString(shellDialogProject.getTextMap().get(Project.K_PORT).getText());
+	}
 }

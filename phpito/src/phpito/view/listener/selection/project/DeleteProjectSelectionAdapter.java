@@ -6,8 +6,9 @@ import org.eclipse.swt.events.SelectionEvent;
 import exception.XMLException;
 import jaswt.core.Jaswt;
 import phpito.core.PHPitoManager;
+import phpito.data.Project;
 import phpito.exception.ProjectException;
-import phpito.view.listener.selection.launcher.LauncherDeleteProjectSelectionListener;
+import phpito.view.listener.selection.launcher.LauncherDeleteProjectSelectionListener.ShellDialogDeleteProject;
 
 /**
  * Class SelecrionAdapter to delete project
@@ -15,12 +16,12 @@ import phpito.view.listener.selection.launcher.LauncherDeleteProjectSelectionLis
  *
  */
 public class DeleteProjectSelectionAdapter extends SelectionAdapter {
-	private LauncherDeleteProjectSelectionListener launcherDeleteProject;
+	private ShellDialogDeleteProject shellDialogDeleteProject;
 
 	/* CONSTRUCT */
-	public DeleteProjectSelectionAdapter(LauncherDeleteProjectSelectionListener launcherDeleteProject) {
+	public DeleteProjectSelectionAdapter(ShellDialogDeleteProject launcherDeleteProject) {
 		super();
-		this.launcherDeleteProject = launcherDeleteProject;
+		this.shellDialogDeleteProject = launcherDeleteProject;
 	}
 
 	/* event click */
@@ -28,18 +29,17 @@ public class DeleteProjectSelectionAdapter extends SelectionAdapter {
 	public void widgetSelected(SelectionEvent se) {
 		try {
 			deleteProject();
-			launcherDeleteProject.getShellDialogPHPito().dispose();
 		} catch (XMLException | ProjectException e) {
-			Jaswt.getInstance().launchMBError(launcherDeleteProject.getShellDialogPHPito(), e, PHPitoManager.getInstance().getJoggerError());
+			Jaswt.getInstance().launchMBError(shellDialogDeleteProject, e, PHPitoManager.getInstance().getJoggerError());
 		}
 	}
 
 	/* method to delete project */
 	private void deleteProject() throws XMLException, ProjectException {
-		PHPitoManager.getInstance().getReentrantLockProjectsXML().deleteProject(launcherDeleteProject.getProject().getIdString());
-		if (launcherDeleteProject.getDeleteLogCheckBtn().getSelection()) PHPitoManager.getInstance().getReentrantLockLogServer().deleteLog(launcherDeleteProject.getProject());
-		if (launcherDeleteProject.getDeletePhpiniCheckBtn().getSelection()) PHPitoManager.getInstance().deletePhpini(launcherDeleteProject.getProject());
-		launcherDeleteProject.getShellPHPito().flushTable();
-		launcherDeleteProject.getShellPHPito().getTable().forceFocus();
+		Project project = shellDialogDeleteProject.getProject();
+		boolean deleteLog = shellDialogDeleteProject.getDeleteLogCheckBtn().getSelection();
+		boolean deletePhpini = shellDialogDeleteProject.getDeletePhpiniCheckBtn().getSelection();
+		PHPitoManager.getInstance().deleteProject(project, deleteLog, deletePhpini);
+		shellDialogDeleteProject.flushTableAndDispose();;
 	}
 }
