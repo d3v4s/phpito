@@ -14,6 +14,7 @@ import jaswt.core.Jaswt;
 import jaswt.listener.selection.LauncherSelectPathSelectionAdapter;
 import phpito.data.Project;
 import phpito.view.listener.selection.launcher.LauncherEditorPhpiniSelectionAdapter;
+import phpito.view.listener.selection.launcher.LauncherEnvironmentVarsSelectionAdapter;
 import phpito.view.listener.selection.project.AddProjectSelectionAdapter;
 import phpito.view.listener.selection.project.UpdateProjectSelctionAdapter;
 import phpito.view.listener.selection.text.ResetTextSelectionAdapter;
@@ -26,8 +27,8 @@ public class ShellDialogProject extends ShellDialogPHPito {
 	private Button bttnEditor;
 	private Combo phpiniCombo;
 	private int type;
-	final public static int UPDATE = 0;
-	final public static int NEW = 1;
+	public static final int UPDATE = 0;
+	public static final int NEW = 1;
 	
 
 	/* ################################################################################# */
@@ -46,6 +47,7 @@ public class ShellDialogProject extends ShellDialogPHPito {
 	/* override for create contents */
 	@Override
 	protected void createContents() {
+		/* preset by type */
 		String title = null;
 		Project project = null;
 		SelectionAdapter actionSlctnAdptr = null;
@@ -72,7 +74,7 @@ public class ShellDialogProject extends ShellDialogPHPito {
 				break;
 		}
 		
-		this.setSize(370, 380);
+		this.setSize(370, 430);
 		this.setText(title);
 		Jaswt.getInstance().centerWindow(this);
 		textMap = new HashMap<String, Text>();
@@ -106,10 +108,11 @@ public class ShellDialogProject extends ShellDialogPHPito {
 		phpiniCombo.setBounds(100, 230, 130, 20);
 		for (String ini : phpiniList) phpiniCombo.add(ini);
 		phpiniCombo.select(project.getPhpini());
+		phpiniCombo.addSelectionListener(phpiniSlctnAdptr);
 
 		/* check button to enable log */
 		logActvChckBttn =new Button(this, SWT.CHECK);
-		logActvChckBttn.setBounds(20, 280, 100, 20);
+		logActvChckBttn.setBounds(20, 290, 100, 20);
 		logActvChckBttn.setText("Enable Log");
 		logActvChckBttn.setSelection(project.isLogActive());
 		
@@ -128,8 +131,12 @@ public class ShellDialogProject extends ShellDialogPHPito {
 		bttnEditor.setBounds(240, 230, 100, 30);
 		bttnEditor.setText("Open Editor");
 		bttnEditor.setEnabled(project.getPhpini() == 2);
-		
-		phpiniCombo.addSelectionListener(phpiniSlctnAdptr);
+
+		/* button to show environment variables */
+		bttn = new Button(this, SWT.PUSH);
+		bttn.setBounds(200, 285, 140, 30);
+		bttn.setText("Environment Vars");
+		bttn.addSelectionListener(new LauncherEnvironmentVarsSelectionAdapter(this, project));
 
 		/* loop for button save and cancel */
 		selAdptList = new SelectionAdapter[] {
@@ -137,7 +144,7 @@ public class ShellDialogProject extends ShellDialogPHPito {
 			actionSlctnAdptr
 		};
 		String[] namesButton = new String[] {"Cancel", "Save"};
-		Jaswt.getInstance().printButtonHorizontal(namesButton, 130, 310, 100, 30, 20, this, selAdptList);
+		Jaswt.getInstance().printButtonHorizontal(namesButton, 130, 350, 100, 30, 20, this, selAdptList);
 	}
 
 	/* ################################################################################# */
