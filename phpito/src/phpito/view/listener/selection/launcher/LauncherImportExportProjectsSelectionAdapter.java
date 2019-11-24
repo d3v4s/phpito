@@ -19,7 +19,7 @@ import phpito.exception.PHPitoException;
 import phpito.exception.ProjectException;
 import phpito.exception.ServerException;
 import phpito.view.shell.ShellPHPito;
-import phpito.view.shell.dialog.ShellDialogPHPito;
+import phpito.view.shell.dialog.ShellDialogPHPitoAbstract;
 
 /**
  * Class SelectionAdpater for launch import or export projects window
@@ -59,7 +59,7 @@ public class LauncherImportExportProjectsSelectionAdapter implements SelectionLi
 	 * @author Andrea Serra
 	 *
 	 */
-	private class ShellDialogImportExport extends ShellDialogPHPito {
+	private class ShellDialogImportExport extends ShellDialogPHPitoAbstract {
 
 		public ShellDialogImportExport(ShellPHPito shellPHPito) {
 			super(shellPHPito);
@@ -113,10 +113,10 @@ public class LauncherImportExportProjectsSelectionAdapter implements SelectionLi
 			 *
 			 */
 			class ImportExportProjectsSelectionAdapter implements SelectionListener {
-				ShellDialogPHPito shellDialogPHPito;
+				ShellDialogPHPitoAbstract shellDialogPHPito;
 				
 				/* CONSTRUCT*/
-				private ImportExportProjectsSelectionAdapter(ShellDialogPHPito shellDialogPHPito) {
+				private ImportExportProjectsSelectionAdapter(ShellDialogPHPitoAbstract shellDialogPHPito) {
 					super();
 					this.shellDialogPHPito = shellDialogPHPito;
 				}

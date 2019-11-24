@@ -160,6 +160,7 @@ public class PHPitoManager {
 		String regexReasError = ".*reason: ([\\w\\s]{1,}).*";
 		joggerDebug.writeLog("PHPito Starting Server - Execute command");
 		ProcessBuilder pbStart = new ProcessBuilder(cmndStart);
+		pbStart.environment().putAll(project.getServer().getEnvironmentVariables());;
 		pbStart.directory(new File(DIR_SCRIPT));
 		pbStart.redirectErrorStream(true);
 		Process prcssStart = pbStart.start();

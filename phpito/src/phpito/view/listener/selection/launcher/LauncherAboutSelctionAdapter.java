@@ -17,7 +17,7 @@ import jaswt.core.Jaswt;
 import jutilas.core.Jutilas;
 import phpito.core.PHPitoManager;
 import phpito.view.shell.ShellPHPito;
-import phpito.view.shell.dialog.ShellDialogPHPito;
+import phpito.view.shell.dialog.ShellDialogPHPitoAbstract;
 
 /**
  * Class SelectionListener to launch the PHPito info window
@@ -39,11 +39,6 @@ public class LauncherAboutSelctionAdapter implements SelectionListener {
 	/* event click */
 	@Override
 	public void widgetSelected(SelectionEvent evnt) {
-		launchSettingPHPito();
-	}
-
-	/* metodo per lanciare finestra che aggiunge il progetto */
-	public void launchSettingPHPito() {
 		ShellDialogAbout shellDialogAbout = new ShellDialogAbout(shellPHPito);
 		shellDialogAbout.open();
 	}
@@ -53,11 +48,11 @@ public class LauncherAboutSelctionAdapter implements SelectionListener {
 	/* ################################################################################# */
 
 	/**
-	 * Private inner class for create import export shell dialog
+	 * Private inner class for about shell dialog
 	 * @author Andrea Serra
 	 *
 	 */
-	private class ShellDialogAbout extends ShellDialogPHPito {
+	private class ShellDialogAbout extends ShellDialogPHPitoAbstract {
 
 		public ShellDialogAbout(ShellPHPito shellPHPito) {
 			super(shellPHPito);
@@ -81,11 +76,11 @@ public class LauncherAboutSelctionAdapter implements SelectionListener {
 				"Developed by: " + PHPitoManager.AUTHOR
 			};
 			
-			Jaswt.getInstance().printLabelVertical(txtLblList, 10, 190, 380, shellPHPito.getFontHeight(), 5, this, SWT.CENTER);
+			Jaswt.getInstance().printLabelVertical(txtLblList, 10, 190, 380, 20, 5, this, SWT.CENTER);
 			
 			Link link = new Link(this, SWT.CENTER);
-			link.getFont().getFontData()[0].setHeight(shellPHPito.getFontHeight());
-			link.setBounds(160, 290, 80, shellPHPito.getFontHeight() + 6);
+			link.getFont().getFontData()[0].setHeight(30);
+			link.setBounds(160, 290, 80, 30);
 			link.setText("<a href=\"" + PHPitoManager.LINK_GITHUB + "\">Link GitHub</a>");
 			link.addSelectionListener(new SelectionAdapter(){
 				@Override

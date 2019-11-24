@@ -11,22 +11,32 @@ import phpito.view.shell.ShellPHPito;
  * @author Andrea Serra
  *
  */
-public abstract class ShellDialogPHPito extends Shell {
+public abstract class ShellDialogPHPitoAbstract extends Shell {
+	protected ShellDialogPHPitoAbstract shellDialogPHPito;
 	protected ShellPHPito shellPHPito;
 	
 	/* ################################################################################# */
 	/* START CONSTRUCTORS */
 	/* ################################################################################# */
 
-	public ShellDialogPHPito(ShellPHPito shellPHPito, int style) {
+	public ShellDialogPHPitoAbstract(ShellPHPito shellPHPito, int style) {
 		super(shellPHPito, style | SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL);
 		this.shellPHPito = shellPHPito;
 	}
 
-	/* costruttore senza style */
-	public ShellDialogPHPito(ShellPHPito shellPHPito) {
+	public ShellDialogPHPitoAbstract(ShellPHPito shellPHPito) {
 		super(shellPHPito, SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL);
 		this.shellPHPito = shellPHPito;
+	}
+
+	public ShellDialogPHPitoAbstract(ShellDialogPHPitoAbstract shellDialogPHPito, int style) {
+		super(shellDialogPHPito, style | SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL);
+		this.shellDialogPHPito = shellDialogPHPito;
+	}
+
+	public ShellDialogPHPitoAbstract(ShellDialogPHPitoAbstract shellDialogPHPito) {
+		super(shellDialogPHPito, SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL);
+		this.shellDialogPHPito = shellDialogPHPito;
 	}
 
 	/* ################################################################################# */
