@@ -143,6 +143,7 @@ public class Project {
 			project.getServer().setAddress("127.0.0.1");
 			project.getServer().setPort(8080);
 			project.getServer().setPath(JutilasSys.getInstance().getPathUsrHome());
+			project.getServer().setEnvironmentVariables(new HashMap<String, String>());
 		} catch (ProjectException e) {
 			e.printStackTrace();
 		}

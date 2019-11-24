@@ -35,6 +35,9 @@ public class ReentrantLockProjectsXML extends JSX {
 	private final String XML_PID = "pid";
 	private final String XML_LOG = "log";
 	private final String XML_INI = "ini";
+	private final String XML_VAR = "env-var";
+	private final String XML_VAR_KEY = "key";
+	private final String XML_VAR_VAL = "val";
 
 	/* CONSTRUCT */
 	public ReentrantLockProjectsXML() {
@@ -108,19 +111,7 @@ public class ReentrantLockProjectsXML extends JSX {
 				PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Get Project - NULL");
 				return null;
 			}
-			project = new Project();
-			project.setIdString(id);
-			project.setName(getArrayChildNode(node, XML_NAME).get(0).getTextContent());
-			project.setLogActiveString(getArrayChildNode(node, XML_LOG).get(0).getTextContent());
-			project.setPhpiniString(getArrayChildNode(node, XML_INI).get(0).getTextContent());
-			project.setServer(new Server());
-			project.getServer().setAddress(getArrayChildNode(node, XML_ADDRESS).get(0).getTextContent());
-			project.getServer().setPortString(getArrayChildNode(node, XML_PORT).get(0).getTextContent());
-			project.getServer().setPath(getArrayChildNode(node, XML_PATH).get(0).getTextContent());
-			if (!getArrayChildNode(node, XML_PID).isEmpty()) {
-				String pid = getArrayChildNode(node, XML_PID).get(0).getTextContent();
-				project.getServer().setProcessIdString(pid);
-			}
+			project = getProjectByNode(node, id);
 			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Get Project - SUCCESFULLY");
 		} catch (JSXLockException e) {
 			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Get Project - LOCK ERROR");
@@ -134,7 +125,7 @@ public class ReentrantLockProjectsXML extends JSX {
 	}
 
 	/* meotodo che ritorna il prossimo id da utilizzare */
-	public String getNextProjectId() {
+	public String getNextIdProject() {
 		PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Next ID Project - START");
 		String id = null;
 		try {
@@ -157,17 +148,9 @@ public class ReentrantLockProjectsXML extends JSX {
 	public void addProject(Project project) throws ProjectException {
 		PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Add Project - START");
 		try {
-			String id = getNextProjectId();
-			HashMap<String, String> mapChild = new HashMap<String, String>();
-			mapChild.put(XML_NAME, project.getName());
-			mapChild.put(XML_PATH, project.getServer().getPath());
-			mapChild.put(XML_ADDRESS, project.getServer().getAddress());
-			mapChild.put(XML_PORT, project.getServer().getPortString());
-			mapChild.put(XML_LOG, project.isLogActiveString());
-			mapChild.put(XML_INI, project.getPhpiniString());
-			mapChild.put(XML_PID, "");
-			addElementWithChild(XML_SERVER, id, mapChild);
+			String id = getNextIdProject();
 			project.setIdString(id);
+			createProject(project);
 			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Add Project - SUCCESFULLY");
 		} catch (JSXLockException e) {
 			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Add Project - LOCK ERROR");
@@ -183,17 +166,20 @@ public class ReentrantLockProjectsXML extends JSX {
 	public void updateProject(Project project) {
 		PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Update Project - START");
 		try {
-			HashMap<String, Node> mapNode = getMapIdElement(XML_SERVER);
-			Node node = mapNode.get(project.getIdString());
-			getArrayChildNode(node, XML_NAME).get(0).setTextContent(project.getName());
-			getArrayChildNode(node, XML_PATH).get(0).setTextContent(project.getServer().getPath());
-			getArrayChildNode(node, XML_ADDRESS).get(0).setTextContent(project.getServer().getAddress());
-			getArrayChildNode(node, XML_PORT).get(0).setTextContent(project.getServer().getPortString());
-			getArrayChildNode(node, XML_LOG).get(0).setTextContent(project.isLogActiveString());
-			getArrayChildNode(node, XML_INI).get(0).setTextContent(project.getPhpiniString());
-			if (!getArrayChildNode(node, XML_PID).isEmpty()) getArrayChildNode(node, XML_PID).get(0).setTextContent(project.getServer().getPIDString());
-			else addChildElement(node, XML_PID, project.getServer().getPIDString());
-			flush(PATH_FILE_XML, true);
+			deleteProject(project.getIdString());
+			createProject(project);
+//			HashMap<String, Node> mapNode = getMapIdElement(XML_SERVER);
+//			Node node = mapNode.get(project.getIdString());
+//			getArrayChildNode(node, XML_NAME).get(0).setTextContent(project.getName());
+//			getArrayChildNode(node, XML_PATH).get(0).setTextContent(project.getServer().getPath());
+//			getArrayChildNode(node, XML_ADDRESS).get(0).setTextContent(project.getServer().getAddress());
+//			getArrayChildNode(node, XML_PORT).get(0).setTextContent(project.getServer().getPortString());
+//			getArrayChildNode(node, XML_LOG).get(0).setTextContent(project.isLogActiveString());
+//			getArrayChildNode(node, XML_INI).get(0).setTextContent(project.getPhpiniString());
+//			if (!getArrayChildNode(node, XML_PID).isEmpty()) getArrayChildNode(node, XML_PID).get(0).setTextContent(project.getServer().getPIDString());
+//			else addChildElement(node, XML_PID, project.getServer().getPIDString());
+//			update
+//			flush(PATH_FILE_XML, true);
 			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Update Project - SUCCESFULLY");
 		} catch (JSXLockException e) {
 			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Update Project - LOCK ERROR");
@@ -279,31 +265,63 @@ public class ReentrantLockProjectsXML extends JSX {
 	/* ################################################################################# */
 
 	/* method that get a Project by node */
-	private Project getProjectByNode(Node node, String id) throws ProjectException, DOMException {
-		Project project = null;
-		try {
-			project = new Project();
-			project.setIdString(id);
-			project.setName(getArrayChildNode(node, XML_NAME).get(0).getTextContent());
-			project.setLogActiveString(getArrayChildNode(node, XML_LOG).get(0).getTextContent());
-			project.setPhpiniString(getArrayChildNode(node, XML_INI).get(0).getTextContent());
-			project.setServer(new Server());
-			project.getServer().setAddress(getArrayChildNode(node, XML_ADDRESS).get(0).getTextContent());
-			project.getServer().setPortString(getArrayChildNode(node, XML_PORT).get(0).getTextContent());
-			project.getServer().setPath(getArrayChildNode(node, XML_PATH).get(0).getTextContent());
-			if (!getArrayChildNode(node, XML_PID).isEmpty()) {
-				String pid = getArrayChildNode(node, XML_PID).get(0).getTextContent();
-				project.getServer().setProcessIdString(pid);
-			}
-		} catch (JSXLockException e) {
-			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Get Project by Node - LOCK ERROR");
-			try {
-				PHPitoManager.getInstance().getJoggerError().writeLog(e);
-			} catch (LockLogException e1) {
-				e1.printStackTrace();
-			}
+	private Project getProjectByNode(Node node, String id) throws ProjectException, DOMException, JSXLockException {
+		Project project = new Project();
+		project.setIdString(id);
+		project.setName(getArrayChildNode(node, XML_NAME).get(0).getTextContent());
+		project.setLogActiveString(getArrayChildNode(node, XML_LOG).get(0).getTextContent());
+		project.setPhpiniString(getArrayChildNode(node, XML_INI).get(0).getTextContent());
+		project.setServer(new Server());
+		project.getServer().setAddress(getArrayChildNode(node, XML_ADDRESS).get(0).getTextContent());
+		project.getServer().setPortString(getArrayChildNode(node, XML_PORT).get(0).getTextContent());
+		project.getServer().setPath(getArrayChildNode(node, XML_PATH).get(0).getTextContent());
+		project.getServer().setEnvironmentVariables(getEnvironmentVariables(node));
+		if (!getArrayChildNode(node, XML_PID).isEmpty()) {
+			String pid = getArrayChildNode(node, XML_PID).get(0).getTextContent();
+			project.getServer().setProcessIdString(pid);
 		}
 		return project;
+	}
+
+	/* method that get a environment variables by project node */
+	private HashMap<String, String> getEnvironmentVariables(Node node) throws JSXLockException {
+		HashMap<String, String> variablesMap = new HashMap<String, String>();
+		ArrayList<Node> nodeList = getArrayChildNode(node, XML_VAR);
+		String key = "";
+		String val = "";
+		for (Node nodeVar : nodeList) {
+			key = getArrayChildNode(nodeVar, XML_VAR_KEY).get(0).getTextContent();
+			val = getArrayChildNode(nodeVar, XML_VAR_VAL).get(0).getTextContent();
+			variablesMap.put(key, val);
+		}
+		return variablesMap;
+	}
+
+	/* method that create a project on document */
+	private void createProject(Project project) throws JSXLockException {
+		HashMap<String, String> mapChild = new HashMap<String, String>();
+		mapChild.put(XML_NAME, project.getName());
+		mapChild.put(XML_PATH, project.getServer().getPath());
+		mapChild.put(XML_ADDRESS, project.getServer().getAddress());
+		mapChild.put(XML_PORT, project.getServer().getPortString());
+		mapChild.put(XML_LOG, project.isLogActiveString());
+		mapChild.put(XML_INI, project.getPhpiniString());
+		mapChild.put(XML_PID, "");
+		addElementWithChild(XML_SERVER, project.getIdString(), mapChild);
+		addEnvironmentVariables(project, getMapIdElement(XML_SERVER).get(project.getIdString()));
+	}
+
+	/* method that add the environment variables */
+	private void addEnvironmentVariables(Project project, Node node) throws JSXLockException {
+		HashMap<String, String> varsMap = project.getServer().getEnvironmentVariables();
+		Set<String> keys = varsMap.keySet();
+		HashMap<String, String> var;
+		for (String key : keys) {
+			var = new HashMap<String, String>();
+			var.put(XML_VAR_KEY, key);
+			var.put(XML_VAR_VAL, varsMap.get(key));
+			addElementWithChild(XML_VAR, new HashMap<String, String>(), var);
+		}
 	}
 
 	/* ################################################################################# */
