@@ -54,6 +54,7 @@ public class PHPitoManager {
 	private PHPitoManager() {
 		joggerDebug = new JoggerDebug(NAME);
 		joggerDebug.setDebug(false);
+		joggerDebug.setPrintStackTrace(true);
 		joggerDebug.setLock(true);
 		joggerError = new JoggerError(NAME);
 		joggerError.setLock(true);
