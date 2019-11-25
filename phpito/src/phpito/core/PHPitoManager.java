@@ -144,7 +144,7 @@ public class PHPitoManager {
 			joggerDebug.writeLog("PHPito Starting Server - SERVER ALREADY RUNNING");
 			throw new ServerException("Error!!! Server already running");
 		}
-		if (!JutilasNet.getInstance().isAvaiblePort(project.getServer().getPort())) {
+		if (!JutilasNet.getInstance().isAvailablePort(project.getServer().getPort())) {
 			joggerDebug.writeLog("PHPito Starting Server - Port already in use");
 			throw new ServerException("Error!!! Port already in use");
 		}

@@ -1,7 +1,6 @@
 package phpito.view.listener.selection;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 
 import org.eclipse.swt.SWT;
@@ -44,7 +43,7 @@ public class SaveConfSelectionAdapter extends SelectionAdapter {
 			String msg = "To view some changes and 'need to restart the application.\nRestart now??";
 			int res = Jaswt.getInstance().launchMB(shellPHPito, SWT.YES | SWT.NO, "RESTART???", msg);
 			if (res == SWT.YES) Jutilas.getInstance().restartApp();
-		} catch (FileException | URISyntaxException | IOException e) {
+		} catch (FileException | IOException e) {
 			Jaswt.getInstance().launchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
 		}
 	}
