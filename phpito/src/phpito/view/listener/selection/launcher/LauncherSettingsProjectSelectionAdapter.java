@@ -31,7 +31,7 @@ public class LauncherSettingsProjectSelectionAdapter implements SelectionListene
 	
 	/* metodo che apre la finestra per aggiunge il progetto */
 	public void launchUpdateProject() {
-		ShellDialogProject shellDialog = new ShellDialogProject(shellPHPito, ShellDialogProject.UPDATE);
-		shellDialog.open();
+		ShellDialogProject shellDialogProject = new ShellDialogProject(shellPHPito, ShellDialogProject.UPDATE);
+		shellDialogProject.open();
 	}
 }

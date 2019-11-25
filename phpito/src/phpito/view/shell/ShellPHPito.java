@@ -3,6 +3,7 @@ package phpito.view.shell;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import org.eclipse.jface.viewers.TableViewer;
@@ -61,10 +62,10 @@ import swing2swt.layout.BorderLayout;
 public class ShellPHPito extends Shell {
 	private ShellPHPito shellPHPito;
 	private Table table;
-	private final int fontHeight = 20;
 	private StyledText logOutText;
 	private CPUMonitorCanvas cpuMonitorCanvas;
 	private CLabel lblInfo;
+//	private final int fontHeight = 20;
 	private Long idProjectSelect;
 	private boolean actvtLogMon;
 	private boolean actvtSysInfo;
@@ -125,9 +126,9 @@ public class ShellPHPito extends Shell {
 	/* START GET AND SET */
 	/* ################################################################################# */
 
-	public int getFontHeight() {
-		return fontHeight;
-	}
+//	public int getFontHeight() {
+//		return fontHeight;
+//	}
 	public StyledText getLogOutText() {
 		return logOutText;
 	}
@@ -228,7 +229,8 @@ public class ShellPHPito extends Shell {
 		TableItem ti;
 		Project p;
 		table.removeAll();
-		for (String id : mapProjects.keySet()) {
+		Set<String> keySet = mapProjects.keySet();
+		for (String id : keySet) {
 			p = mapProjects.get(id);
 			ti = new TableItem(table, SWT.NONE);
 			ti.setText(0, id);
@@ -377,7 +379,6 @@ public class ShellPHPito extends Shell {
 			gd = new GridData(GridData.FILL_BOTH);
 			gd.heightHint = 150;
 			logOutText.setLayoutData(gd);
-			logOutText.getFont().getFontData()[0].setHeight(fontHeight);
 			logOutText.setForeground(PHPitoConf.getInstance().getColorForegrndLogMonConf());
 			logOutText.setBackground(PHPitoConf.getInstance().getColorBckgrndLogMonConf());
 			logOutText.setEditable(false);
@@ -478,15 +479,15 @@ public class ShellPHPito extends Shell {
 			}
 		}
 
-		/* nomi delle colonne per la tabella*/
+		/* nomi e stili delle colonne per la tabella*/
 		String[] titles = { "id", "Name", "Address", "Path", "Satus"};
 		int[] width = {40, 100, 130, 260, 100};
 		int[] style = {SWT.CENTER, SWT.LEFT, SWT.LEFT, SWT.LEFT, SWT.CENTER};
 
 		/* loop for headers table */
-		table.setHeaderVisible(true);
+		TableViewerColumn tblclmn;
 		for (int i = 0, length = titles.length; i < length; i++) {
-			TableViewerColumn tblclmn = new TableViewerColumn(tableViewer, style[i]);
+			tblclmn = new TableViewerColumn(tableViewer, style[i]);
 			tblclmn.getColumn().setText(titles[i]);
 			tblclmn.getColumn().setWidth(width[i]);
 			tblclmn.getColumn().setResizable(true);

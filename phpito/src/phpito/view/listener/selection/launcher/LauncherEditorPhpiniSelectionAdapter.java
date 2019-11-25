@@ -7,7 +7,7 @@ import jaswt.listener.selection.OpenFileFromOSSelectionAdapter;
 import phpito.core.PHPitoManager;
 import phpito.data.Project;
 import phpito.exception.ProjectException;
-import phpito.view.shell.dialog.ShellDialogPHPito;
+import phpito.view.shell.dialog.ShellDialogPHPitoAbstract;
 
 /**
  * Class SelectionAdapter to launch the window for edit the phpini file
@@ -15,11 +15,11 @@ import phpito.view.shell.dialog.ShellDialogPHPito;
  *
  */
 public class LauncherEditorPhpiniSelectionAdapter extends OpenFileFromOSSelectionAdapter {
-	private ShellDialogPHPito shellDialogPHPito;
+	private ShellDialogPHPitoAbstract shellDialogPHPito;
 	private Project project;
 
 	/* CONSTRUCT */
-	public LauncherEditorPhpiniSelectionAdapter(ShellDialogPHPito shellDialogPHPito, Project project) {
+	public LauncherEditorPhpiniSelectionAdapter(ShellDialogPHPitoAbstract shellDialogPHPito, Project project) {
 		super(shellDialogPHPito);
 		this.shellDialogPHPito = shellDialogPHPito;
 		this.project = project;

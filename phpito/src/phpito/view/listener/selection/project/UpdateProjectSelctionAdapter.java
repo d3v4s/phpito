@@ -45,12 +45,10 @@ public class UpdateProjectSelctionAdapter extends SelectionAdapter {
 
 	/* method that update a project */
 	private void updateProject() {
-		Project project = shellDialogProject.getShellPHPito().getProjectSelect();
-		Project oldProject = project.clone();
+		Project oldProject = shellDialogProject.getShellPHPito().getProjectSelect();
+		Project project  = shellDialogProject.getProject();
 		
 		try {
-			setUpdate(project);
-			
 			/* compare the projects */
 			if (project.equals(oldProject)) {
 				Jaswt.getInstance().launchMB(shellDialogProject, SWT.OK, "FAIL!!!", "There are no changes.");
@@ -85,13 +83,13 @@ public class UpdateProjectSelctionAdapter extends SelectionAdapter {
 		}
 	}
 
-	/* method that set the update on project */
-	private void setUpdate(Project project) throws ProjectException {
-		project.setName(shellDialogProject.getTextMap().get(Project.K_NAME).getText());
-		project.setLogActive(shellDialogProject.getLogActvChckBttn().getSelection());
-		project.setPhpini(shellDialogProject.getPhpiniCombo().getSelectionIndex());
-		project.getServer().setPath(shellDialogProject.getTextMap().get(Project.K_PATH).getText());
-		project.getServer().setAddress(shellDialogProject.getTextMap().get(Project.K_ADDRESS).getText());
-		project.getServer().setPortString(shellDialogProject.getTextMap().get(Project.K_PORT).getText());
-	}
+//	/* method that set the update on project */
+//	private void setUpdate(Project project) throws ProjectException {
+//		project.setName(shellDialogProject.getTextMap().get(Project.K_NAME).getText());
+//		project.setLogActive(shellDialogProject.getLogActvChckBttn().getSelection());
+//		project.setPhpini(shellDialogProject.getPhpiniCombo().getSelectionIndex());
+//		project.getServer().setPath(shellDialogProject.getTextMap().get(Project.K_PATH).getText());
+//		project.getServer().setAddress(shellDialogProject.getTextMap().get(Project.K_ADDRESS).getText());
+//		project.getServer().setPortString(shellDialogProject.getTextMap().get(Project.K_PORT).getText());
+//	}
 }

@@ -143,6 +143,7 @@ public class Project {
 			project.getServer().setAddress("127.0.0.1");
 			project.getServer().setPort(8080);
 			project.getServer().setPath(JutilasSys.getInstance().getPathUsrHome());
+			project.getServer().setEnvironmentVariables(new HashMap<String, String>());
 		} catch (ProjectException e) {
 			e.printStackTrace();
 		}
@@ -234,13 +235,19 @@ public class Project {
 	public boolean equals(Object obj) {
 		if (!obj.getClass().equals(this.getClass())) return false;
 		Project p = (Project) obj;
-		return this.toString().equals(p.toString());
+		return this.toString().equals(p.toString()) && equalsEnvVars(p);
 	}
 
 	/* ############################################################################# */
 	/* END OVERRIDE */
 	/* ############################################################################# */
 
+	
+	private boolean equalsEnvVars(Project project) {
+		return server.getEnvironmentVariables().equals(project.server.getEnvironmentVariables());
+	}
+
+	/* method that get a name of phpini selected */
 	private String getPhpiniType() {
 		String type = "";
 		switch (phpini) {

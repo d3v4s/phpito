@@ -1,4 +1,63 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <projects>
-    
+    <server id="2">
+        <path>/home/hxs</path>
+        <address>127.0.0.1</address>
+        <port>8080</port>
+        <log>true</log>
+        <ini>0</ini>
+        <name>dio</name>
+        <pid/>
+    </server>
+    <server id="4">
+        <path>/home/hxs</path>
+        <address>127.0.0.1</address>
+        <port>8080</port>
+        <log>true</log>
+        <ini>0</ini>
+        <name>prova</name>
+        <pid/>
+        <env-var>
+            <val>cane</val>
+            <key>dio</key>
+        </env-var>
+    </server>
+    <server id="5">
+        <path>/home/hxs</path>
+        <address>127.0.0.1</address>
+        <port>8080</port>
+        <log>true</log>
+        <ini>0</ini>
+        <name>madtreryduy</name>
+        <pid/>
+        <env-var>
+            <val>merda</val>
+            <key>dio</key>
+        </env-var>
+    </server>
+    <server id="6">
+        <path>/home/hxs/git-php/wabot/wabot/public</path>
+        <address>127.0.0.1</address>
+        <port>8080</port>
+        <log>true</log>
+        <ini>0</ini>
+        <name>wabot</name>
+        <pid>2215</pid>
+        <env-var>
+            <val>+393494526690</val>
+            <key>MY_NUM</key>
+        </env-var>
+        <env-var>
+            <val>+14155238886</val>
+            <key>FROM</key>
+        </env-var>
+        <env-var>
+            <val>bdfd70171e6c27b4a95912332fa0ac16</val>
+            <key>TOKEN</key>
+        </env-var>
+        <env-var>
+            <val>AC9d9c001fd351cbc48fb0cc4a5092ac36</val>
+            <key>SID</key>
+        </env-var>
+    </server>
 </projects>

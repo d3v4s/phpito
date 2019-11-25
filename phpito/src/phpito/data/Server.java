@@ -1,5 +1,6 @@
 package phpito.data;
 
+import java.util.HashMap;
 import java.util.regex.Pattern;
 
 import phpito.exception.ProjectException;
@@ -14,6 +15,7 @@ public class Server {
 	private String address;
 	private Integer port;
 	private Long processID;
+	private HashMap<String, String> environmentVariables;
 
 	/* ############################################################################# */
 	/* START GET SET */
@@ -46,6 +48,12 @@ public class Server {
 	public void setProcessId(Long processID) {
 		this.processID = processID;
 	}
+	public HashMap<String, String> getEnvironmentVariables() {
+		return environmentVariables;
+	}
+	public void setEnvironmentVariables(HashMap<String, String> environmentVariables) {
+		this.environmentVariables = environmentVariables;
+	}
 
 	/* ############################################################################# */
 	/* END GET SET */
@@ -54,7 +62,7 @@ public class Server {
 	/* ############################################################################# */
 	/* START GET SET STRING */
 	/* ############################################################################# */
-
+	
 	/* metodo che setta porta da String */
 	public void setPortString(String port) throws ProjectException {
 		if (port == null || port.isEmpty() || !Pattern.matches("[\\d]{1,}", port)) throw new ProjectException("Invalid port");
@@ -112,6 +120,7 @@ public class Server {
 			clone.setAddress(new String(address));
 			clone.setPath(new String(path));
 			clone.setPort(Integer.valueOf(port));
+			clone.setEnvironmentVariables(new HashMap<String, String>(environmentVariables));
 			if (processID != null) clone.setProcessId(Long.valueOf(processID));
 		} catch (ProjectException e) {
 		}

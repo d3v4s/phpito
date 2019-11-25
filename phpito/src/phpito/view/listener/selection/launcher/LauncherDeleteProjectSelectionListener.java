@@ -17,7 +17,7 @@ import phpito.exception.ProjectException;
 import phpito.exception.ServerException;
 import phpito.view.listener.selection.project.DeleteProjectSelectionAdapter;
 import phpito.view.shell.ShellPHPito;
-import phpito.view.shell.dialog.ShellDialogPHPito;
+import phpito.view.shell.dialog.ShellDialogPHPitoAbstract;
 
 /**
  * Class SelectionListener to launch window for delete a project
@@ -89,7 +89,7 @@ public class LauncherDeleteProjectSelectionListener implements SelectionListener
 	 * @author Andrea Serra
 	 *
 	 */
-	public class ShellDialogDeleteProject extends ShellDialogPHPito {
+	public class ShellDialogDeleteProject extends ShellDialogPHPitoAbstract {
 		private Button deletePhpiniCheckBtn;
 		private Button deleteLogCheckBtn;
 

@@ -37,7 +37,7 @@ import swing2swt.layout.BorderLayout;
  * @author Andrea Serra
  *
  */
-public class ShellDialogSettings extends ShellDialogPHPito {
+public class ShellDialogSettings extends ShellDialogPHPitoAbstract {
 	private HashMap<String, Button> confChckBttnMap;
 	private HashMap<String, Spinner> confSpinnerMap;
 	private HashMap<String, Integer> colorBackgrndLogMonMap;
@@ -297,7 +297,7 @@ public class ShellDialogSettings extends ShellDialogPHPito {
 		/* check button to enable log monitor */
 		ArrayList<Control> logMonControlList = new ArrayList<Control>();
 		Button chckBttnActiveLogMonitor = new Button(compositeLog, SWT.CHECK);
-		chckBttnActiveLogMonitor.setBounds(20, 15, 170, shellPHPito.getFontHeight());
+		chckBttnActiveLogMonitor.setBounds(20, 15, 170, 30);
 		chckBttnActiveLogMonitor.setText("Enable log monitor");
 		chckBttnActiveLogMonitor.setSelection(PHPitoConf.getInstance().getActvtLogMonConf());
 		confChckBttnMap.put(PHPitoConf.K_CONF_ACTVT_LOG_MON, chckBttnActiveLogMonitor);
@@ -306,7 +306,7 @@ public class ShellDialogSettings extends ShellDialogPHPito {
 
 		/* spinner to select n. rows */
 		lbl = new CLabel(compositeLog, SWT.NONE);
-		lbl.setBounds(20, 60, 100, shellPHPito.getFontHeight());
+		lbl.setBounds(20, 60, 100, 20);
 		lbl.setText("N. rows of log");
 		Spinner spinner = new Spinner(compositeLog, SWT.NONE);
 		spinner.setMinimum(1);
@@ -392,7 +392,7 @@ public class ShellDialogSettings extends ShellDialogPHPito {
 		/* check button to enable system info */
 		ArrayList<Control> sysInfoControlList = new ArrayList<Control>();
 		Button chckBttnActiveSystemInfo = new Button(compositeSys, SWT.CHECK);
-		chckBttnActiveSystemInfo.setBounds(20, 15, 170, shellPHPito.getFontHeight());
+		chckBttnActiveSystemInfo.setBounds(20, 15, 170, 30);
 		chckBttnActiveSystemInfo.setText("Enable System Info");
 		chckBttnActiveSystemInfo.setSelection(PHPitoConf.getInstance().getActvtSysInfoConf());
 		chckBttnActiveSystemInfo.addSelectionListener(new DisablerControlSelctionAdapter(sysInfoControlList));
@@ -401,7 +401,7 @@ public class ShellDialogSettings extends ShellDialogPHPito {
 
 		/* check button to enable cpu load average monitor */
 		Button chckBttnActiveCPUMon = new Button(compositeSys, SWT.CHECK);
-		chckBttnActiveCPUMon.setBounds(20, 55, 170, shellPHPito.getFontHeight());
+		chckBttnActiveCPUMon.setBounds(20, 55, 180, 30);
 		chckBttnActiveCPUMon.setText("View CPU load average");
 		chckBttnActiveCPUMon.setEnabled(enable);
 		chckBttnActiveCPUMon.setSelection(PHPitoConf.getInstance().getActvtCPUMon());
@@ -410,7 +410,7 @@ public class ShellDialogSettings extends ShellDialogPHPito {
 
 		/* check button to enable other system info */
 		Button chckBttnViewOtherInfo = new Button(compositeSys, SWT.CHECK);
-		chckBttnViewOtherInfo.setBounds(20, 80, 170, shellPHPito.getFontHeight());
+		chckBttnViewOtherInfo.setBounds(20, 80, 170, 30);
 		chckBttnViewOtherInfo.setText("View other sys info");
 		chckBttnViewOtherInfo.setSelection(PHPitoConf.getInstance().getOthInfo());
 		chckBttnViewOtherInfo.setEnabled(enable);
@@ -420,10 +420,10 @@ public class ShellDialogSettings extends ShellDialogPHPito {
 		/* combo to select cpu monitor style */
 		lbl = new CLabel(compositeSys, SWT.NONE);
 		lbl.setText("Style CPU monitor");
-		lbl.setBounds(20, 120, 130, 25);
+		lbl.setBounds(20, 120, 130, 30);
 		String[] styleList = {"1", "2", "3"};
 		styleLogMonCombo = new Combo(compositeSys, SWT.DROP_DOWN | SWT.READ_ONLY);
-		styleLogMonCombo.setBounds(160, 120, 60, 25);
+		styleLogMonCombo.setBounds(160, 120, 60, 30);
 		for (String st : styleList) styleLogMonCombo.add(st);
 		styleLogMonCombo.select(PHPitoConf.getInstance().getStyleLogMonConf());
 		styleLogMonCombo.setEnabled(enable);
