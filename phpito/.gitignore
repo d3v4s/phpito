@@ -1,6 +1,7 @@
 /bin/
 /.settings/
-/conf/
+/conf/*
+/conf/projects.xml
 /single.instance.app
 *.log
 LICENSE
