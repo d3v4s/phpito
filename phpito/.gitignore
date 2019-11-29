@@ -1,8 +1,6 @@
-/bin/
-/.settings/
-/conf/*
-/conf/projects.xml
-/single.instance.app
+bin/
+.settings/
+conf/*
+conf/projects.xml
+single.instance.app
 *.log
-LICENSE
-README.md
