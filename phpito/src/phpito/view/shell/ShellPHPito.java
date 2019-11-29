@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ArrayBlockingQueue;
 
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
@@ -32,6 +31,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 import jaswt.canvas.CPUMonitorCanvas;
 import jaswt.core.Jaswt;
+import jaswt.exception.JaswtException;
 import jaswt.listener.selection.OpenFileFromOSSelectionAdapter;
 import jogger.Jogger;
 import phpito.core.PHPitoConf;
@@ -50,7 +50,6 @@ import phpito.view.listener.selection.launcher.LauncherSettingsProjectSelectionA
 import phpito.view.listener.selection.launcher.LauncherSettingsSelctionAdapter;
 import phpito.view.listener.selection.server.StartServerSelectionAdapter;
 import phpito.view.listener.selection.server.StopServerSelectionAdapter;
-import phpito.view.thread.CpuMonitorThread;
 import phpito.view.thread.WriterLogMonitorThread;
 import swing2swt.layout.BorderLayout;
 
@@ -64,7 +63,7 @@ public class ShellPHPito extends Shell {
 	private Table table;
 	private StyledText logOutText;
 	private CPUMonitorCanvas cpuMonitorCanvas;
-	private CLabel lblInfo;
+	private CLabel infoLabel;
 //	private final int fontHeight = 20;
 	private Long idProjectSelect;
 	private boolean actvtLogMon;
@@ -101,7 +100,7 @@ public class ShellPHPito extends Shell {
 		});
 	}
 
-	/* override to bypass error */
+	/* override to bypass check subclass error */
 	@Override
 	protected void checkSubclass() {
 	}
@@ -116,8 +115,12 @@ public class ShellPHPito extends Shell {
 			PHPitoManager.getInstance().flushRunningServers();
 			flushTable();
 			if (actvtLogMon) (writerLogMonitorThread = new WriterLogMonitorThread(this, PHPitoManager.getInstance().getReentrantLockLogServer())).start();
-			if (actvtSysInfo) new CpuMonitorThread(this).start();
-		} catch (NumberFormatException | IOException | ProjectException e) {
+			if (actvtSysInfo) {
+				cpuMonitorCanvas.setAutomatic(true);
+				cpuMonitorCanvas.setInfoLabel(infoLabel);
+				cpuMonitorCanvas.start();
+			}
+		} catch (NumberFormatException | IOException | ProjectException | JaswtException e) {
 			Jaswt.getInstance().launchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
 		}
 	}
@@ -163,7 +166,7 @@ public class ShellPHPito extends Shell {
 		return cpuMonitorCanvas;
 	}
 	public CLabel getLblCPU() {
-		return lblInfo;
+		return infoLabel;
 	}
 	public WriterLogMonitorThread getWriterLogMonitorThread() {
 		return writerLogMonitorThread;
@@ -505,7 +508,7 @@ public class ShellPHPito extends Shell {
 			int xInfoLabel = 25;
 			if (PHPitoConf.getInstance().getActvtCPUMon()) {
 				PHPitoManager.getInstance().getJoggerDebug().writeLog("Create Content ShellPHPito - CPU Monitor ON");
-				cpuMonitorCanvas = new CPUMonitorCanvas(compositeBottom, SWT.NONE, new ArrayBlockingQueue<Double>(80));
+				cpuMonitorCanvas = new CPUMonitorCanvas(compositeBottom);
 				cpuMonitorCanvas.setBounds(20, 20, 80, 60);
 				cpuMonitorCanvas.setStyleCPUMon(PHPitoConf.getInstance().getStyleLogMonConf());
 				xInfoLabel = 110;
@@ -514,11 +517,11 @@ public class ShellPHPito extends Shell {
 			/* draw other info */
 			if (PHPitoConf.getInstance().getOthInfo()) {
 				PHPitoManager.getInstance().getJoggerDebug().writeLog("Create Content ShellPHPito - Other Info ON");
-				lblInfo = new CLabel(compositeBottom, SWT.NONE);
-				lblInfo.setBounds(xInfoLabel, 15, 200, 70);
+				infoLabel = new CLabel(compositeBottom, SWT.NONE);
+				infoLabel.setBounds(xInfoLabel, 15, 200, 70);
 				
 				try {
-					lblInfo.setText(PHPitoManager.getInstance().getSystemInfo(null));
+					infoLabel.setText(PHPitoManager.getInstance().getSystemInfo(null));
 				} catch (IOException e) {
 					Jaswt.getInstance().launchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
 				}

@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
 import jaswt.core.Jaswt;
-import jaswt.exception.ParameterException;
+import jaswt.exception.ArgumentException;
 import jaswt.label.ViewColorLabel;
 import jaswt.listener.selection.CloserShellSelectionAdpter;
 import jaswt.listener.selection.DisablerControlSelctionAdapter;
@@ -198,7 +198,7 @@ public class ShellDialogSettings extends ShellDialogPHPitoAbstract {
 	}
 
 	/* method that set RGB color on label by layer and redraw it */
-	public void setColorByLayerAndRedraw() throws ParameterException {
+	public void setColorByLayerAndRedraw() throws ArgumentException {
 		HashMap<String, Integer> colorsMap = null;
 
 		/* select layer to be select color */
@@ -229,7 +229,7 @@ public class ShellDialogSettings extends ShellDialogPHPitoAbstract {
 	}
 
 	/* method that set RGB color on label by scale and redraw it */
-	public void setColorByScaleAndRedraw() throws ParameterException {
+	public void setColorByScaleAndRedraw() throws ArgumentException {
 		HashMap<String, Integer> colorsMap = getColorsRGBMap();
 
 		/* select layer to be set color */
@@ -278,7 +278,7 @@ public class ShellDialogSettings extends ShellDialogPHPitoAbstract {
 	/* ################################################################################# */
 
 	/* method that set RGB colors on label */
-	private void setColorLabaelAndRedraw(HashMap<String, Integer> colorsMap) throws ParameterException {
+	private void setColorLabaelAndRedraw(HashMap<String, Integer> colorsMap) throws ArgumentException {
 		viewColorLabel.setRed(colorsMap.get(PHPitoConf.K_COLOR_RED));
 		viewColorLabel.setGreen(colorsMap.get(PHPitoConf.K_COLOR_GREEN));
 		viewColorLabel.setBlue(colorsMap.get(PHPitoConf.K_COLOR_BLUE));
@@ -352,7 +352,7 @@ public class ShellDialogSettings extends ShellDialogPHPitoAbstract {
 					colorBackgrndLogMonMap.get(PHPitoConf.K_COLOR_GREEN),
 					colorBackgrndLogMonMap.get(PHPitoConf.K_COLOR_BLUE)
 			);
-		} catch (ParameterException e) {
+		} catch (ArgumentException e) {
 			Jaswt.getInstance().launchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
 		}
 		viewColorLabel.setBounds(240, 25, 50, 50);
