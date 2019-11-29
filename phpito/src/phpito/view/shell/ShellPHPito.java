@@ -116,7 +116,7 @@ public class ShellPHPito extends Shell {
 			flushTable();
 			if (actvtLogMon) (writerLogMonitorThread = new WriterLogMonitorThread(this, PHPitoManager.getInstance().getReentrantLockLogServer())).start();
 			if (actvtSysInfo) {
-				cpuMonitorCanvas.setAutomatic(true);
+//				cpuMonitorCanvas.setAutomatic(true);
 				cpuMonitorCanvas.setInfoLabel(infoLabel);
 				cpuMonitorCanvas.start();
 			}
