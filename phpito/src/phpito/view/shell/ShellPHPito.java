@@ -30,10 +30,10 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 import jaswt.canvas.CPUMonitorCanvas;
-import jaswt.core.Jaswt;
-import jaswt.exception.JaswtException;
 import jaswt.listener.selection.OpenFileFromOSSelectionAdapter;
+import jaswt.utils.Jaswt;
 import jogger.Jogger;
+import jutilas.utils.JutilasSys;
 import phpito.core.PHPitoConf;
 import phpito.core.PHPitoManager;
 import phpito.data.Project;
@@ -116,11 +116,10 @@ public class ShellPHPito extends Shell {
 			flushTable();
 			if (actvtLogMon) (writerLogMonitorThread = new WriterLogMonitorThread(this, PHPitoManager.getInstance().getReentrantLockLogServer())).start();
 			if (actvtSysInfo) {
-//				cpuMonitorCanvas.setAutomatic(true);
 				cpuMonitorCanvas.setInfoLabel(infoLabel);
 				cpuMonitorCanvas.start();
 			}
-		} catch (NumberFormatException | IOException | ProjectException | JaswtException e) {
+		} catch (NumberFormatException | IOException | ProjectException e) {
 			Jaswt.getInstance().launchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
 		}
 	}
@@ -309,7 +308,7 @@ public class ShellPHPito extends Shell {
 		mntm.setMenu(mn);
 
 		/* list of project menu */
-		String[] menuProjectList = {"Add", "Settings", "Delete", "Start", "Stop", "Update Table", "Import", "Export"};
+		String[] menuProjectList = {"Add", "Settings", "Delete", "Start", "Stop", "Refresh Table", "Import", "Export"};
 		SelectionListener[] menuProjectSelAdptList = {
 				new LauncherAddProjectSelectionAdapter(this),
 				new LauncherSettingsProjectSelectionAdapter(this),
@@ -510,7 +509,7 @@ public class ShellPHPito extends Shell {
 				PHPitoManager.getInstance().getJoggerDebug().writeLog("Create Content ShellPHPito - CPU Monitor ON");
 				cpuMonitorCanvas = new CPUMonitorCanvas(compositeBottom);
 				cpuMonitorCanvas.setBounds(20, 20, 80, 60);
-				cpuMonitorCanvas.setStyleCPUMon(PHPitoConf.getInstance().getStyleLogMonConf());
+				cpuMonitorCanvas.setCPUMonStyle(PHPitoConf.getInstance().getStyleLogMonConf());
 				xInfoLabel = 110;
 			}
 
@@ -519,12 +518,7 @@ public class ShellPHPito extends Shell {
 				PHPitoManager.getInstance().getJoggerDebug().writeLog("Create Content ShellPHPito - Other Info ON");
 				infoLabel = new CLabel(compositeBottom, SWT.NONE);
 				infoLabel.setBounds(xInfoLabel, 15, 200, 70);
-				
-				try {
-					infoLabel.setText(PHPitoManager.getInstance().getSystemInfo(null));
-				} catch (IOException e) {
-					Jaswt.getInstance().launchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
-				}
+				infoLabel.setText(JutilasSys.getInstance().getSystemInfo(null));
 			}
 			new Label(compositeBottom, SWT.NONE).setBounds(0, 100, 300, 0);
 		}

@@ -20,11 +20,12 @@ import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
-import jaswt.core.Jaswt;
 import jaswt.exception.ArgumentException;
 import jaswt.label.ViewColorLabel;
 import jaswt.listener.selection.CloserShellSelectionAdpter;
 import jaswt.listener.selection.DisablerControlSelctionAdapter;
+import jaswt.utils.CreateContentsStyle;
+import jaswt.utils.Jaswt;
 import phpito.core.PHPitoConf;
 import phpito.core.PHPitoManager;
 import phpito.view.listener.selection.SaveConfSelectionAdapter;
@@ -96,7 +97,7 @@ public class ShellDialogSettings extends ShellDialogPHPitoAbstract {
     		new CloserShellSelectionAdpter(this),
     		new SaveConfSelectionAdapter(this)
         };
-        Jaswt.getInstance().printButtonHorizontal(namesBttnList, 130, 20, 100, 30, 20, compositeBottom, selAdptrBttnList);
+        Jaswt.getInstance().createButtons(namesBttnList, 130, 20, 100, 30, 20, compositeBottom, selAdptrBttnList, CreateContentsStyle.HORIZONTAL);
 		new Label(compositeBottom, SWT.NONE).setBounds(270, 20, 0, 50);
 	}
 	
@@ -341,7 +342,7 @@ public class ShellDialogSettings extends ShellDialogPHPitoAbstract {
 
 		/* labels R G B */
 		String[] namesLabel = {"R", "G", "B"};
-		Jaswt.getInstance().printLabelVertical(namesLabel, 10, 20, 15, 20, 0, compositeRGB, SWT.NONE);
+		Jaswt.getInstance().createLabels(namesLabel, 10, 20, 15, 20, 0, compositeRGB, SWT.NONE, CreateContentsStyle.VERTICAL);
 
 		/* set label view color */
 		try {
@@ -421,9 +422,9 @@ public class ShellDialogSettings extends ShellDialogPHPitoAbstract {
 		lbl = new CLabel(compositeSys, SWT.NONE);
 		lbl.setText("Style CPU monitor");
 		lbl.setBounds(20, 120, 130, 30);
-		String[] styleList = {"1", "2", "3"};
+		String[] styleList = {"Classic", "Reverse", "Line"};
 		styleLogMonCombo = new Combo(compositeSys, SWT.DROP_DOWN | SWT.READ_ONLY);
-		styleLogMonCombo.setBounds(160, 120, 60, 30);
+		styleLogMonCombo.setBounds(160, 120, 110, 30);
 		for (String st : styleList) styleLogMonCombo.add(st);
 		styleLogMonCombo.select(PHPitoConf.getInstance().getStyleLogMonConf());
 		styleLogMonCombo.setEnabled(enable);

@@ -9,8 +9,9 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Label;
 
-import jaswt.core.Jaswt;
 import jaswt.listener.selection.CloserShellSelectionAdpter;
+import jaswt.utils.CreateContentsStyle;
+import jaswt.utils.Jaswt;
 import phpito.core.PHPitoManager;
 import phpito.data.Project;
 import phpito.exception.ProjectException;
@@ -140,7 +141,10 @@ public class LauncherDeleteProjectSelectionListener implements SelectionListener
 					new CloserShellSelectionAdpter(this),
 					new DeleteProjectSelectionAdapter(this)
 			};
-			Jaswt.getInstance().printButtonHorizontal(namesList, 15, 250, 130, 30, 10, this, selAdptList);
+			Button bttnYes = Jaswt.getInstance().createButtons(namesList, 15, 250, 130, 30, 10, this, selAdptList, CreateContentsStyle.HORIZONTAL).get("Yes");
+			System.out.println(bttnYes.toString());
+			this.setDefaultButton(bttnYes);
+//			bttnYes.forceFocus();
 		}
 	}
 

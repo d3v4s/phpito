@@ -2,8 +2,8 @@ package phpito.view.listener.selection.launcher;
 
 import org.eclipse.swt.events.SelectionEvent;
 
-import jaswt.core.Jaswt;
 import jaswt.listener.selection.OpenFileFromOSSelectionAdapter;
+import jaswt.utils.Jaswt;
 import phpito.core.PHPitoManager;
 import phpito.data.Project;
 import phpito.exception.ProjectException;

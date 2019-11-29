@@ -18,7 +18,8 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
-import jaswt.core.Jaswt;
+import jaswt.utils.CreateContentsStyle;
+import jaswt.utils.Jaswt;
 import phpito.view.listener.selection.text.TextFocusSelectionAdapter;
 
 /**
@@ -29,6 +30,7 @@ import phpito.view.listener.selection.text.TextFocusSelectionAdapter;
 public class ShellDialogEnvironmentVars extends ShellDialogPHPitoAbstract {
 	private ShellDialogProject shellDialogProject;
 	private ShellDialogEnvironmentVars shellDialogEnvironmentVars;
+	private HashMap<String, Text> textsMap;
 	private ArrayList<Button> envVarsBtns;
 	private Table table;
 
@@ -148,7 +150,7 @@ public class ShellDialogEnvironmentVars extends ShellDialogPHPitoAbstract {
 				}
 			}
 		};
-		Jaswt.getInstance().printButtonHorizontal(namesBtn, 160, 430, 80, 30, 10, this, slectLstnrList);
+		Jaswt.getInstance().createButtons(namesBtn, 160, 430, 80, 30, 10, this, slectLstnrList, CreateContentsStyle.HORIZONTAL);
 
 		flushTable();
 	}
@@ -247,13 +249,14 @@ public class ShellDialogEnvironmentVars extends ShellDialogPHPitoAbstract {
 
 			/* print label */
 			String[] namesLabel = {"Key:", "Val:"};
-			Jaswt.getInstance().printLabelVertical(namesLabel, 20, 25, 50, 30, 10, this, SWT.NONE);
+			Jaswt.getInstance().createLabels(namesLabel, 20, 25, 50, 30, 10, this, SWT.NONE, CreateContentsStyle.VERTICAL);
 
 			/* print text */
 			int[] widthList = {250, 250};
 			String[] keysMap = {K_KEY, K_VAL};
-			HashMap<String, Text> textsMap = new HashMap<String, Text>();
-			Jaswt.getInstance().printTextVertical(80, 25, widthList, 30, 10, this, keysMap, textsMap, new int[] {});
+			// = new HashMap<String, Text>();
+//			Jaswt.getInstance().createTexts(80, 25, widthList, 30, 10, this, keysMap, textsMap, CreateContentsStyle.HORIZONTAL);
+			textsMap = new HashMap<String, Text>(Jaswt.getInstance().createTexts(80, 25, widthList, 30, 10, this, keysMap, SWT.NONE, CreateContentsStyle.VERTICAL));
 			textsMap.get(K_KEY).setText(key);
 			textsMap.get(K_VAL).setText(val);
 
@@ -294,7 +297,7 @@ public class ShellDialogEnvironmentVars extends ShellDialogPHPitoAbstract {
 				},
 				saveSelctn
 			};
-			Jaswt.getInstance().printButtonHorizontal(namesBtn, 200, 130, 80, 30, 10, this, listnrList);
+			Jaswt.getInstance().createButtons(namesBtn, 200, 130, 80, 30, 10, this, listnrList, CreateContentsStyle.HORIZONTAL);
 		}
 	}
 

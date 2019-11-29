@@ -10,8 +10,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Text;
 
-import jaswt.core.Jaswt;
 import jaswt.listener.selection.LauncherSelectPathSelectionAdapter;
+import jaswt.utils.CreateContentsStyle;
+import jaswt.utils.Jaswt;
 import phpito.core.PHPitoManager;
 import phpito.data.Project;
 import phpito.data.Server;
@@ -88,16 +89,18 @@ public class ShellDialogProject extends ShellDialogPHPitoAbstract {
 		this.setSize(370, 470);
 		this.setText(title);
 		Jaswt.getInstance().centerWindow(this);
-		textMap = new HashMap<String, Text>();
 		
 		/* ciclo per label */
 		String[] txtLbl = {"Id:", "Name:", "Path:", "Address:", "Port:", "php.ini"};
-		Jaswt.getInstance().printLabelVertical(txtLbl, 20, 30, 70, 30, 20, this, SWT.NONE);
+		Jaswt.getInstance().createLabels(txtLbl, 20, 30, 70, 30, 20, this, SWT.NONE, CreateContentsStyle.VERTICAL);
 		
 		/* ciclo per text */
 		String[] keyList = Project.getArrayKeyProject();
 		int[] width = {70, 160, 160, 160, 160};
-		Jaswt.getInstance().printTextVertical(100, 30, width, 30, 20, this, keyList, textMap, new int[] {0});
+//		HashMap<String, Text> textMap = Jaswt.getInstance().createTextVertical(100, 30, width, 30, 20, this, keyList, new int[] {0});
+		textMap = new HashMap<String, Text>(Jaswt.getInstance().createTexts(100, 30, width, 30, 20, this, keyList, SWT.NONE, CreateContentsStyle.VERTICAL));
+		textMap.get(Project.K_ID).setEnabled(false);
+		textMap.get(Project.K_NAME).forceFocus();
 
 		/* set aree di testo e aggiunta listener */
 		SelectionAdapter[] selAdptList = new SelectionAdapter[] {
@@ -155,7 +158,8 @@ public class ShellDialogProject extends ShellDialogPHPitoAbstract {
 			actionSlctnAdptr
 		};
 		String[] namesButton = new String[] {"Cancel", "Save"};
-		Jaswt.getInstance().printButtonHorizontal(namesButton, 130, 400, 100, 30, 20, this, selAdptList);
+		Button bttnSave = Jaswt.getInstance().createButtons(namesButton, 130, 400, 100, 30, 20, this, selAdptList, CreateContentsStyle.HORIZONTAL).get("Save");
+		this.setDefaultButton(bttnSave);
 	}
 
 	/* ################################################################################# */

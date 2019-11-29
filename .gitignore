@@ -1,6 +1,6 @@
 /phpito/bin/
 /phpito/.settings/
-/phpito/conf/
+/phpito/conf/*
 /phpito/conf/projects.xml
 /phpito/single.instance.app
 *.log

@@ -7,9 +7,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
-import jaswt.core.Jaswt;
-import jutilas.core.Jutilas;
+import jaswt.utils.Jaswt;
 import jutilas.exception.FileException;
+import jutilas.utils.Jutilas;
 import phpito.core.PHPitoConf;
 import phpito.core.PHPitoManager;
 import phpito.view.shell.ShellPHPito;

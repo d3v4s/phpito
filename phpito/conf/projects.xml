@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <projects>
-    
+    <server id="1">
+        <path>/home/hxs</path>
+        <address>127.0.0.1</address>
+        <port>8080</port>
+        <log>true</log>
+        <ini>0</ini>
+        <name>test</name>
+        <pid/>
+    </server>
 </projects>

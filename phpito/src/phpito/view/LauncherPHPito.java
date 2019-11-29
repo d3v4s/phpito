@@ -9,7 +9,7 @@ import org.eclipse.swt.widgets.Shell;
 import exception.ApplicationException;
 import exception.FileLockException;
 import exception.SystemException;
-import jaswt.core.Jaswt;
+import jaswt.utils.Jaswt;
 import jun.Jun;
 import phpito.core.PHPitoManager;
 import phpito.view.shell.ShellPHPito;

@@ -14,10 +14,10 @@ import java.util.regex.Pattern;
 import exception.LockLogException;
 import jogger.JoggerDebug;
 import jogger.JoggerError;
-import jutilas.core.Jutilas;
-import jutilas.core.JutilasNet;
-import jutilas.core.JutilasSys;
 import jutilas.exception.FileException;
+import jutilas.utils.Jutilas;
+import jutilas.utils.JutilasNet;
+import jutilas.utils.JutilasSys;
 import phpito.core.lock.ReentrantLockProjectsXML;
 import phpito.core.lock.ReentrantLockServerLog;
 import phpito.data.Project;
@@ -110,15 +110,6 @@ public class PHPitoManager {
 		getReentrantLockLogServer().renameProjectLogDir(oldIdName, project.getIdAndName());
 		renamePhpini(oldIdName, project.getIdAndName());
 		project.getPhpiniPath();
-	}
-
-	/* metodo che ritorna stringa con info sistema */
-	public String getSystemInfo(Double sysAdvrg) throws IOException {
-		if (sysAdvrg == null) sysAdvrg = JutilasSys.getInstance().getSystemLoadAverage(1000);
-		StringBuffer cpu = new StringBuffer("CPU: ").append(String.format("%.0f", sysAdvrg)).append("%");
-		return new StringBuffer("OS: ").append(JutilasSys.getInstance().getOsName()).append("\n").append(
-				"Arch: ").append(JutilasSys.getInstance().getOsArch()).append("\n").append(
-				"User: ").append(JutilasSys.getInstance().getOsUser()).append("\n").append(cpu).toString();
 	}
 
 	/* metodo ritorna progetto da id */
