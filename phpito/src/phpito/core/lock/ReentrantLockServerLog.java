@@ -50,8 +50,7 @@ public class ReentrantLockServerLog {
 
 	/* metodo che ritorna ultime righe del log del progetto */
 	public String readLog(Project project, int numRows) {
-		String rows = "PHPito -- PHP Server Manager\n"
-						+ "Developed by Andrea Serra";
+		String rows = "PHPito -- PHP Server Manager\nDeveloped by Andrea Serra (DevAS)";
 		if (project != null && project.isLogActive()) {
 			PHPitoManager.getInstance().getJoggerDebug().writeLog("Read Log Starting");
 			try {

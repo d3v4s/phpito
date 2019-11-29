@@ -2,7 +2,7 @@ package phpito.view.shell;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 
@@ -224,7 +224,7 @@ public class ShellPHPito extends Shell {
 	/* ################################################################################# */
 
 	/* metodo che scrive tabella da hashmap di progetti */
-	private void printProjectsOnTable(HashMap<String, Project> mapProjects) {
+	private void printProjectsOnTable(Map<String, Project> mapProjects) {
 		PHPitoManager.getInstance().getJoggerDebug().writeLog("ShellPHPito - Print Projects on Table");
 		TableItem ti;
 		Project p;
@@ -249,7 +249,7 @@ public class ShellPHPito extends Shell {
 	private void flushTable() throws ProjectException {
 		PHPitoManager.getInstance().getJoggerDebug().writeLog("ShellPHPito - Flush Table");
 		int indexTable = table.getSelectionIndex();
-		HashMap<String, Project> mapProjects = PHPitoManager.getInstance().getReentrantLockProjectsXML().getProjectsMap();
+		Map<String, Project> mapProjects = PHPitoManager.getInstance().getReentrantLockProjectsXML().getProjectsMap();
 		printProjectsOnTable(mapProjects);
 		if (indexTable >= table.getItems().length || indexTable < 0) indexTable = 0;
 		table.setSelection(indexTable);

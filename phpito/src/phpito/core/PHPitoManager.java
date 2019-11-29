@@ -342,7 +342,7 @@ public class PHPitoManager {
 	/* metodo che aggiorna i server in esecuzione sull'xml */
 	public void flushRunningServers() throws IOException, NumberFormatException, ProjectException {
 		joggerDebug.writeLog("PHPito Write Running Server on XML - START");
-		HashMap<String, Project> projectMap = reentrantLockProjectsXML.getProjectsMap();
+		HashMap<String, Project> projectMap = new HashMap<String, Project>(reentrantLockProjectsXML.getProjectsMap());
 		Project project = null;
 		for (String id : projectMap.keySet()) {
 			project = projectMap.get(id);
@@ -358,7 +358,7 @@ public class PHPitoManager {
 		joggerDebug.writeLog("PHPito Get Running Server - START");
 		ArrayList<Project> serverList = new ArrayList<Project>();
 //		flushRunningServers();
-		HashMap<String, Project> projectMap = reentrantLockProjectsXML.getProjectsMap();
+		HashMap<String, Project> projectMap = new HashMap<String, Project>(reentrantLockProjectsXML.getProjectsMap());
 		for (String id : projectMap.keySet()) if (projectMap.get(id).getServer().isRunning()) serverList.add(projectMap.get(id));
 		joggerDebug.writeLog("PHPito Get Running Server - END");
 		return serverList;
