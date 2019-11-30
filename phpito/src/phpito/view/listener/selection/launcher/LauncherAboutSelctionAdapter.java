@@ -13,7 +13,7 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 
-import jaswt.utils.CreateContentsStyle;
+import jaswt.utils.CreateContentsDirection;
 import jaswt.utils.Jaswt;
 import jutilas.utils.Jutilas;
 import phpito.core.PHPitoManager;
@@ -77,7 +77,7 @@ public class LauncherAboutSelctionAdapter implements SelectionListener {
 				"Developed by: " + PHPitoManager.AUTHOR
 			};
 			
-			Jaswt.getInstance().createLabels(txtLblList, 10, 190, 380, 20, 5, this, SWT.CENTER, CreateContentsStyle.VERTICAL);
+			Jaswt.getInstance().createLabels(txtLblList, 10, 190, 380, 20, 5, this, txtLblList, SWT.CENTER, CreateContentsDirection.VERTICAL);
 			
 			Link link = new Link(this, SWT.CENTER);
 			link.getFont().getFontData()[0].setHeight(30);

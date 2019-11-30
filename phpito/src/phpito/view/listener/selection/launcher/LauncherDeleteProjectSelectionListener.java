@@ -3,14 +3,13 @@ package phpito.view.listener.selection.launcher;
 import java.io.IOException;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Label;
 
 import jaswt.listener.selection.CloserShellSelectionAdpter;
-import jaswt.utils.CreateContentsStyle;
+import jaswt.utils.CreateContentsDirection;
 import jaswt.utils.Jaswt;
 import phpito.core.PHPitoManager;
 import phpito.data.Project;
@@ -137,14 +136,12 @@ public class LauncherDeleteProjectSelectionListener implements SelectionListener
 
 			/* button no and yes */
 			String[] namesList = {"No", "Yes"};
-			SelectionAdapter[] selAdptList = {
+			SelectionListener[] selAdptList = {
 					new CloserShellSelectionAdpter(this),
 					new DeleteProjectSelectionAdapter(this)
 			};
-			Button bttnYes = Jaswt.getInstance().createButtons(namesList, 15, 250, 130, 30, 10, this, selAdptList, CreateContentsStyle.HORIZONTAL).get("Yes");
-			System.out.println(bttnYes.toString());
+			Button bttnYes = Jaswt.getInstance().createButtons(namesList, 15, 250, 130, 30, 10, this, selAdptList, namesList, CreateContentsDirection.HORIZONTAL).get("Yes");
 			this.setDefaultButton(bttnYes);
-//			bttnYes.forceFocus();
 		}
 	}
 

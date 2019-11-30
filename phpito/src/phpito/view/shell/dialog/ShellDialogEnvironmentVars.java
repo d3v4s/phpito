@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
-import jaswt.utils.CreateContentsStyle;
+import jaswt.utils.CreateContentsDirection;
 import jaswt.utils.Jaswt;
 import phpito.view.listener.selection.text.TextFocusSelectionAdapter;
 
@@ -150,7 +150,7 @@ public class ShellDialogEnvironmentVars extends ShellDialogPHPitoAbstract {
 				}
 			}
 		};
-		Jaswt.getInstance().createButtons(namesBtn, 160, 430, 80, 30, 10, this, slectLstnrList, CreateContentsStyle.HORIZONTAL);
+		Jaswt.getInstance().createButtons(namesBtn, 160, 430, 80, 30, 10, this, slectLstnrList, namesBtn, CreateContentsDirection.HORIZONTAL);
 
 		flushTable();
 	}
@@ -248,15 +248,15 @@ public class ShellDialogEnvironmentVars extends ShellDialogPHPitoAbstract {
 			Jaswt.getInstance().centerWindow(this);
 
 			/* print label */
+			String[] keysMap = {K_KEY, K_VAL};
 			String[] namesLabel = {"Key:", "Val:"};
-			Jaswt.getInstance().createLabels(namesLabel, 20, 25, 50, 30, 10, this, SWT.NONE, CreateContentsStyle.VERTICAL);
+			Jaswt.getInstance().createLabels(namesLabel, 20, 25, 50, 30, 10, this, keysMap, SWT.NONE,  CreateContentsDirection.VERTICAL);
 
 			/* print text */
 			int[] widthList = {250, 250};
-			String[] keysMap = {K_KEY, K_VAL};
 			// = new HashMap<String, Text>();
 //			Jaswt.getInstance().createTexts(80, 25, widthList, 30, 10, this, keysMap, textsMap, CreateContentsStyle.HORIZONTAL);
-			textsMap = new HashMap<String, Text>(Jaswt.getInstance().createTexts(80, 25, widthList, 30, 10, this, keysMap, SWT.NONE, CreateContentsStyle.VERTICAL));
+			textsMap = new HashMap<String, Text>(Jaswt.getInstance().createTexts(80, 25, widthList, 30, 10, this, keysMap, SWT.NONE, CreateContentsDirection.VERTICAL));
 			textsMap.get(K_KEY).setText(key);
 			textsMap.get(K_VAL).setText(val);
 
@@ -297,7 +297,7 @@ public class ShellDialogEnvironmentVars extends ShellDialogPHPitoAbstract {
 				},
 				saveSelctn
 			};
-			Jaswt.getInstance().createButtons(namesBtn, 200, 130, 80, 30, 10, this, listnrList, CreateContentsStyle.HORIZONTAL);
+			Jaswt.getInstance().createButtons(namesBtn, 200, 130, 80, 30, 10, this, listnrList, namesBtn, CreateContentsDirection.HORIZONTAL);
 		}
 	}
 

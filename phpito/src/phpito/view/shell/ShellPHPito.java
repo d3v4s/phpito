@@ -308,7 +308,7 @@ public class ShellPHPito extends Shell {
 		mntm.setMenu(mn);
 
 		/* list of project menu */
-		String[] menuProjectList = {"Add", "Settings", "Delete", "Start", "Stop", "Refresh Table", "Import", "Export"};
+		String[] menuProjectList = {"Add", "Settings", "Delete", "Start", "Stop", "Refresh table", "Import", "Export"};
 		SelectionListener[] menuProjectSelAdptList = {
 				new LauncherAddProjectSelectionAdapter(this),
 				new LauncherSettingsProjectSelectionAdapter(this),

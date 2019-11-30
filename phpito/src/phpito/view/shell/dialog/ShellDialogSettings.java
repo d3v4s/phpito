@@ -7,7 +7,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
@@ -21,10 +21,10 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
 import jaswt.exception.ArgumentException;
-import jaswt.label.ViewColorLabel;
+import jaswt.label.ViewerColorLabel;
 import jaswt.listener.selection.CloserShellSelectionAdpter;
 import jaswt.listener.selection.DisablerControlSelctionAdapter;
-import jaswt.utils.CreateContentsStyle;
+import jaswt.utils.CreateContentsDirection;
 import jaswt.utils.Jaswt;
 import phpito.core.PHPitoConf;
 import phpito.core.PHPitoManager;
@@ -45,7 +45,7 @@ public class ShellDialogSettings extends ShellDialogPHPitoAbstract {
 	private HashMap<String, Integer> colorForegrndLogMonMap;
 	private HashMap<String, Scale> colorScaleMap;
 	private List layerLogMonList;
-	private ViewColorLabel viewColorLabel;
+	private ViewerColorLabel viewerColorLabel;
 	private Label hexColorLbl;
 	private Combo styleLogMonCombo;
 
@@ -93,11 +93,11 @@ public class ShellDialogSettings extends ShellDialogPHPitoAbstract {
 
 		/* loop for button cancel and save*/
         String[] namesBttnList = {"Cancel", "Save"};
-        SelectionAdapter[] selAdptrBttnList = {
+        SelectionListener[] selAdptrBttnList = {
     		new CloserShellSelectionAdpter(this),
     		new SaveConfSelectionAdapter(this)
         };
-        Jaswt.getInstance().createButtons(namesBttnList, 130, 20, 100, 30, 20, compositeBottom, selAdptrBttnList, CreateContentsStyle.HORIZONTAL);
+        Jaswt.getInstance().createButtons(namesBttnList, 130, 20, 100, 30, 20, compositeBottom, selAdptrBttnList, namesBttnList, CreateContentsDirection.HORIZONTAL);
 		new Label(compositeBottom, SWT.NONE).setBounds(270, 20, 0, 50);
 	}
 	
@@ -141,11 +141,11 @@ public class ShellDialogSettings extends ShellDialogPHPitoAbstract {
 	public void setLayerLogMonList(List layerLogMonList) {
 		this.layerLogMonList = layerLogMonList;
 	}
-	public ViewColorLabel getViewColorLabel() {
-		return viewColorLabel;
+	public ViewerColorLabel getViewerColorLabel() {
+		return viewerColorLabel;
 	}
-	public void setViewColorLabel(ViewColorLabel viewColorlabel) {
-		this.viewColorLabel = viewColorlabel;
+	public void setViewerColorLabel(ViewerColorLabel viewerColorlabel) {
+		this.viewerColorLabel = viewerColorlabel;
 	}
 	public Label getHexColorLbl() {
 		return hexColorLbl;
@@ -280,10 +280,10 @@ public class ShellDialogSettings extends ShellDialogPHPitoAbstract {
 
 	/* method that set RGB colors on label */
 	private void setColorLabaelAndRedraw(HashMap<String, Integer> colorsMap) throws ArgumentException {
-		viewColorLabel.setRed(colorsMap.get(PHPitoConf.K_COLOR_RED));
-		viewColorLabel.setGreen(colorsMap.get(PHPitoConf.K_COLOR_GREEN));
-		viewColorLabel.setBlue(colorsMap.get(PHPitoConf.K_COLOR_BLUE));
-		viewColorLabel.redraw();
+		viewerColorLabel.setRed(colorsMap.get(PHPitoConf.K_COLOR_RED));
+		viewerColorLabel.setGreen(colorsMap.get(PHPitoConf.K_COLOR_GREEN));
+		viewerColorLabel.setBlue(colorsMap.get(PHPitoConf.K_COLOR_BLUE));
+		viewerColorLabel.redraw();
 	}
 
 	/* metodo che crea tabitem per impostazioni del log monitor */
@@ -342,11 +342,11 @@ public class ShellDialogSettings extends ShellDialogPHPitoAbstract {
 
 		/* labels R G B */
 		String[] namesLabel = {"R", "G", "B"};
-		Jaswt.getInstance().createLabels(namesLabel, 10, 20, 15, 20, 0, compositeRGB, SWT.NONE, CreateContentsStyle.VERTICAL);
+		Jaswt.getInstance().createLabels(namesLabel, 10, 20, 15, 20, 0, compositeRGB, namesLabel, SWT.NONE, CreateContentsDirection.VERTICAL);
 
 		/* set label view color */
 		try {
-			viewColorLabel = new ViewColorLabel(
+			viewerColorLabel = new ViewerColorLabel(
 					compositeRGB,
 					SWT.BORDER,
 					colorBackgrndLogMonMap.get(PHPitoConf.K_COLOR_RED),
@@ -356,7 +356,7 @@ public class ShellDialogSettings extends ShellDialogPHPitoAbstract {
 		} catch (ArgumentException e) {
 			Jaswt.getInstance().launchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
 		}
-		viewColorLabel.setBounds(240, 25, 50, 50);
+		viewerColorLabel.setBounds(240, 25, 50, 50);
 
 		/* scale for set RGB */
 		Scale scale;

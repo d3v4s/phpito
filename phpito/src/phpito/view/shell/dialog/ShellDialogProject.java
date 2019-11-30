@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Text;
 
 import jaswt.listener.selection.LauncherSelectPathSelectionAdapter;
-import jaswt.utils.CreateContentsStyle;
+import jaswt.utils.CreateContentsDirection;
 import jaswt.utils.Jaswt;
 import phpito.core.PHPitoManager;
 import phpito.data.Project;
@@ -90,15 +90,16 @@ public class ShellDialogProject extends ShellDialogPHPitoAbstract {
 		this.setText(title);
 		Jaswt.getInstance().centerWindow(this);
 		
+
 		/* ciclo per label */
 		String[] txtLbl = {"Id:", "Name:", "Path:", "Address:", "Port:", "php.ini"};
-		Jaswt.getInstance().createLabels(txtLbl, 20, 30, 70, 30, 20, this, SWT.NONE, CreateContentsStyle.VERTICAL);
+		Jaswt.getInstance().createLabels(txtLbl, 20, 30, 70, 30, 20, this, txtLbl, SWT.NONE, CreateContentsDirection.VERTICAL);
 		
 		/* ciclo per text */
 		String[] keyList = Project.getArrayKeyProject();
 		int[] width = {70, 160, 160, 160, 160};
 //		HashMap<String, Text> textMap = Jaswt.getInstance().createTextVertical(100, 30, width, 30, 20, this, keyList, new int[] {0});
-		textMap = new HashMap<String, Text>(Jaswt.getInstance().createTexts(100, 30, width, 30, 20, this, keyList, SWT.NONE, CreateContentsStyle.VERTICAL));
+		textMap = new HashMap<String, Text>(Jaswt.getInstance().createTexts(100, 30, width, 30, 20, this, keyList, SWT.NONE, CreateContentsDirection.VERTICAL));
 		textMap.get(Project.K_ID).setEnabled(false);
 		textMap.get(Project.K_NAME).forceFocus();
 
@@ -158,7 +159,7 @@ public class ShellDialogProject extends ShellDialogPHPitoAbstract {
 			actionSlctnAdptr
 		};
 		String[] namesButton = new String[] {"Cancel", "Save"};
-		Button bttnSave = Jaswt.getInstance().createButtons(namesButton, 130, 400, 100, 30, 20, this, selAdptList, CreateContentsStyle.HORIZONTAL).get("Save");
+		Button bttnSave = Jaswt.getInstance().createButtons(namesButton, 130, 400, 100, 30, 20, this, selAdptList, namesButton, CreateContentsDirection.HORIZONTAL).get("Save");
 		this.setDefaultButton(bttnSave);
 	}
 

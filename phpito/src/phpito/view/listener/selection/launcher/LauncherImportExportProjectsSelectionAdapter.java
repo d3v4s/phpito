@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.Text;
 import jaswt.listener.selection.CloserShellSelectionAdpter;
 import jaswt.listener.selection.LauncherSelectFileSelectionAdapter;
 import jaswt.listener.selection.LauncherSelectPathSelectionAdapter;
-import jaswt.utils.CreateContentsStyle;
+import jaswt.utils.CreateContentsDirection;
 import jaswt.utils.Jaswt;
 import jutilas.exception.FileException;
 import phpito.core.PHPitoManager;
@@ -168,7 +168,7 @@ public class LauncherImportExportProjectsSelectionAdapter implements SelectionLi
 				new CloserShellSelectionAdpter(this),
 				new ImportExportProjectsSelectionAdapter(this)
 			};
-			Jaswt.getInstance().createButtons(bttnNameList, 250, 110, 100, 30, 10, this, slctnAdptrList, CreateContentsStyle.HORIZONTAL);
+			Jaswt.getInstance().createButtons(bttnNameList, 250, 110, 100, 30, 10, this, slctnAdptrList, bttnNameList, CreateContentsDirection.HORIZONTAL);
 		}
 	}
 
