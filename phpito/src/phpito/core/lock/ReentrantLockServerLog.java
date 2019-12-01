@@ -5,8 +5,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
-import exception.FileLogException;
 import exception.LockLogException;
+import exception.LogFileException;
 import jogger.Jogger;
 import jutilas.exception.FileException;
 import jutilas.utils.Jutilas;
@@ -31,7 +31,7 @@ public class ReentrantLockServerLog {
 					PHPitoManager.getInstance().getJoggerDebug().writeLog("Write Log -- LOCK OK");
 					try {
 						Jogger.writeLog(write, "server", new String[] {"server", project.getIdAndName()});
-					} catch (FileLogException | LockLogException e) {
+					} catch (LockLogException e) {
 						try {
 							PHPitoManager.getInstance().getJoggerError().writeLog(e);
 						} catch (LockLogException e1) {
@@ -63,7 +63,7 @@ public class ReentrantLockServerLog {
 							PHPitoManager.getInstance().getJoggerDebug().writeLog("Read Log -- LOG EMPTY");
 							rows = "404 Log not found";
 						}
-					} catch (FileLogException | FileException e) {
+					} catch (FileException | LogFileException e) {
 						try {
 							PHPitoManager.getInstance().getJoggerError().writeLog(e);
 						} catch (LockLogException e1) {

@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.TabItem;
 import jaswt.exception.ArgumentException;
 import jaswt.label.ViewerColorLabel;
 import jaswt.listener.selection.CloserShellSelectionAdpter;
-import jaswt.listener.selection.DisablerControlSelctionAdapter;
+import jaswt.listener.selection.DisablerControlsSelctionAdapter;
 import jaswt.utils.CreateContentsDirection;
 import jaswt.utils.Jaswt;
 import phpito.core.PHPitoConf;
@@ -302,7 +302,7 @@ public class ShellDialogSettings extends ShellDialogPHPitoAbstract {
 		chckBttnActiveLogMonitor.setText("Enable log monitor");
 		chckBttnActiveLogMonitor.setSelection(PHPitoConf.getInstance().getActvtLogMonConf());
 		confChckBttnMap.put(PHPitoConf.K_CONF_ACTVT_LOG_MON, chckBttnActiveLogMonitor);
-		chckBttnActiveLogMonitor.addSelectionListener(new DisablerControlSelctionAdapter(logMonControlList));
+		chckBttnActiveLogMonitor.addSelectionListener(new DisablerControlsSelctionAdapter(logMonControlList));
 		boolean enable = chckBttnActiveLogMonitor.getSelection();
 
 		/* spinner to select n. rows */
@@ -396,7 +396,7 @@ public class ShellDialogSettings extends ShellDialogPHPitoAbstract {
 		chckBttnActiveSystemInfo.setBounds(20, 15, 170, 30);
 		chckBttnActiveSystemInfo.setText("Enable System Info");
 		chckBttnActiveSystemInfo.setSelection(PHPitoConf.getInstance().getActvtSysInfoConf());
-		chckBttnActiveSystemInfo.addSelectionListener(new DisablerControlSelctionAdapter(sysInfoControlList));
+		chckBttnActiveSystemInfo.addSelectionListener(new DisablerControlsSelctionAdapter(sysInfoControlList));
 		confChckBttnMap.put(PHPitoConf.K_CONF_ACTVT_SYS_INFO, chckBttnActiveSystemInfo);
 		boolean enable = chckBttnActiveSystemInfo.getSelection();
 

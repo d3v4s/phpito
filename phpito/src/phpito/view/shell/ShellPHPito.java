@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 import jaswt.canvas.CPUMonitorCanvas;
-import jaswt.listener.selection.OpenFileFromOSSelectionAdapter;
+import jaswt.listener.selection.OpenerFileFromOSSelectionAdapter;
 import jaswt.utils.Jaswt;
 import jogger.Jogger;
 import jutilas.utils.JutilasSys;
@@ -354,7 +354,7 @@ public class ShellPHPito extends Shell {
 		String[] menuPHPitoList = {"Settings PHPito", "Open log folder", "About"};
 		SelectionListener[] menuPHPitoSelAdptList = {
 				new LauncherSettingsSelctionAdapter(this),
-				new OpenFileFromOSSelectionAdapter(this, Jogger.getLogDirPath("server")),
+				new OpenerFileFromOSSelectionAdapter(this, Jogger.getLogDirPath("server")),
 				new LauncherAboutSelctionAdapter(this)
 		};
 

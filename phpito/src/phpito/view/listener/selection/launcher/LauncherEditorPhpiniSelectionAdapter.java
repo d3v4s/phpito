@@ -2,7 +2,7 @@ package phpito.view.listener.selection.launcher;
 
 import org.eclipse.swt.events.SelectionEvent;
 
-import jaswt.listener.selection.OpenFileFromOSSelectionAdapter;
+import jaswt.listener.selection.OpenerFileFromOSSelectionAdapter;
 import jaswt.utils.Jaswt;
 import phpito.core.PHPitoManager;
 import phpito.data.Project;
@@ -13,7 +13,7 @@ import phpito.view.shell.dialog.ShellDialogPHPitoAbstract;
  * @author Andrea Serra
  *
  */
-public class LauncherEditorPhpiniSelectionAdapter extends OpenFileFromOSSelectionAdapter {
+public class LauncherEditorPhpiniSelectionAdapter extends OpenerFileFromOSSelectionAdapter {
 
 	/* CONSTRUCT */
 	public LauncherEditorPhpiniSelectionAdapter(ShellDialogPHPitoAbstract shellDialogPHPito, Project project) {
