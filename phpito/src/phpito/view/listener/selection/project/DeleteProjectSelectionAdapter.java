@@ -4,7 +4,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
 import exception.XMLException;
-import jaswt.core.Jaswt;
+import jaswt.utils.Jaswt;
 import phpito.core.PHPitoManager;
 import phpito.data.Project;
 import phpito.exception.ProjectException;

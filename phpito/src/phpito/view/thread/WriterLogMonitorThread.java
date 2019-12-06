@@ -5,8 +5,8 @@ import java.time.LocalDateTime;
 
 import com.ibm.icu.text.SimpleDateFormat;
 
-import exception.FileLogException;
 import exception.LockLogException;
+import exception.LogFileException;
 import jogger.Jogger;
 import phpito.core.PHPitoConf;
 import phpito.core.PHPitoManager;
@@ -66,7 +66,7 @@ public class WriterLogMonitorThread extends Thread {
 	}
 
 	/* method that get the date time of server log file last modify */
-	private LocalDateTime getLocalDateTimeLastModifyLogServer(Project project) throws FileLogException {
+	private LocalDateTime getLocalDateTimeLastModifyLogServer(Project project) throws LogFileException {
 		if (project == null) return LocalDateTime.MAX;
 		File logFile = Jogger.getLogFileIfExists("server", new String[] {"server", project.getIdAndName()});
 		if (logFile == null) return LocalDateTime.MIN;

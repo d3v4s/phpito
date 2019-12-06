@@ -7,8 +7,8 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
-import jutilas.core.Jutilas;
 import jutilas.exception.FileException;
+import jutilas.utils.Jutilas;
 
 /**
  * Class for manage the configuration of PHPito

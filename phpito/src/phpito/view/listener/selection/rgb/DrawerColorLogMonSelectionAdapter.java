@@ -3,8 +3,8 @@ package phpito.view.listener.selection.rgb;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
-import jaswt.core.Jaswt;
-import jaswt.exception.ParameterException;
+import jaswt.exception.ArgumentException;
+import jaswt.utils.Jaswt;
 import phpito.core.PHPitoManager;
 import phpito.view.shell.dialog.ShellDialogSettings;
 
@@ -41,7 +41,7 @@ public class DrawerColorLogMonSelectionAdapter extends SelectionAdapter{
 				default:
 					break;
 			}
-		} catch (ParameterException e) {
+		} catch (ArgumentException e) {
 			Jaswt.getInstance().launchMBError(shellDialogSettings, e, PHPitoManager.getInstance().getJoggerError());
 		}
 	}

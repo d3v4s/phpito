@@ -4,9 +4,9 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
-import jutilas.core.Jutilas;
-import jutilas.core.JutilasSys;
 import jutilas.exception.FileException;
+import jutilas.utils.Jutilas;
+import jutilas.utils.JutilasSys;
 import phpito.exception.ProjectException;
 
 /**

@@ -2,9 +2,8 @@ package phpito.view.shell;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ArrayBlockingQueue;
 
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
@@ -31,9 +30,10 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 import jaswt.canvas.CPUMonitorCanvas;
-import jaswt.core.Jaswt;
-import jaswt.listener.selection.OpenFileFromOSSelectionAdapter;
+import jaswt.listener.selection.OpenerFileFromOSSelectionAdapter;
+import jaswt.utils.Jaswt;
 import jogger.Jogger;
+import jutilas.utils.JutilasSys;
 import phpito.core.PHPitoConf;
 import phpito.core.PHPitoManager;
 import phpito.data.Project;
@@ -50,7 +50,6 @@ import phpito.view.listener.selection.launcher.LauncherSettingsProjectSelectionA
 import phpito.view.listener.selection.launcher.LauncherSettingsSelctionAdapter;
 import phpito.view.listener.selection.server.StartServerSelectionAdapter;
 import phpito.view.listener.selection.server.StopServerSelectionAdapter;
-import phpito.view.thread.CpuMonitorThread;
 import phpito.view.thread.WriterLogMonitorThread;
 import swing2swt.layout.BorderLayout;
 
@@ -64,7 +63,7 @@ public class ShellPHPito extends Shell {
 	private Table table;
 	private StyledText logOutText;
 	private CPUMonitorCanvas cpuMonitorCanvas;
-	private CLabel lblInfo;
+	private CLabel infoLabel;
 //	private final int fontHeight = 20;
 	private Long idProjectSelect;
 	private boolean actvtLogMon;
@@ -101,7 +100,7 @@ public class ShellPHPito extends Shell {
 		});
 	}
 
-	/* override to bypass error */
+	/* override to bypass check subclass error */
 	@Override
 	protected void checkSubclass() {
 	}
@@ -116,7 +115,10 @@ public class ShellPHPito extends Shell {
 			PHPitoManager.getInstance().flushRunningServers();
 			flushTable();
 			if (actvtLogMon) (writerLogMonitorThread = new WriterLogMonitorThread(this, PHPitoManager.getInstance().getReentrantLockLogServer())).start();
-			if (actvtSysInfo) new CpuMonitorThread(this).start();
+			if (actvtSysInfo) {
+				cpuMonitorCanvas.setInfoLabel(infoLabel);
+				cpuMonitorCanvas.start();
+			}
 		} catch (NumberFormatException | IOException | ProjectException e) {
 			Jaswt.getInstance().launchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
 		}
@@ -163,7 +165,7 @@ public class ShellPHPito extends Shell {
 		return cpuMonitorCanvas;
 	}
 	public CLabel getLblCPU() {
-		return lblInfo;
+		return infoLabel;
 	}
 	public WriterLogMonitorThread getWriterLogMonitorThread() {
 		return writerLogMonitorThread;
@@ -224,7 +226,7 @@ public class ShellPHPito extends Shell {
 	/* ################################################################################# */
 
 	/* metodo che scrive tabella da hashmap di progetti */
-	private void printProjectsOnTable(HashMap<String, Project> mapProjects) {
+	private void printProjectsOnTable(Map<String, Project> mapProjects) {
 		PHPitoManager.getInstance().getJoggerDebug().writeLog("ShellPHPito - Print Projects on Table");
 		TableItem ti;
 		Project p;
@@ -249,7 +251,7 @@ public class ShellPHPito extends Shell {
 	private void flushTable() throws ProjectException {
 		PHPitoManager.getInstance().getJoggerDebug().writeLog("ShellPHPito - Flush Table");
 		int indexTable = table.getSelectionIndex();
-		HashMap<String, Project> mapProjects = PHPitoManager.getInstance().getReentrantLockProjectsXML().getProjectsMap();
+		Map<String, Project> mapProjects = PHPitoManager.getInstance().getReentrantLockProjectsXML().getProjectsMap();
 		printProjectsOnTable(mapProjects);
 		if (indexTable >= table.getItems().length || indexTable < 0) indexTable = 0;
 		table.setSelection(indexTable);
@@ -306,7 +308,7 @@ public class ShellPHPito extends Shell {
 		mntm.setMenu(mn);
 
 		/* list of project menu */
-		String[] menuProjectList = {"Add", "Settings", "Delete", "Start", "Stop", "Update Table", "Import", "Export"};
+		String[] menuProjectList = {"Add", "Settings", "Delete", "Start", "Stop", "Refresh table", "Import", "Export"};
 		SelectionListener[] menuProjectSelAdptList = {
 				new LauncherAddProjectSelectionAdapter(this),
 				new LauncherSettingsProjectSelectionAdapter(this),
@@ -352,7 +354,7 @@ public class ShellPHPito extends Shell {
 		String[] menuPHPitoList = {"Settings PHPito", "Open log folder", "About"};
 		SelectionListener[] menuPHPitoSelAdptList = {
 				new LauncherSettingsSelctionAdapter(this),
-				new OpenFileFromOSSelectionAdapter(this, Jogger.getLogDirPath("server")),
+				new OpenerFileFromOSSelectionAdapter(this, Jogger.getLogDirPath("server")),
 				new LauncherAboutSelctionAdapter(this)
 		};
 
@@ -505,23 +507,18 @@ public class ShellPHPito extends Shell {
 			int xInfoLabel = 25;
 			if (PHPitoConf.getInstance().getActvtCPUMon()) {
 				PHPitoManager.getInstance().getJoggerDebug().writeLog("Create Content ShellPHPito - CPU Monitor ON");
-				cpuMonitorCanvas = new CPUMonitorCanvas(compositeBottom, SWT.NONE, new ArrayBlockingQueue<Double>(80));
+				cpuMonitorCanvas = new CPUMonitorCanvas(compositeBottom);
 				cpuMonitorCanvas.setBounds(20, 20, 80, 60);
-				cpuMonitorCanvas.setStyleCPUMon(PHPitoConf.getInstance().getStyleLogMonConf());
+				cpuMonitorCanvas.setCPUMonStyle(PHPitoConf.getInstance().getStyleLogMonConf());
 				xInfoLabel = 110;
 			}
 
 			/* draw other info */
 			if (PHPitoConf.getInstance().getOthInfo()) {
 				PHPitoManager.getInstance().getJoggerDebug().writeLog("Create Content ShellPHPito - Other Info ON");
-				lblInfo = new CLabel(compositeBottom, SWT.NONE);
-				lblInfo.setBounds(xInfoLabel, 15, 200, 70);
-				
-				try {
-					lblInfo.setText(PHPitoManager.getInstance().getSystemInfo(null));
-				} catch (IOException e) {
-					Jaswt.getInstance().launchMBError(shellPHPito, e, PHPitoManager.getInstance().getJoggerError());
-				}
+				infoLabel = new CLabel(compositeBottom, SWT.NONE);
+				infoLabel.setBounds(xInfoLabel, 15, 200, 70);
+				infoLabel.setText(JutilasSys.getInstance().getSystemInfo(null));
 			}
 			new Label(compositeBottom, SWT.NONE).setBounds(0, 100, 300, 0);
 		}

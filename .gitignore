@@ -1,8 +1,8 @@
-phpito/bin/
-phpito/.settings/
-phpito/conf/
-phpito/conf/projects.xml
-phpito/single.instance.app
+/phpito/bin/
+/phpito/.settings/
+/phpito/conf/*
+/phpito/conf/projects.xml
+/phpito/single.instance.app
 *.log
 LICENSE
 README.md

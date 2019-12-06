@@ -5,11 +5,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
-import exception.FileLogException;
 import exception.LockLogException;
+import exception.LogFileException;
 import jogger.Jogger;
-import jutilas.core.Jutilas;
 import jutilas.exception.FileException;
+import jutilas.utils.Jutilas;
 import phpito.core.PHPitoManager;
 import phpito.data.Project;
 import phpito.exception.ProjectException;
@@ -31,7 +31,7 @@ public class ReentrantLockServerLog {
 					PHPitoManager.getInstance().getJoggerDebug().writeLog("Write Log -- LOCK OK");
 					try {
 						Jogger.writeLog(write, "server", new String[] {"server", project.getIdAndName()});
-					} catch (FileLogException | LockLogException e) {
+					} catch (LockLogException e) {
 						try {
 							PHPitoManager.getInstance().getJoggerError().writeLog(e);
 						} catch (LockLogException e1) {
@@ -50,8 +50,7 @@ public class ReentrantLockServerLog {
 
 	/* metodo che ritorna ultime righe del log del progetto */
 	public String readLog(Project project, int numRows) {
-		String rows = "PHPito -- PHP Server Manager\n"
-						+ "Developed by Andrea Serra";
+		String rows = "PHPito -- PHP Server Manager\nDeveloped by Andrea Serra (DevAS)";
 		if (project != null && project.isLogActive()) {
 			PHPitoManager.getInstance().getJoggerDebug().writeLog("Read Log Starting");
 			try {
@@ -64,7 +63,7 @@ public class ReentrantLockServerLog {
 							PHPitoManager.getInstance().getJoggerDebug().writeLog("Read Log -- LOG EMPTY");
 							rows = "404 Log not found";
 						}
-					} catch (FileLogException | FileException e) {
+					} catch (FileException | LogFileException e) {
 						try {
 							PHPitoManager.getInstance().getJoggerError().writeLog(e);
 						} catch (LockLogException e1) {
