@@ -45,11 +45,11 @@ public class ReentrantLockProjectsXML extends JSX {
 		super();
 		setFilePath(PATH_FILE_XML);
 		setLock(true);
-//		setAutoFlush(false);
+		setAutoFlush(true);
 		try {
 			loadDocument();
 		} catch (JSXLockException e) {
-			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Construct Load Document - LOCK ERROR");
+			PHPitoManager.getInstance().getJoggerDebug().writeError("XML Construct Load Document");
 			try {
 				PHPitoManager.getInstance().getJoggerError().writeLog(e);
 			} catch (LockLogException e1) {
@@ -64,15 +64,15 @@ public class ReentrantLockProjectsXML extends JSX {
 
 	/* meotodo che ritorna hashmap dei progetti con key id */
 	public Map<String, Project> getProjectsMap() throws ProjectException {
-		PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Get Projects Map - START");
+		PHPitoManager.getInstance().getJoggerDebug().writeStart("XML Get Projects Maps");
 		HashMap<String, Project> mapProjects = new HashMap<String, Project>();
 		try {
 			HashMap<String, Node> mapNode = new HashMap<String, Node>(getIdNodeMap(XML_SERVER));
 			Set<String> idSet = mapNode.keySet();
 			for (String id : idSet) mapProjects.put(id, getProjectByNode(mapNode.get(id), id));
-			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Get Project Map - SUCCESFULLY");
+			PHPitoManager.getInstance().getJoggerDebug().writeSuccess("XML Get Projects Map");
 		} catch (JSXLockException e) {
-			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Get Project Map - LOCK ERROR");
+			PHPitoManager.getInstance().getJoggerDebug().writeError("XML Get Projects Map");
 			try {
 				PHPitoManager.getInstance().getJoggerError().writeLog(e);
 			} catch (LockLogException e1) {
@@ -84,15 +84,15 @@ public class ReentrantLockProjectsXML extends JSX {
 
 	/* method that get projects array list */
 	public ArrayList<Project> getProjectsArray() throws ProjectException {
-		PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Get Projects ArrayList - START");
+		PHPitoManager.getInstance().getJoggerDebug().writeStart("XML Get Projects ArrayList");
 		ArrayList<Project> projects = new ArrayList<Project>();
 		try {
 			HashMap<String, Node> nodes = new HashMap<String, Node>(getIdNodeMap(XML_SERVER));
 			Set<String> idSet = nodes.keySet();
 			for (String id : idSet) projects.add(getProjectByNode(nodes.get(id), id));
-			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Get Projects ArrayList - SUCCESSFULLY");
+			PHPitoManager.getInstance().getJoggerDebug().writeSuccess("XML Get Projects ArrayList");
 		} catch (JSXLockException e) {
-			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Get Projects ArrayList - LOCK ERROR");
+			PHPitoManager.getInstance().getJoggerDebug().writeError("XML Get Projects ArrayList");
 			try {
 				PHPitoManager.getInstance().getJoggerError().writeLog(e);
 			} catch (LockLogException e1) {
@@ -152,7 +152,7 @@ public class ReentrantLockProjectsXML extends JSX {
 			String id = getNextIdProject();
 			project.setIdString(id);
 			createProject(project);
-			flush();
+//			flush();
 			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Add Project - SUCCESFULLY");
 		} catch (JSXLockException e) {
 			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Add Project - LOCK ERROR");
@@ -170,7 +170,7 @@ public class ReentrantLockProjectsXML extends JSX {
 		try {
 			deleteProject(project.getIdString());
 			createProject(project);
-			flush();
+//			flush();
 			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Update Project - SUCCESFULLY");
 		} catch (JSXLockException e) {
 			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Update Project - LOCK ERROR");
@@ -187,7 +187,7 @@ public class ReentrantLockProjectsXML extends JSX {
 		PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Delete Project - START");
 		try {
 			deleteNode(XML_SERVER, id);
-			flush();
+//			flush();
 			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Delete Project - SUCCESFULLY");
 		} catch (JSXLockException e) {
 			PHPitoManager.getInstance().getJoggerDebug().writeLog("XML Delete Project - LOCK ERROR");
